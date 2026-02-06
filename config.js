@@ -12,13 +12,13 @@
 // FIREBASE CONFIGURATION
 // ============================================
 export const firebaseConfig = {
-    apiKey: "YOUR_API_KEY_HERE",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+  authDomain: "hallpass2-n244.firebaseapp.com",
+  projectId: "hallpass2-n244",
+  storageBucket: "hallpass2-n244.firebasestorage.app",
+  messagingSenderId: "262508006458",
+  appId: "1:262508006458:web:4cdebead1181506d833903",
+  measurementId: "G-175T67QFGY"
 };
 
 // ============================================
@@ -92,7 +92,7 @@ export const schedules = {
             {
                 name: "P4",
                 startTime: "12:42",
-                endTime: "14:05",
+                endTime: "23:55",
                 students: {
                     "qr_01": "Student D1",
                     "qr_02": "Student D2",
@@ -162,7 +162,7 @@ export const schedules = {
             {
                 name: "P4",
                 startTime: "12:50",
-                endTime: "13:54",
+                endTime: "23:55",
                 students: {
                     "qr_01": "Student D1",
                     "qr_02": "Student D2",
@@ -234,7 +234,7 @@ export const schedules = {
             {
                 name: "P4",
                 startTime: "12:42",
-                endTime: "14:05",
+                endTime: "23:55",
                 students: {
                     "qr_11": "Student H1",
                     "qr_12": "Student H2",
@@ -304,7 +304,7 @@ export const schedules = {
             {
                 name: "P4",
                 startTime: "12:50",
-                endTime: "13:54",
+                endTime: "23:55",
                 students: {
                     "qr_11": "Student H1",
                     "qr_12": "Student H2",
