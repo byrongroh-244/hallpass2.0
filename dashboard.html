@@ -3,15 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Dashboard - Classroom Management</title>
+    <title>Live Dashboard</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         :root {
             --color-ink: #0f172a;
             --color-slate: #475569;
@@ -20,14 +17,12 @@
             --color-success: #10b981;
             --color-danger: #ef4444;
         }
-
         body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'DM Sans', sans-serif;
             background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
             padding: 2rem;
             color: var(--color-ink);
         }
-        
         .header {
             background: white;
             padding: 2rem;
@@ -35,49 +30,10 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
-        
-        .header h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        .header-controls {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .schedule-selector {
-            display: flex;
-            gap: 0.5rem;
-            background: var(--color-cloud);
-            padding: 0.25rem;
-            border-radius: 10px;
-        }
-
-        .schedule-button {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: transparent;
-        }
-
-        .schedule-button.active {
-            background: white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        
-        .stats-grid {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-        
+        .header h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 1rem; }
+        .header-controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+        #periodInfo { font-size: 1rem; }
+        .stats-grid { display: flex; gap: 1rem; margin-bottom: 2rem; }
         .stat-card {
             background: white;
             padding: 1.5rem;
@@ -85,7 +41,6 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             flex: 1;
         }
-        
         .stat-label {
             font-size: 0.875rem;
             color: var(--color-slate);
@@ -93,22 +48,14 @@
             letter-spacing: 0.5px;
             margin-bottom: 0.5rem;
         }
-        
-        .stat-value {
-            font-family: 'Fraunces', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-        }
-
+        .stat-value { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 700; }
         .stat-value.in { color: var(--color-success); }
         .stat-value.out { color: var(--color-danger); }
-        
         .students-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
-        
         .student-card {
             background: white;
             border-radius: 12px;
@@ -117,47 +64,27 @@
             border: 3px solid transparent;
             transition: all 0.3s ease;
         }
-        
         .student-card.in { border-color: var(--color-success); }
         .student-card.out { 
             background: rgba(239, 68, 68, 0.05);
             border-color: var(--color-danger);
         }
-        
-        .student-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        
-        .student-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            color: var(--color-ink);
-        }
-        
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-        
+        .student-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
+        .student-name { font-size: 1.25rem; font-weight: 700; color: var(--color-ink); }
+        .status-indicator { width: 12px; height: 12px; border-radius: 50%; }
         .status-indicator.in {
             background: var(--color-success);
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
-        
         .status-indicator.out {
             background: var(--color-danger);
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
-        
         .timer {
             font-size: 1.5rem;
             font-weight: 700;
@@ -165,7 +92,6 @@
             font-family: 'Courier New', monospace;
             margin: 0.75rem 0;
         }
-        
         .reset-button {
             width: 100%;
             padding: 0.75rem;
@@ -177,25 +103,16 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
-        .reset-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-        }
-
+        .reset-button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
-
         .modal-content {
             background: white;
             border-radius: 24px;
@@ -204,20 +121,8 @@
             width: 90%;
             text-align: center;
         }
-
-        .modal-content h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.875rem;
-            margin-bottom: 1rem;
-        }
-
-        .schedule-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-
+        .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; }
+        .schedule-buttons { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
         .modal-button {
             padding: 1.25rem;
             border: none;
@@ -227,31 +132,23 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-
         .modal-button.red {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
         }
-
         .modal-button.black {
             background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
             color: white;
         }
-
         .modal-button.regular {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
         }
-
         .modal-button.late {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
         }
-
-        .modal-button:hover {
-            transform: translateY(-2px);
-        }
-
+        .modal-button:hover { transform: translateY(-2px); }
         .back-button {
             margin-top: 1rem;
             padding: 0.75rem;
@@ -300,31 +197,124 @@
         </div>
     </div>
 
-    <script type="module">
-        import { stateManager } from '../src/stateManager.js';
-        import { getCurrentPeriod, formatDuration, saveScheduleSelection, loadScheduleSelection, generateStudentId, isPastPeriodEnd } from '../src/utils.js';
-        import { timingConfig } from '../config/config.js';
-
+    <script>
+        // ============================================
+        // CONFIGURATION - EDIT THIS SECTION ONLY
+        // ============================================
+		const CONFIG = {
+            // Your Firebase credentials from Firebase Console
+            firebase: {
+			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+			  authDomain: "hallpass2-n244.firebaseapp.com",
+			  projectId: "hallpass2-n244",
+			  storageBucket: "hallpass2-n244.firebasestorage.app",
+			  messagingSenderId: "262508006458",
+			  appId: "1:262508006458:web:4cdebead1181506d833903",
+			  measurementId: "G-175T67QFGY"
+            },
+            
+            // Timing settings (milliseconds)
+            timing: {
+                scanDebounce: 2000,        // Prevent duplicate scans
+                studentCooldown: 5000      // Cooldown after scan
+            },
+            
+            // Your class schedules
+            schedules: {
+                red: {
+                    regular: [
+                        {
+                            name: "P1",
+                            startTime: "07:45",
+                            endTime: "09:13",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        },
+                    ],
+                    late: [
+                        {
+                            name: "P1",
+                            startTime: "08:50",
+                            endTime: "23:59",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
+                    ]
+                },
+                black: {
+                    regular: [
+                        {
+                            name: "P1",
+                            startTime: "07:45",
+                            endTime: "09:13",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
+                    ],
+                    late: [
+                        {
+                            name: "P1",
+                            startTime: "08:50",
+                            endTime: "23:59",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
+                    ]
+                }
+            }
+        };
+        // ============================================
+        // SYSTEM CODE - DO NOT EDIT BELOW
+        // ============================================
+        
+        firebase.initializeApp(CONFIG.firebase);
+        const database = firebase.database();
+        
         let activeScheduleType = null;
         let activeStartType = null;
         let selectedScheduleType = null;
         let timers = new Map();
         let timerInterval = null;
 
-        // Initialize
-        async function initialize() {
-            await stateManager.initialize();
-            
-            const saved = loadScheduleSelection('dashboard');
-            if (saved.scheduleType && saved.startType) {
-                activeScheduleType = saved.scheduleType;
-                activeStartType = saved.startType;
-                hideModal();
-                startMonitoring();
+        function getCurrentPeriod() {
+            if (!activeScheduleType || !activeStartType) return null;
+            const schedule = CONFIG.schedules[activeScheduleType][activeStartType];
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            for (const period of schedule) {
+                if (currentTime >= period.startTime && currentTime < period.endTime) {
+                    return period;
+                }
             }
+            return null;
         }
 
-        // Schedule selection
+        function isPastPeriodEnd(endTime) {
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            return currentTime >= endTime;
+        }
+
+        function formatDuration(ms) {
+            if (!ms || ms < 0) return '0:00';
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
         window.selectScheduleType = function(type) {
             selectedScheduleType = type;
             document.getElementById('modalContent').innerHTML = `
@@ -341,8 +331,11 @@
         window.selectSchedule = function(startType) {
             activeScheduleType = selectedScheduleType;
             activeStartType = startType;
-            saveScheduleSelection(activeScheduleType, activeStartType, 'dashboard');
-            hideModal();
+            try {
+                localStorage.setItem('dashboard_scheduleType', activeScheduleType);
+                localStorage.setItem('dashboard_startType', activeStartType);
+            } catch (e) {}
+            document.getElementById('scheduleModal').style.display = 'none';
             startMonitoring();
         };
 
@@ -357,23 +350,17 @@
             `;
         };
 
-        function hideModal() {
-            document.getElementById('scheduleModal').style.display = 'none';
-        }
-
-        // Monitoring
         function startMonitoring() {
             updatePeriodInfo();
-            stateManager.subscribeToStudents(updateDashboard);
-            setInterval(updatePeriodInfo, timingConfig.periodCheckInterval);
-            setInterval(checkAndAutoReset, timingConfig.autoResetInterval);
+            database.ref('students').on('value', updateDashboard);
+            setInterval(updatePeriodInfo, CONFIG.timing.periodCheckInterval);
+            setInterval(checkAndAutoReset, CONFIG.timing.autoResetInterval);
             startTimerUpdates();
         }
 
         function updatePeriodInfo() {
-            const period = getCurrentPeriod(activeScheduleType, activeStartType);
+            const period = getCurrentPeriod();
             const labels = { red: '🔴 Red', black: '⚫ Black', regular: '⏰ Regular', late: '🌅 Late' };
-            
             if (period) {
                 document.getElementById('periodInfo').innerHTML = 
                     `${labels[activeScheduleType]} ${labels[activeStartType]} • <strong>${period.name}</strong> (${period.startTime} - ${period.endTime})`;
@@ -382,8 +369,9 @@
             }
         }
 
-        function updateDashboard(firebaseData) {
-            const period = getCurrentPeriod(activeScheduleType, activeStartType);
+        function updateDashboard(snapshot) {
+            const firebaseData = snapshot.val() || {};
+            const period = getCurrentPeriod();
             if (!period) {
                 document.getElementById('studentsGrid').innerHTML = '<div style="text-align:center;color:#64748b;padding:3rem;">No active class period</div>';
                 return;
@@ -394,9 +382,10 @@
             let inCount = 0, outCount = 0;
 
             grid.innerHTML = '';
+            timers.clear();
 
             Object.keys(expectedStudents).forEach(qrCode => {
-                const studentId = generateStudentId(qrCode, period.name, activeScheduleType, activeStartType);
+                const studentId = `${activeScheduleType}_${activeStartType}_${qrCode}_${period.name.replace(/\s+/g, '_')}`;
                 const record = firebaseData[studentId] || {
                     name: expectedStudents[qrCode],
                     status: 'in',
@@ -406,7 +395,21 @@
                 if (record.status === 'in') inCount++;
                 else outCount++;
 
-                grid.appendChild(createStudentCard(studentId, record));
+                const card = document.createElement('div');
+                card.className = `student-card ${record.status}`;
+                card.innerHTML = `
+                    <div class="student-header">
+                        <div class="student-name">${record.name}</div>
+                        <div class="status-indicator ${record.status}"></div>
+                    </div>
+                    ${record.status === 'out' ? `<div class="timer" id="timer-${studentId}">Out: 0:00</div>` : ''}
+                    <button class="reset-button" onclick="resetStudent('${studentId}')">Reset to "In"</button>
+                `;
+                grid.appendChild(card);
+
+                if (record.status === 'out' && record.timestamp) {
+                    timers.set(studentId, record.timestamp);
+                }
             });
 
             document.getElementById('inCount').textContent = inCount;
@@ -414,45 +417,36 @@
             document.getElementById('totalCount').textContent = inCount + outCount;
         }
 
-        function createStudentCard(studentId, data) {
-            const card = document.createElement('div');
-            card.className = `student-card ${data.status}`;
-
-            card.innerHTML = `
-                <div class="student-header">
-                    <div class="student-name">${data.name}</div>
-                    <div class="status-indicator ${data.status}"></div>
-                </div>
-                ${data.status === 'out' ? `<div class="timer" id="timer-${studentId}">Out: 0:00</div>` : ''}
-                <button class="reset-button" onclick="resetStudent('${studentId}')">Reset to "In"</button>
-            `;
-
-            if (data.status === 'out' && data.timestamp) {
-                timers.set(studentId, data.timestamp);
-            }
-
-            return card;
-        }
-
         window.resetStudent = async function(studentId) {
             try {
-                const data = await stateManager.getStudent(studentId);
+                const snap = await database.ref('students/' + studentId).once('value');
+                const data = snap.val();
                 if (data && data.status === 'out') {
                     const outTime = data.outTimestamp || data.timestamp;
-                    await stateManager.markStudentIn({
-                        uniqueId: studentId,
+                    const inTime = Date.now();
+                    await database.ref('students/' + studentId).update({
+                        status: 'in',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        outTimestamp: null
+                    });
+                    await database.ref('logs').push().set({
                         studentName: data.name,
                         qrCode: data.qrCode,
-                        periodName: data.period,
-                        schedule: data.schedule
-                    }, outTime);
+                        period: data.period,
+                        schedule: data.schedule,
+                        action: 'manual-reset',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP,
+                        date: new Date().toISOString().split('T')[0],
+                        outTime: outTime,
+                        inTime: inTime,
+                        duration: inTime - outTime
+                    });
                 }
-            } catch (error) {
+            } catch (err) {
                 alert('Failed to reset student');
             }
         };
 
-        // Timer system
         function startTimerUpdates() {
             timerInterval = setInterval(() => {
                 const now = Date.now();
@@ -462,17 +456,16 @@
                         el.textContent = 'Out: ' + formatDuration(now - outTime);
                     }
                 });
-            }, timingConfig.timerUpdateInterval);
+            }, CONFIG.timing.timerUpdateInterval);
         }
 
-        // Auto-reset
         async function checkAndAutoReset() {
-            const period = getCurrentPeriod(activeScheduleType, activeStartType);
+            const period = getCurrentPeriod();
             if (!period || !isPastPeriodEnd(period.endTime)) return;
 
             try {
-                const snapshot = await stateManager.database.ref('students').once('value');
-                const students = snapshot.val() || {};
+                const snap = await database.ref('students').once('value');
+                const students = snap.val() || {};
                 const updates = {};
                 const logs = [];
 
@@ -480,12 +473,14 @@
                     if (data.status === 'out' && data.period === period.name) {
                         updates[`students/${studentId}/status`] = 'in';
                         updates[`students/${studentId}/outTimestamp`] = null;
-                        logs.push(stateManager.logEvent({
+                        logs.push(database.ref('logs').push().set({
                             studentName: data.name,
                             qrCode: data.qrCode,
                             period: data.period,
                             schedule: data.schedule,
                             action: 'auto-reset',
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            date: new Date().toISOString().split('T')[0],
                             outTime: data.outTimestamp || data.timestamp,
                             inTime: Date.now(),
                             duration: Date.now() - (data.outTimestamp || data.timestamp)
@@ -494,15 +489,26 @@
                 });
 
                 if (Object.keys(updates).length > 0) {
-                    await stateManager.database.ref().update(updates);
+                    await database.ref().update(updates);
                     await Promise.all(logs);
                 }
-            } catch (error) {
-                console.error('Auto-reset error:', error);
+            } catch (err) {
+                console.error('Auto-reset error:', err);
             }
         }
 
-        initialize();
+        window.addEventListener('load', () => {
+            try {
+                const savedType = localStorage.getItem('dashboard_scheduleType');
+                const savedStart = localStorage.getItem('dashboard_startType');
+                if (savedType && savedStart) {
+                    activeScheduleType = savedType;
+                    activeStartType = savedStart;
+                    document.getElementById('scheduleModal').style.display = 'none';
+                    startMonitoring();
+                }
+            } catch (e) {}
+        });
     </script>
 </body>
 </html>
