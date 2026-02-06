@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics - Classroom Management</title>
+    <title>Analytics & Reports</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
@@ -21,11 +21,7 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
-        .header h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
+        .header h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 1rem; }
         .controls {
             display: flex;
             gap: 1rem;
@@ -82,10 +78,7 @@
             font-size: 1.5rem;
             margin-bottom: 1.5rem;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        table { width: 100%; border-collapse: collapse; }
         th {
             text-align: left;
             padding: 0.75rem;
@@ -93,10 +86,7 @@
             font-weight: 600;
             border-bottom: 2px solid #e2e8f0;
         }
-        td {
-            padding: 0.75rem;
-            border-bottom: 1px solid #e2e8f0;
-        }
+        td { padding: 0.75rem; border-bottom: 1px solid #e2e8f0; }
         tr:hover { background: #f8fafc; }
         .export-button {
             padding: 0.75rem 1.5rem;
@@ -139,14 +129,48 @@
         <div id="dailyTable"></div>
     </div>
 
-    <script type="module">
-        import { stateManager } from '../src/stateManager.js';
-        import { formatDurationHours, formatDuration } from '../src/utils.js';
+    <script>
+        // ============================================
+        // CONFIGURATION - EDIT THIS SECTION ONLY
+        // ============================================
+        const CONFIG = {
+            firebase: {
+			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+			  authDomain: "hallpass2-n244.firebaseapp.com",
+			  projectId: "hallpass2-n244",
+			  storageBucket: "hallpass2-n244.firebasestorage.app",
+			  messagingSenderId: "262508006458",
+			  appId: "1:262508006458:web:4cdebead1181506d833903",
+			  measurementId: "G-175T67QFGY"
+            },
+        };
 
+        // ============================================
+        // SYSTEM CODE - DO NOT EDIT BELOW
+        // ============================================
+        
+        firebase.initializeApp(CONFIG.firebase);
+        const database = firebase.database();
         let allLogs = [];
 
+        function formatDurationHours(ms) {
+            if (!ms || ms < 0) return '0m';
+            const totalMinutes = Math.floor(ms / 60000);
+            if (totalMinutes < 60) return `${totalMinutes}m`;
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
+        }
+
+        function formatDuration(ms) {
+            if (!ms || ms < 0) return '0:00';
+            const totalSeconds = Math.floor(ms / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            return `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
         async function init() {
-            await stateManager.initialize();
             const end = new Date();
             const start = new Date();
             start.setDate(end.getDate() - 14);
@@ -158,10 +182,20 @@
         window.loadData = async function() {
             const startDate = document.getElementById('startDate').value;
             const endDate = document.getElementById('endDate').value;
-            allLogs = await stateManager.getLogs(startDate, endDate);
-            populateStudentFilter();
-            updateStats();
-            generateTables();
+            
+            try {
+                const snap = await database.ref('logs').orderByChild('date').startAt(startDate).endAt(endDate).once('value');
+                allLogs = [];
+                snap.forEach(child => {
+                    allLogs.push({ id: child.key, ...child.val() });
+                });
+                
+                populateStudentFilter();
+                updateStats();
+                generateTables();
+            } catch (err) {
+                console.error('Error loading data:', err);
+            }
         };
 
         function populateStudentFilter() {
@@ -174,7 +208,9 @@
         }
 
         function updateStats() {
-            const completed = allLogs.filter(log => log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset');
+            const completed = allLogs.filter(log => 
+                log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset'
+            );
             const totalTime = completed.reduce((sum, log) => sum + (log.duration || 0), 0);
             const students = new Set(completed.map(log => log.studentName));
             const dates = new Set(completed.map(log => log.date));
@@ -186,7 +222,9 @@
         }
 
         function generateTables() {
-            const completed = allLogs.filter(log => log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset');
+            const completed = allLogs.filter(log => 
+                log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset'
+            );
             
             // By student
             const studentData = {};
