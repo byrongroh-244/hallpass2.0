@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - Classroom Management</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
+        }
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .header h1 {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        .controls {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        .controls input, .controls select, .controls button {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+        }
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .value {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .section h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            text-align: left;
+            padding: 0.75rem;
+            background: #f8fafc;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        tr:hover { background: #f8fafc; }
+        .export-button {
+            padding: 0.75rem 1.5rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📈 Analytics & Reports</h1>
+        <div class="controls">
+            <input type="date" id="startDate">
+            <input type="date" id="endDate">
+            <select id="studentFilter"><option value="all">All Students</option></select>
+            <button onclick="loadData()">Load Data</button>
+            <button class="export-button" onclick="exportToCSV()">Export CSV</button>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card"><h3>Total Time Out</h3><div class="value" id="totalTime">0m</div></div>
+        <div class="stat-card"><h3>Avg Per Student</h3><div class="value" id="avgPerStudent">0m</div></div>
+        <div class="stat-card"><h3>Daily Average</h3><div class="value" id="dailyAvg">0m</div></div>
+        <div class="stat-card"><h3>Total Exits</h3><div class="value" id="totalExits">0</div></div>
+    </div>
+
+    <div class="section">
+        <h2>By Student</h2>
+        <div id="studentTable"></div>
+    </div>
+
+    <div class="section">
+        <h2>By Date</h2>
+        <div id="dailyTable"></div>
+    </div>
+
+    <script type="module">
+        import { stateManager } from '../src/stateManager.js';
+        import { formatDurationHours, formatDuration } from '../src/utils.js';
+
+        let allLogs = [];
+
+        async function init() {
+            await stateManager.initialize();
+            const end = new Date();
+            const start = new Date();
+            start.setDate(end.getDate() - 14);
+            document.getElementById('startDate').valueAsDate = start;
+            document.getElementById('endDate').valueAsDate = end;
+            loadData();
+        }
+
+        window.loadData = async function() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            allLogs = await stateManager.getLogs(startDate, endDate);
+            populateStudentFilter();
+            updateStats();
+            generateTables();
+        };
+
+        function populateStudentFilter() {
+            const students = new Set(allLogs.map(log => log.studentName));
+            const select = document.getElementById('studentFilter');
+            select.innerHTML = '<option value="all">All Students</option>';
+            students.forEach(name => {
+                select.innerHTML += `<option value="${name}">${name}</option>`;
+            });
+        }
+
+        function updateStats() {
+            const completed = allLogs.filter(log => log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset');
+            const totalTime = completed.reduce((sum, log) => sum + (log.duration || 0), 0);
+            const students = new Set(completed.map(log => log.studentName));
+            const dates = new Set(completed.map(log => log.date));
+
+            document.getElementById('totalTime').textContent = formatDurationHours(totalTime);
+            document.getElementById('avgPerStudent').textContent = students.size > 0 ? formatDurationHours(totalTime / students.size) : '0m';
+            document.getElementById('dailyAvg').textContent = dates.size > 0 ? formatDurationHours(totalTime / dates.size) : '0m';
+            document.getElementById('totalExits').textContent = completed.length;
+        }
+
+        function generateTables() {
+            const completed = allLogs.filter(log => log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset');
+            
+            // By student
+            const studentData = {};
+            completed.forEach(log => {
+                if (!studentData[log.studentName]) {
+                    studentData[log.studentName] = { name: log.studentName, totalTime: 0, trips: 0 };
+                }
+                studentData[log.studentName].totalTime += log.duration || 0;
+                studentData[log.studentName].trips++;
+            });
+            
+            const sorted = Object.values(studentData).sort((a, b) => b.totalTime - a.totalTime);
+            let html = '<table><thead><tr><th>Student</th><th>Total Time</th><th>Trips</th><th>Avg Per Trip</th></tr></thead><tbody>';
+            sorted.forEach(s => {
+                html += `<tr><td><strong>${s.name}</strong></td><td>${formatDurationHours(s.totalTime)}</td><td>${s.trips}</td><td>${formatDuration(s.totalTime / s.trips)}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('studentTable').innerHTML = html;
+
+            // By date
+            const dailyData = {};
+            completed.forEach(log => {
+                if (!dailyData[log.date]) {
+                    dailyData[log.date] = { date: log.date, totalTime: 0, trips: 0 };
+                }
+                dailyData[log.date].totalTime += log.duration || 0;
+                dailyData[log.date].trips++;
+            });
+
+            const sortedDates = Object.values(dailyData).sort((a, b) => b.date.localeCompare(a.date));
+            html = '<table><thead><tr><th>Date</th><th>Total Time</th><th>Total Trips</th></tr></thead><tbody>';
+            sortedDates.forEach(d => {
+                const dateStr = new Date(d.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                html += `<tr><td><strong>${dateStr}</strong></td><td>${formatDurationHours(d.totalTime)}</td><td>${d.trips}</td></tr>`;
+            });
+            html += '</tbody></table>';
+            document.getElementById('dailyTable').innerHTML = html;
+        }
+
+        window.exportToCSV = function() {
+            let csv = 'Date,Student,QR Code,Period,Schedule,Action,Duration (minutes)\n';
+            allLogs.forEach(log => {
+                const duration = log.duration ? (log.duration / 60000).toFixed(2) : '0';
+                csv += `${log.date},${log.studentName},${log.qrCode},${log.period},${log.schedule},${log.action},${duration}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `analytics-${Date.now()}.csv`;
+            a.click();
+        };
+
+        init();
+    </script>
+</body>
+</html>
