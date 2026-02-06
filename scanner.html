@@ -3,32 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scanner Kiosk - Classroom Management</title>
+    <title>Scanner Kiosk</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
             --color-ink: #0f172a;
             --color-slate: #475569;
-            --color-cloud: #f1f5f9;
             --color-paper: #ffffff;
-            --color-primary: #3b82f6;
             --color-success: #10b981;
             --color-danger: #ef4444;
         }
-
         body {
-            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'DM Sans', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
@@ -36,7 +26,6 @@
             justify-content: center;
             padding: 20px;
         }
-        
         .container {
             width: 100%;
             max-width: 500px;
@@ -45,30 +34,15 @@
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
         }
-        
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 2rem;
             text-align: center;
         }
-        
-        .header h1 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.75rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .header p {
-            font-size: 0.9375rem;
-            opacity: 0.95;
-        }
-        
-        #reader {
-            width: 100%;
-            border: none;
-        }
-        
+        .header h1 { font-family: 'Fraunces', serif; font-size: 1.75rem; margin-bottom: 0.5rem; }
+        .header p { font-size: 0.9375rem; opacity: 0.95; }
+        #reader { width: 100%; border: none; }
         .status-area {
             padding: 2rem;
             text-align: center;
@@ -78,7 +52,6 @@
             align-items: center;
             justify-content: center;
         }
-        
         .student-name {
             font-family: 'Fraunces', serif;
             font-size: 2rem;
@@ -89,12 +62,7 @@
             transform: scale(0.9);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
-        .student-name.show {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
+        .student-name.show { opacity: 1; transform: scale(1); }
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -106,23 +74,17 @@
             opacity: 0;
             transition: all 0.3s ease;
         }
-        
-        .status-badge.show {
-            opacity: 1;
-        }
-        
+        .status-badge.show { opacity: 1; }
         .status-badge.out {
             background: rgba(239, 68, 68, 0.1);
             border: 2px solid rgba(239, 68, 68, 0.3);
             color: var(--color-danger);
         }
-        
         .status-badge.in {
             background: rgba(16, 185, 129, 0.1);
             border: 2px solid rgba(16, 185, 129, 0.3);
             color: var(--color-success);
         }
-        
         .error-message {
             color: var(--color-danger);
             font-size: 1rem;
@@ -132,20 +94,10 @@
             border-radius: 12px;
             margin-top: 1rem;
         }
-        
-        .waiting-text {
-            color: var(--color-slate);
-            font-size: 1.125rem;
-            font-weight: 500;
-        }
-        
-        /* Schedule Modal */
+        .waiting-text { color: var(--color-slate); font-size: 1.125rem; font-weight: 500; }
         .modal-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.85);
             display: flex;
             align-items: center;
@@ -153,7 +105,6 @@
             z-index: 1000;
             backdrop-filter: blur(4px);
         }
-        
         .modal-content {
             background: white;
             border-radius: 24px;
@@ -163,37 +114,13 @@
             text-align: center;
             animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
         @keyframes modalSlideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
-        
-        .modal-content h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.875rem;
-            color: var(--color-ink);
-            margin-bottom: 1rem;
-        }
-        
-        .modal-content p {
-            color: var(--color-slate);
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-        
-        .schedule-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-        
+        .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; }
+        .modal-content p { color: var(--color-slate); margin-bottom: 2rem; line-height: 1.6; }
+        .schedule-buttons { display: flex; flex-direction: column; gap: 1rem; }
         .schedule-button {
             padding: 1.25rem;
             border: none;
@@ -204,59 +131,32 @@
             transition: all 0.2s ease;
             font-family: 'DM Sans', sans-serif;
         }
-        
         .schedule-button.red {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
-        
-        .schedule-button.red:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
-        }
-        
         .schedule-button.black {
             background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(51, 65, 85, 0.3);
         }
-        
-        .schedule-button.black:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(51, 65, 85, 0.4);
-        }
-        
         .schedule-button.regular {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
-        
-        .schedule-button.regular:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-        }
-        
         .schedule-button.late {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
-        
-        .schedule-button.late:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-        }
-        
-        .schedule-button:active {
-            transform: translateY(0);
-        }
-
+        .schedule-button:hover { transform: translateY(-2px); }
+        .schedule-button:active { transform: translateY(0); }
         .back-button {
             margin-top: 1rem;
             padding: 0.75rem;
-            background: var(--color-cloud);
+            background: #f1f5f9;
             color: var(--color-slate);
             border: none;
             border-radius: 8px;
@@ -264,12 +164,6 @@
             cursor: pointer;
             width: 100%;
         }
-
-        .back-button:hover {
-            background: #e2e8f0;
-        }
-
-        /* Hidden Settings Menu */
         .hidden-menu-trigger {
             position: fixed;
             top: 20px;
@@ -287,18 +181,10 @@
             z-index: 100;
             transition: all 0.3s ease;
         }
-
-        .hidden-menu-trigger:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
+        .hidden-menu-trigger:hover { background: white; transform: scale(1.1); }
         .hidden-menu {
             position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.9);
             display: none;
             align-items: center;
@@ -306,11 +192,7 @@
             z-index: 1001;
             backdrop-filter: blur(8px);
         }
-
-        .hidden-menu.show {
-            display: flex;
-        }
-
+        .hidden-menu.show { display: flex; }
         .hidden-menu-content {
             background: white;
             border-radius: 24px;
@@ -318,19 +200,12 @@
             max-width: 400px;
             width: 90%;
         }
-
-        .hidden-menu-content h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.75rem;
-            margin-bottom: 2rem;
-            text-align: center;
-        }
-
+        .hidden-menu-content h2 { font-family: 'Fraunces', serif; font-size: 1.75rem; margin-bottom: 2rem; text-align: center; }
         .menu-button {
             width: 100%;
             padding: 1rem;
             margin-bottom: 1rem;
-            background: var(--color-cloud);
+            background: #f1f5f9;
             border: none;
             border-radius: 12px;
             font-size: 1rem;
@@ -338,20 +213,8 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-
-        .menu-button:hover {
-            background: #e2e8f0;
-            transform: translateX(4px);
-        }
-
-        .menu-button.danger {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--color-danger);
-        }
-
-        .menu-button.danger:hover {
-            background: rgba(239, 68, 68, 0.2);
-        }
+        .menu-button:hover { background: #e2e8f0; transform: translateX(4px); }
+        .menu-button.danger { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); }
     </style>
 </head>
 <body>
@@ -360,15 +223,12 @@
             <h1>Scanner Kiosk</h1>
             <p id="scheduleDisplay">Select schedule to begin</p>
         </div>
-        
         <div id="reader"></div>
-        
         <div class="status-area">
-            <div class="waiting-text" id="statusMessage">Waiting for scan...</div>
+            <div class="waiting-text">Waiting for scan...</div>
         </div>
     </div>
 
-    <!-- Schedule Selection Modal -->
     <div id="scheduleModal" class="modal-overlay" style="display: none;">
         <div class="modal-content" id="modalContent">
             <h2>Select Schedule Day</h2>
@@ -380,7 +240,6 @@
         </div>
     </div>
 
-    <!-- Hidden Settings Menu -->
     <div class="hidden-menu-trigger" onclick="toggleHiddenMenu()">⚙️</div>
     <div id="hiddenMenu" class="hidden-menu">
         <div class="hidden-menu-content">
@@ -391,60 +250,170 @@
         </div>
     </div>
 
-    <script type="module">
-        import { stateManager } from '../src/stateManager.js';
-        import { 
-            getCurrentPeriod, 
-            getStudentInfo, 
-            playSuccessBeep, 
-            playErrorBuzz,
-            saveScheduleSelection,
-            loadScheduleSelection
-        } from '../src/utils.js';
-        import { timingConfig } from '../config/config.js';
+    <script>
+        // ============================================
+        // CONFIGURATION - EDIT THIS SECTION ONLY
+        // ============================================
+        const CONFIG = {
+            // Your Firebase credentials from Firebase Console
+            firebase: {
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_PROJECT.firebaseapp.com",
+                databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+                projectId: "YOUR_PROJECT_ID",
+                storageBucket: "YOUR_PROJECT.appspot.com",
+                messagingSenderId: "YOUR_SENDER_ID",
+                appId: "YOUR_APP_ID"
+            },
+            
+            // Timing settings (milliseconds)
+            timing: {
+                scanDebounce: 2000,        // Prevent duplicate scans
+                studentCooldown: 5000      // Cooldown after scan
+            },
+            
+            // Your class schedules
+            schedules: {
+                red: {
+                    regular: [
+                        {
+                            name: "P1",
+                            startTime: "07:45",
+                            endTime: "09:13",
+                            students: {
+                                "qr_01": "Student Name 1",
+                                "qr_02": "Student Name 2",
+                                "qr_03": "Student Name 3"
+                            }
+                        },
+                        {
+                            name: "P2",
+                            startTime: "09:18",
+                            endTime: "10:41",
+                            students: {
+                                "qr_11": "Student Name 4",
+                                "qr_12": "Student Name 5"
+                            }
+                        }
+                    ],
+                    late: [
+                        {
+                            name: "P1",
+                            startTime: "08:50",
+                            endTime: "09:59",
+                            students: {
+                                "qr_01": "Student Name 1",
+                                "qr_02": "Student Name 2"
+                            }
+                        }
+                    ]
+                },
+                black: {
+                    regular: [
+                        {
+                            name: "P1",
+                            startTime: "07:45",
+                            endTime: "09:13",
+                            students: {
+                                "qr_11": "Student Name 6",
+                                "qr_12": "Student Name 7"
+                            }
+                        }
+                    ],
+                    late: [
+                        {
+                            name: "P1",
+                            startTime: "08:50",
+                            endTime: "09:59",
+                            students: {
+                                "qr_11": "Student Name 6"
+                            }
+                        }
+                    ]
+                }
+            }
+        };
 
-        // ====================================
-        // STATE MANAGEMENT
-        // ====================================
+        // ============================================
+        // SYSTEM CODE - DO NOT EDIT BELOW
+        // ============================================
+        
+        firebase.initializeApp(CONFIG.firebase);
+        const database = firebase.database();
+        
         let activeScheduleType = null;
         let activeStartType = null;
         let isProcessingScan = false;
         let lastScannedCode = null;
         let lastScannedTime = 0;
         let lastScanTimes = {};
+        let selectedScheduleType = null;
 
-        // ====================================
-        // INITIALIZATION
-        // ====================================
-        async function initialize() {
-            try {
-                await stateManager.initialize();
-                console.log('✅ Scanner initialized');
-
-                // Check for saved schedule
-                const saved = loadScheduleSelection('scanner');
-                if (saved.scheduleType && saved.startType) {
-                    activeScheduleType = saved.scheduleType;
-                    activeStartType = saved.startType;
-                    updateScheduleDisplay();
-                    startScanner();
-                } else {
-                    showScheduleModal();
+        function getCurrentPeriod() {
+            if (!activeScheduleType || !activeStartType) return null;
+            const schedule = CONFIG.schedules[activeScheduleType][activeStartType];
+            const now = new Date();
+            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            for (const period of schedule) {
+                if (currentTime >= period.startTime && currentTime < period.endTime) {
+                    return period;
                 }
-            } catch (error) {
-                showError('Failed to initialize: ' + error.message);
             }
+            return null;
         }
 
-        // ====================================
-        // SCHEDULE SELECTION
-        // ====================================
-        let selectedScheduleType = null;
+        function getStudentInfo(qrCode) {
+            const currentPeriod = getCurrentPeriod();
+            if (!currentPeriod) {
+                return { error: 'No active class period right now', qrCode };
+            }
+            const studentName = currentPeriod.students[qrCode];
+            if (!studentName) {
+                return { error: `QR code ${qrCode} not registered for ${currentPeriod.name}`, qrCode };
+            }
+            return {
+                uniqueId: `${activeScheduleType}_${activeStartType}_${qrCode}_${currentPeriod.name.replace(/\s+/g, '_')}`,
+                studentName,
+                qrCode,
+                periodName: currentPeriod.name,
+                schedule: `${activeScheduleType}_${activeStartType}`
+            };
+        }
+
+        function playSuccessBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 800;
+                osc.type = 'sine';
+                gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.15);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.15);
+            } catch (e) {}
+        }
+
+        function playErrorBuzz() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                osc.frequency.value = 200;
+                osc.type = 'sawtooth';
+                gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
+                osc.start(ctx.currentTime);
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
 
         window.selectScheduleType = function(type) {
             selectedScheduleType = type;
-            
-            // Show start type selection
             document.getElementById('modalContent').innerHTML = `
                 <h2>Select Start Type</h2>
                 <p>Choose the schedule for today</p>
@@ -459,13 +428,13 @@
         window.selectSchedule = function(startType) {
             activeScheduleType = selectedScheduleType;
             activeStartType = startType;
-            
-            // Save selection
-            saveScheduleSelection(activeScheduleType, activeStartType, 'scanner');
-            
-            // Update display and start scanner
-            updateScheduleDisplay();
-            hideScheduleModal();
+            try {
+                localStorage.setItem('scanner_scheduleType', activeScheduleType);
+                localStorage.setItem('scanner_startType', activeStartType);
+            } catch (e) {}
+            const labels = { red: '🔴 Red Day', black: '⚫ Black Day', regular: '⏰ Regular', late: '🌅 Late Start' };
+            document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
+            document.getElementById('scheduleModal').style.display = 'none';
             startScanner();
         };
 
@@ -482,31 +451,9 @@
 
         window.changeSchedule = function() {
             closeHiddenMenu();
-            showScheduleModal();
+            document.getElementById('scheduleModal').style.display = 'flex';
         };
 
-        function showScheduleModal() {
-            document.getElementById('scheduleModal').style.display = 'flex';
-        }
-
-        function hideScheduleModal() {
-            document.getElementById('scheduleModal').style.display = 'none';
-        }
-
-        function updateScheduleDisplay() {
-            const labels = {
-                red: '🔴 Red Day',
-                black: '⚫ Black Day',
-                regular: '⏰ Regular',
-                late: '🌅 Late Start'
-            };
-            document.getElementById('scheduleDisplay').textContent = 
-                `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
-        }
-
-        // ====================================
-        // HIDDEN MENU
-        // ====================================
         window.toggleHiddenMenu = function() {
             document.getElementById('hiddenMenu').classList.add('show');
         };
@@ -515,104 +462,82 @@
             document.getElementById('hiddenMenu').classList.remove('show');
         };
 
-        // ====================================
-        // QR SCANNER
-        // ====================================
         const html5QrCode = new Html5Qrcode("reader");
         let scannerStarted = false;
 
         function startScanner() {
             if (scannerStarted) return;
-            
-            const config = {
-                fps: 10,
-                qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
-            };
-            
             html5QrCode.start(
                 { facingMode: "environment" },
-                config,
-                (decodedText) => processStudentScan(decodedText.trim()),
-                () => {} // Ignore continuous scan errors
-            ).catch(handleCameraError);
-            
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                (text) => processStudentScan(text.trim()),
+                () => {}
+            ).catch(err => {
+                let msg = 'Camera Error: ';
+                if (err.name === 'NotAllowedError') msg += 'Permission denied. Allow camera access and refresh.';
+                else if (err.name === 'NotFoundError') msg += 'No camera found.';
+                else if (err.name === 'NotReadableError') msg += 'Camera in use by another app.';
+                else msg += 'HTTPS required for camera access.';
+                showError(msg);
+            });
             scannerStarted = true;
         }
 
-        function handleCameraError(err) {
-            let errorMsg = 'Camera Error: ';
-            
-            if (err.name === 'NotAllowedError') {
-                errorMsg += 'Camera permission denied. Please allow camera access and refresh.';
-            } else if (err.name === 'NotFoundError') {
-                errorMsg += 'No camera found on this device.';
-            } else if (err.name === 'NotReadableError') {
-                errorMsg += 'Camera is in use by another app. Close other apps and refresh.';
-            } else if (err.name === 'NotSupportedError' || err.name === 'SecurityError') {
-                errorMsg += 'HTTPS required for camera access.';
-            } else {
-                errorMsg += err.message || 'Unknown error. Try using HTTPS or a different browser.';
-            }
-            
-            showError(errorMsg);
-        }
-
-        // ====================================
-        // SCAN PROCESSING
-        // ====================================
         async function processStudentScan(qrCode) {
-            // Processing guard
-            if (isProcessingScan) {
-                console.log('⏸️ Already processing a scan');
-                return;
-            }
-            
-            // Debounce check
+            if (isProcessingScan) return;
             const now = Date.now();
-            if (lastScannedCode === qrCode && (now - lastScannedTime < timingConfig.scanDebounce)) {
-                console.log('⏸️ Debounced');
-                return;
-            }
+            if (lastScannedCode === qrCode && (now - lastScannedTime < CONFIG.timing.scanDebounce)) return;
             
             isProcessingScan = true;
             lastScannedCode = qrCode;
             lastScannedTime = now;
             
             try {
-                // Get student info
-                const studentInfo = getStudentInfo(qrCode, activeScheduleType, activeStartType);
-                
-                if (studentInfo.error) {
+                const info = getStudentInfo(qrCode);
+                if (info.error) {
                     playErrorBuzz();
-                    showError(studentInfo.error);
+                    showError(info.error);
                     return;
                 }
                 
-                // Cooldown check
-                if (lastScanTimes[studentInfo.uniqueId] && 
-                    (now - lastScanTimes[studentInfo.uniqueId] < timingConfig.studentCooldown)) {
-                    console.log('⏸️ Cooldown period');
-                    return;
-                }
+                if (lastScanTimes[info.uniqueId] && (now - lastScanTimes[info.uniqueId] < CONFIG.timing.studentCooldown)) return;
                 
-                // Get current status and toggle
-                const currentData = await stateManager.getStudent(studentInfo.uniqueId);
-                const isCurrentlyIn = !currentData || currentData.status === 'in';
+                const ref = database.ref('students/' + info.uniqueId);
+                const snap = await ref.once('value');
+                const curr = snap.val();
+                const isIn = !curr || curr.status === 'in';
                 
-                if (isCurrentlyIn) {
-                    await stateManager.markStudentOut(studentInfo);
-                    showStatus(studentInfo.studentName, 'out');
-                } else {
-                    await stateManager.markStudentIn(studentInfo, currentData.outTimestamp || currentData.timestamp);
-                    showStatus(studentInfo.studentName, 'in');
-                }
+                const data = {
+                    name: info.studentName,
+                    qrCode: info.qrCode,
+                    period: info.periodName,
+                    schedule: info.schedule,
+                    status: isIn ? 'out' : 'in',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    outTimestamp: isIn ? firebase.database.ServerValue.TIMESTAMP : null
+                };
                 
+                await ref.set(data);
+                
+                const logData = {
+                    studentName: info.studentName,
+                    qrCode: info.qrCode,
+                    period: info.periodName,
+                    schedule: info.schedule,
+                    action: isIn ? 'out' : 'in',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
+                    date: new Date().toISOString().split('T')[0],
+                    outTime: isIn ? Date.now() : (curr.outTimestamp || curr.timestamp),
+                    inTime: isIn ? null : Date.now(),
+                    duration: isIn ? null : (Date.now() - (curr.outTimestamp || curr.timestamp))
+                };
+                await database.ref('logs').push().set(logData);
+                
+                showStatus(info.studentName, isIn ? 'out' : 'in');
                 playSuccessBeep();
-                lastScanTimes[studentInfo.uniqueId] = now;
-                
-            } catch (error) {
-                console.error('❌ Scan error:', error);
+                lastScanTimes[info.uniqueId] = now;
+            } catch (err) {
+                console.error(err);
                 playErrorBuzz();
                 showError('Database error - please try again');
             } finally {
@@ -620,37 +545,43 @@
             }
         }
 
-        // ====================================
-        // UI FEEDBACK
-        // ====================================
-        function showStatus(studentName, status) {
-            const statusArea = document.querySelector('.status-area');
-            const statusLabels = {
-                in: '✓ Scanned Back In',
-                out: '⚠ Scanned Out'
-            };
-            
-            statusArea.innerHTML = `
-                <div class="student-name show">${studentName}</div>
-                <div class="status-badge ${status} show">${statusLabels[status]}</div>
+        function showStatus(name, status) {
+            const area = document.querySelector('.status-area');
+            const labels = { in: '✓ Scanned Back In', out: '⚠ Scanned Out' };
+            area.innerHTML = `
+                <div class="student-name show">${name}</div>
+                <div class="status-badge ${status} show">${labels[status]}</div>
             `;
-            
             setTimeout(() => {
-                statusArea.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
+                area.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
             }, 3000);
         }
 
-        function showError(message) {
-            const statusArea = document.querySelector('.status-area');
-            statusArea.innerHTML = `<div class="error-message">⚠️ ${message}</div>`;
-            
+        function showError(msg) {
+            const area = document.querySelector('.status-area');
+            area.innerHTML = `<div class="error-message">⚠️ ${msg}</div>`;
             setTimeout(() => {
-                statusArea.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
+                area.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
             }, 4000);
         }
 
-        // Start the app
-        initialize();
+        window.addEventListener('load', () => {
+            try {
+                const savedType = localStorage.getItem('scanner_scheduleType');
+                const savedStart = localStorage.getItem('scanner_startType');
+                if (savedType && savedStart) {
+                    activeScheduleType = savedType;
+                    activeStartType = savedStart;
+                    const labels = { red: '🔴 Red Day', black: '⚫ Black Day', regular: '⏰ Regular', late: '🌅 Late Start' };
+                    document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
+                    startScanner();
+                } else {
+                    document.getElementById('scheduleModal').style.display = 'flex';
+                }
+            } catch (e) {
+                document.getElementById('scheduleModal').style.display = 'flex';
+            }
+        });
     </script>
 </body>
 </html>
