@@ -606,32 +606,76 @@
         // ============================================
         // CONFIGURATION - EDIT THIS SECTION ONLY
         // ============================================
-        const CONFIG = {
+		const CONFIG = {
+            // Your Firebase credentials from Firebase Console
             firebase: {
-                apiKey: "YOUR_API_KEY",
-                authDomain: "YOUR_PROJECT.firebaseapp.com",
-                databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-                projectId: "YOUR_PROJECT_ID",
-                storageBucket: "YOUR_PROJECT.appspot.com",
-                messagingSenderId: "YOUR_SENDER_ID",
-                appId: "YOUR_APP_ID"
+			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+			  authDomain: "hallpass2-n244.firebaseapp.com",
+			  projectId: "hallpass2-n244",
+			  storageBucket: "hallpass2-n244.firebasestorage.app",
+			  messagingSenderId: "262508006458",
+			  appId: "1:262508006458:web:4cdebead1181506d833903",
+			  measurementId: "G-175T67QFGY"
             },
+            
+            // Timing settings (milliseconds)
+            timing: {
+                scanDebounce: 2000,        // Prevent duplicate scans
+                studentCooldown: 5000      // Cooldown after scan
+            },
+            
+            // Your class schedules
             schedules: {
                 red: {
                     regular: [
-                        { name: "P1", students: { "qr_01": "Student A1", "qr_02": "Student A2" } },
-                        { name: "P2", students: { "qr_11": "Student B1" } }
+                        {
+                            name: "P1",
+                            startTime: "13:45",
+                            endTime: "13:50",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        },
                     ],
                     late: [
-                        { name: "P1", students: { "qr_01": "Student A1" } }
+                        {
+                            name: "P1",
+                            startTime: "13:51",
+                            endTime: "13:56",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
                     ]
                 },
                 black: {
                     regular: [
-                        { name: "P1", students: { "qr_11": "Student E1" } }
+                        {
+                            name: "P1",
+                            startTime: "13:57",
+                            endTime: "14:00",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
                     ],
                     late: [
-                        { name: "P1", students: { "qr_11": "Student E1" } }
+                        {
+                            name: "P1",
+                            startTime: "14:01",
+                            endTime: "23:59",
+                            students: {
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
+                            }
+                        }
                     ]
                 }
             }
