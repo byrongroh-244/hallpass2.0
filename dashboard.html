@@ -16,6 +16,7 @@
             --color-paper: #ffffff;
             --color-success: #10b981;
             --color-danger: #ef4444;
+            --color-primary: #667eea;
         }
         body {
             font-family: 'DM Sans', sans-serif;
@@ -30,16 +31,77 @@
             box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
-        .header h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 1rem; }
-        .header-controls { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
-        #periodInfo { font-size: 1rem; }
-        .stats-grid { display: flex; gap: 1rem; margin-bottom: 2rem; }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .header h1 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem;
+        }
+        .header-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .icon-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: none;
+            background: var(--color-cloud);
+            color: var(--color-ink);
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icon-button:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+        .header-controls { 
+            display: flex; 
+            gap: 1rem; 
+            align-items: center; 
+            flex-wrap: wrap; 
+        }
+        #periodInfo { 
+            font-size: 1rem;
+            color: var(--color-slate);
+        }
+        .period-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .period-status.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+        .period-status.inactive {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--color-slate);
+        }
+        .stats-grid { 
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem; 
+            margin-bottom: 2rem; 
+        }
         .stat-card {
             background: white;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-            flex: 1;
         }
         .stat-label {
             font-size: 0.875rem;
@@ -48,7 +110,11 @@
             letter-spacing: 0.5px;
             margin-bottom: 0.5rem;
         }
-        .stat-value { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 700; }
+        .stat-value { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem; 
+            font-weight: 700; 
+        }
         .stat-value.in { color: var(--color-success); }
         .stat-value.out { color: var(--color-danger); }
         .students-grid {
@@ -64,14 +130,36 @@
             border: 3px solid transparent;
             transition: all 0.3s ease;
         }
-        .student-card.in { border-color: var(--color-success); }
+        .student-card.in { 
+            border-color: var(--color-success); 
+        }
         .student-card.out { 
             background: rgba(239, 68, 68, 0.05);
             border-color: var(--color-danger);
         }
-        .student-header { display: flex; justify-content: space-between; margin-bottom: 1rem; }
-        .student-name { font-size: 1.25rem; font-weight: 700; color: var(--color-ink); }
-        .status-indicator { width: 12px; height: 12px; border-radius: 50%; }
+        .student-card.inactive {
+            background: var(--color-cloud);
+            border-color: #e2e8f0;
+            opacity: 0.6;
+        }
+        .student-header { 
+            display: flex; 
+            justify-content: space-between; 
+            margin-bottom: 1rem; 
+        }
+        .student-name { 
+            font-size: 1.25rem; 
+            font-weight: 700; 
+            color: var(--color-ink); 
+        }
+        .student-card.inactive .student-name {
+            color: var(--color-slate);
+        }
+        .status-indicator { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+        }
         .status-indicator.in {
             background: var(--color-success);
             box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
@@ -80,6 +168,9 @@
             background: var(--color-danger);
             box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
             animation: pulse 2s infinite;
+        }
+        .status-indicator.inactive {
+            background: var(--color-slate);
         }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
@@ -90,6 +181,11 @@
             font-weight: 700;
             color: var(--color-danger);
             font-family: 'Courier New', monospace;
+            margin: 0.75rem 0;
+        }
+        .inactive-label {
+            font-size: 0.875rem;
+            color: var(--color-slate);
             margin: 0.75rem 0;
         }
         .reset-button {
@@ -103,7 +199,16 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        .reset-button:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); }
+        .reset-button:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3); 
+        }
+        .reset-button:disabled {
+            background: var(--color-cloud);
+            color: var(--color-slate);
+            cursor: not-allowed;
+            transform: none;
+        }
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -112,6 +217,10 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.show {
+            display: flex;
         }
         .modal-content {
             background: white;
@@ -120,9 +229,27 @@
             max-width: 400px;
             width: 90%;
             text-align: center;
+            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; }
-        .schedule-buttons { display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
+        @keyframes modalSlideUp {
+            from { opacity: 0; transform: translateY(20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .modal-content h2 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 1.875rem; 
+            margin-bottom: 1rem; 
+        }
+        .modal-content p { 
+            color: var(--color-slate); 
+            margin-bottom: 2rem; 
+            line-height: 1.6; 
+        }
+        .schedule-buttons { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 1rem; 
+        }
         .modal-button {
             padding: 1.25rem;
             border: none;
@@ -148,7 +275,9 @@
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
         }
-        .modal-button:hover { transform: translateY(-2px); }
+        .modal-button:hover { 
+            transform: translateY(-2px); 
+        }
         .back-button {
             margin-top: 1rem;
             padding: 0.75rem;
@@ -158,12 +287,31 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            width: 100%;
+        }
+        .section-header {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 1.5rem;
+        }
+        .section-header h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            color: var(--color-ink);
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📊 Live Dashboard</h1>
+        <div class="header-top">
+            <h1>📊 Live Dashboard</h1>
+            <div class="header-buttons">
+                <button class="icon-button" onclick="window.location.href='index.html'" title="Home">🏠</button>
+                <button class="icon-button" onclick="showScheduleModal()" title="Change Schedule">🔄</button>
+            </div>
+        </div>
         <div class="header-controls">
             <div id="periodInfo"></div>
         </div>
@@ -182,6 +330,18 @@
             <div class="stat-label">Total Students</div>
             <div class="stat-value" id="totalCount">0</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-label">Today's Trips</div>
+            <div class="stat-value" id="todayTrips">0</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-label">Today's Time Out</div>
+            <div class="stat-value" id="todayTime">0m</div>
+        </div>
+    </div>
+
+    <div class="section-header" id="activeSection">
+        <h2>👥 Active Period Students</h2>
     </div>
 
     <div class="students-grid" id="studentsGrid"></div>
@@ -201,26 +361,7 @@
         // ============================================
         // CONFIGURATION - EDIT THIS SECTION ONLY
         // ============================================
-		const CONFIG = {
-            // Your Firebase credentials from Firebase Console
-            firebase: {
-			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-			  authDomain: "hallpass2-n244.firebaseapp.com",
-			  projectId: "hallpass2-n244",
-			  storageBucket: "hallpass2-n244.firebasestorage.app",
-			  messagingSenderId: "262508006458",
-			  appId: "1:262508006458:web:4cdebead1181506d833903",
-			  measurementId: "G-175T67QFGY"
-            },
-            
-            // Timing settings (milliseconds)
-            timing: {
-                scanDebounce: 2000,        // Prevent duplicate scans
-                studentCooldown: 5000      // Cooldown after scan
-            },
-            
-            // Your class schedules
-            schedules: {
+           schedules: {
                 red: {
                     regular: [
                         {
@@ -275,6 +416,7 @@
                 }
             }
         };
+
         // ============================================
         // SYSTEM CODE - DO NOT EDIT BELOW
         // ============================================
@@ -287,6 +429,7 @@
         let selectedScheduleType = null;
         let timers = new Map();
         let timerInterval = null;
+        let todayLogs = [];
 
         function getCurrentPeriod() {
             if (!activeScheduleType || !activeStartType) return null;
@@ -301,6 +444,11 @@
             return null;
         }
 
+        function getAllPeriodsForToday() {
+            if (!activeScheduleType || !activeStartType) return [];
+            return CONFIG.schedules[activeScheduleType][activeStartType];
+        }
+
         function isPastPeriodEnd(endTime) {
             const now = new Date();
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
@@ -313,6 +461,15 @@
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = totalSeconds % 60;
             return `${minutes}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function formatDurationHours(ms) {
+            if (!ms || ms < 0) return '0m';
+            const totalMinutes = Math.floor(ms / 60000);
+            if (totalMinutes < 60) return `${totalMinutes}m`;
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return minutes > 0 ? `${hours}h ${minutes}m` : `${hours}h`;
         }
 
         window.selectScheduleType = function(type) {
@@ -335,7 +492,7 @@
                 localStorage.setItem('dashboard_scheduleType', activeScheduleType);
                 localStorage.setItem('dashboard_startType', activeStartType);
             } catch (e) {}
-            document.getElementById('scheduleModal').style.display = 'none';
+            hideScheduleModal();
             startMonitoring();
         };
 
@@ -350,66 +507,143 @@
             `;
         };
 
+        function showScheduleModal() {
+            document.getElementById('scheduleModal').classList.add('show');
+            goBackToScheduleType();
+        }
+
+        function hideScheduleModal() {
+            document.getElementById('scheduleModal').classList.remove('show');
+        }
+
         function startMonitoring() {
             updatePeriodInfo();
+            loadTodayLogs();
             database.ref('students').on('value', updateDashboard);
             setInterval(updatePeriodInfo, CONFIG.timing.periodCheckInterval);
             setInterval(checkAndAutoReset, CONFIG.timing.autoResetInterval);
+            setInterval(loadTodayLogs, 60000); // Update today's stats every minute
             startTimerUpdates();
         }
 
         function updatePeriodInfo() {
             const period = getCurrentPeriod();
             const labels = { red: '🔴 Red', black: '⚫ Black', regular: '⏰ Regular', late: '🌅 Late' };
+            
             if (period) {
                 document.getElementById('periodInfo').innerHTML = 
-                    `${labels[activeScheduleType]} ${labels[activeStartType]} • <strong>${period.name}</strong> (${period.startTime} - ${period.endTime})`;
+                    `${labels[activeScheduleType]} ${labels[activeStartType]} • <strong>${period.name}</strong> (${period.startTime} - ${period.endTime}) <span class="period-status active">● Active Period</span>`;
+                document.getElementById('activeSection').innerHTML = '<h2>👥 Active Period Students</h2>';
             } else {
-                document.getElementById('periodInfo').innerHTML = `${labels[activeScheduleType]} ${labels[activeStartType]} • No active period`;
+                document.getElementById('periodInfo').innerHTML = 
+                    `${labels[activeScheduleType]} ${labels[activeStartType]} • <span class="period-status inactive">⏸ No Active Period</span>`;
+                document.getElementById('activeSection').innerHTML = '<h2>👥 All Students (Inactive Period)</h2>';
             }
+        }
+
+        async function loadTodayLogs() {
+            const today = new Date().toISOString().split('T')[0];
+            try {
+                const snap = await database.ref('logs')
+                    .orderByChild('date')
+                    .equalTo(today)
+                    .once('value');
+                
+                todayLogs = [];
+                snap.forEach(child => {
+                    const log = child.val();
+                    if (log.schedule && log.schedule === `${activeScheduleType}_${activeStartType}`) {
+                        todayLogs.push(log);
+                    }
+                });
+                
+                updateTodayStats();
+            } catch (err) {
+                console.error('Error loading today logs:', err);
+            }
+        }
+
+        function updateTodayStats() {
+            const completedTrips = todayLogs.filter(log => 
+                log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset'
+            );
+            
+            const totalTrips = completedTrips.length;
+            const totalTime = completedTrips.reduce((sum, log) => sum + (log.duration || 0), 0);
+            
+            document.getElementById('todayTrips').textContent = totalTrips;
+            document.getElementById('todayTime').textContent = formatDurationHours(totalTime);
         }
 
         function updateDashboard(snapshot) {
             const firebaseData = snapshot.val() || {};
-            const period = getCurrentPeriod();
-            if (!period) {
-                document.getElementById('studentsGrid').innerHTML = '<div style="text-align:center;color:#64748b;padding:3rem;">No active class period</div>';
-                return;
-            }
-
+            const currentPeriod = getCurrentPeriod();
+            const allPeriods = getAllPeriodsForToday();
+            
             const grid = document.getElementById('studentsGrid');
-            const expectedStudents = period.students;
             let inCount = 0, outCount = 0;
+            const allStudents = new Map();
 
             grid.innerHTML = '';
             timers.clear();
 
-            Object.keys(expectedStudents).forEach(qrCode => {
-                const studentId = `${activeScheduleType}_${activeStartType}_${qrCode}_${period.name.replace(/\s+/g, '_')}`;
-                const record = firebaseData[studentId] || {
-                    name: expectedStudents[qrCode],
-                    status: 'in',
-                    qrCode: qrCode
-                };
+            // Collect all students from all periods
+            allPeriods.forEach(period => {
+                Object.keys(period.students).forEach(qrCode => {
+                    const studentId = `${activeScheduleType}_${activeStartType}_${qrCode}_${period.name.replace(/\s+/g, '_')}`;
+                    const isCurrentPeriod = currentPeriod && period.name === currentPeriod.name;
+                    
+                    allStudents.set(studentId, {
+                        id: studentId,
+                        name: period.students[qrCode],
+                        qrCode: qrCode,
+                        period: period.name,
+                        isActive: isCurrentPeriod,
+                        data: firebaseData[studentId] || {
+                            name: period.students[qrCode],
+                            status: 'in',
+                            qrCode: qrCode
+                        }
+                    });
+                });
+            });
 
-                if (record.status === 'in') inCount++;
-                else outCount++;
+            // Sort: active period first, then by period name, then by student name
+            const sortedStudents = Array.from(allStudents.values()).sort((a, b) => {
+                if (a.isActive !== b.isActive) return b.isActive ? 1 : -1;
+                if (a.period !== b.period) return a.period.localeCompare(b.period);
+                return a.name.localeCompare(b.name);
+            });
+
+            sortedStudents.forEach(student => {
+                const record = student.data;
+                
+                if (student.isActive) {
+                    if (record.status === 'in') inCount++;
+                    else outCount++;
+                }
 
                 const card = document.createElement('div');
-                card.className = `student-card ${record.status}`;
-                card.innerHTML = `
+                card.className = `student-card ${student.isActive ? record.status : 'inactive'}`;
+                
+                let content = `
                     <div class="student-header">
                         <div class="student-name">${record.name}</div>
-                        <div class="status-indicator ${record.status}"></div>
+                        <div class="status-indicator ${student.isActive ? record.status : 'inactive'}"></div>
                     </div>
-                    ${record.status === 'out' ? `<div class="timer" id="timer-${studentId}">Out: 0:00</div>` : ''}
-                    <button class="reset-button" onclick="resetStudent('${studentId}')">Reset to "In"</button>
                 `;
-                grid.appendChild(card);
 
-                if (record.status === 'out' && record.timestamp) {
-                    timers.set(studentId, record.timestamp);
+                if (student.isActive && record.status === 'out' && record.timestamp) {
+                    content += `<div class="timer" id="timer-${student.id}">Out: 0:00</div>`;
+                    timers.set(student.id, record.timestamp);
+                } else if (!student.isActive) {
+                    content += `<div class="inactive-label">Period: ${student.period}</div>`;
                 }
+
+                content += `<button class="reset-button" ${!student.isActive || record.status === 'in' ? 'disabled' : ''} onclick="resetStudent('${student.id}')">Reset to "In"</button>`;
+                
+                card.innerHTML = content;
+                grid.appendChild(card);
             });
 
             document.getElementById('inCount').textContent = inCount;
@@ -441,6 +675,7 @@
                         inTime: inTime,
                         duration: inTime - outTime
                     });
+                    loadTodayLogs(); // Refresh today's stats
                 }
             } catch (err) {
                 alert('Failed to reset student');
@@ -491,6 +726,7 @@
                 if (Object.keys(updates).length > 0) {
                     await database.ref().update(updates);
                     await Promise.all(logs);
+                    loadTodayLogs(); // Refresh today's stats
                 }
             } catch (err) {
                 console.error('Auto-reset error:', err);
@@ -504,7 +740,7 @@
                 if (savedType && savedStart) {
                     activeScheduleType = savedType;
                     activeStartType = savedStart;
-                    document.getElementById('scheduleModal').style.display = 'none';
+                    hideScheduleModal();
                     startMonitoring();
                 }
             } catch (e) {}
