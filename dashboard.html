@@ -45,25 +45,106 @@
             color: var(--color-slate);
             font-size: 0.9375rem;
         }
-        .settings-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: var(--color-cloud);
+        
+        /* Slider Filters */
+        .slider-filters {
             display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
             align-items: center;
-            justify-content: center;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .slider-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .slider-buttons {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--color-cloud);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+        .slider-button {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            border: none;
+            color: var(--color-slate);
+            font-size: 0.875rem;
         }
-        .settings-icon:hover {
-            background: var(--color-primary);
+        .slider-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .slider-button.active {
+            background: white;
+            color: var(--color-ink);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .slider-button.red.active {
+            background: #ef4444;
             color: white;
         }
-        .settings-icon svg {
-            width: 20px;
-            height: 20px;
+        .slider-button.black.active {
+            background: #0f172a;
+            color: white;
+        }
+        
+        /* Period Status */
+        .period-status {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-left: auto;
+        }
+        .status-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-slate);
+        }
+        .status-indicator-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .status-indicator-badge.active {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+        .status-indicator-badge.inactive {
+            background: rgba(100, 116, 139, 0.1);
+            color: var(--color-slate);
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        .status-dot.active {
+            background: var(--color-success);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        .status-dot.inactive {
+            background: var(--color-slate);
         }
         
         /* Stats Layout */
@@ -411,14 +492,42 @@
     <div class="header">
         <div class="header-content">
             <h1>Live Dashboard</h1>
-            <p id="periodInfo">Loading...</p>
+            <p id="periodInfo">Select schedule and period</p>
         </div>
-        <button class="settings-icon" onclick="openSettings()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-            </svg>
-        </button>
+    </div>
+
+    <!-- Slider Filters -->
+    <div class="slider-filters">
+        <div class="slider-group">
+            <div class="slider-label">Schedule</div>
+            <div class="slider-buttons">
+                <button class="slider-button red active" data-schedule="red" onclick="setSchedule('red', this)">Red</button>
+                <button class="slider-button black" data-schedule="black" onclick="setSchedule('black', this)">Black</button>
+            </div>
+        </div>
+        <div class="slider-group">
+            <div class="slider-label">Period</div>
+            <div class="slider-buttons">
+                <button class="slider-button active" data-period="P1" onclick="setPeriod('P1', this)">P1</button>
+                <button class="slider-button" data-period="P2" onclick="setPeriod('P2', this)">P2</button>
+                <button class="slider-button" data-period="P3" onclick="setPeriod('P3', this)">P3</button>
+                <button class="slider-button" data-period="P4" onclick="setPeriod('P4', this)">P4</button>
+            </div>
+        </div>
+        <div class="slider-group">
+            <div class="slider-label">Start Type</div>
+            <div class="slider-buttons">
+                <button class="slider-button active" data-start="regular" onclick="setStartType('regular', this)">Regular</button>
+                <button class="slider-button" data-start="late" onclick="setStartType('late', this)">Late</button>
+            </div>
+        </div>
+        <div class="period-status">
+            <span class="status-label">Period Status:</span>
+            <span class="status-indicator-badge" id="periodStatus">
+                <span class="status-dot inactive"></span>
+                Not Active
+            </span>
+        </div>
     </div>
 
     <!-- Stats Grid -->
@@ -464,62 +573,6 @@
     <!-- Student Cards -->
     <div class="students-grid" id="studentsGrid"></div>
 
-    <!-- PIN Modal -->
-    <div id="pinModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Enter PIN</h2>
-            <p>Enter your 4-digit PIN to access settings</p>
-            <div class="pin-input-container">
-                <input type="password" class="pin-digit" maxlength="1" id="pin1" />
-                <input type="password" class="pin-digit" maxlength="1" id="pin2" />
-                <input type="password" class="pin-digit" maxlength="1" id="pin3" />
-                <input type="password" class="pin-digit" maxlength="1" id="pin4" />
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closePinModal()">Cancel</button>
-                <button class="btn-primary" onclick="verifyPin()">Enter</button>
-            </div>
-            <p id="pinError" style="color: var(--color-danger); margin-top: 1rem; display: none;">Incorrect PIN</p>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal-overlay">
-        <div class="modal-content">
-            <h2>Settings</h2>
-            <div class="settings-menu">
-                <div class="settings-option">
-                    <div>
-                        <div class="settings-label">Lock Kiosk Mode</div>
-                        <div class="settings-description">Prevent leaving page</div>
-                    </div>
-                    <div class="toggle-switch" id="kioskToggle" onclick="toggleKioskMode()">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="changeSchedule()">Change Schedule</button>
-                <button class="btn-primary" onclick="returnHome()">Return Home</button>
-            </div>
-            <div class="modal-buttons" style="margin-top: 0.5rem;">
-                <button class="btn-secondary" onclick="closeSettings()">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Schedule Modal -->
-    <div id="scheduleModal" class="modal-overlay" style="display: flex;">
-        <div class="modal-content" id="modalContent">
-            <h2>Select Schedule</h2>
-            <p>Choose the active schedule for monitoring</p>
-            <div class="schedule-buttons">
-                <button class="schedule-button red" onclick="selectScheduleType('red')">Red Day</button>
-                <button class="schedule-button black" onclick="selectScheduleType('black')">Black Day</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ============================================
         // CONFIGURATION
@@ -536,7 +589,7 @@
                 measurementId: "G-175T67QFGY"
             },
             pin: "1891",
-             schedules: {
+            schedules: {
                 red: {
                     regular: [
                         {
@@ -544,9 +597,9 @@
                             startTime: "13:45",
                             endTime: "13:50",
                             students: {
-                                "qr_01": "ByronRR",
-                                "qr_02": "LaurelRR",
-                                "qr_03": "OliveRR"
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
                             }
                         },
                     ],
@@ -554,11 +607,11 @@
                         {
                             name: "P1",
                             startTime: "13:51",
-                            endTime: "13:55",
+                            endTime: "13:56",
                             students: {
-                                "qr_01": "ByronRL",
-                                "qr_02": "LaurelRL",
-                                "qr_03": "OliveRL"
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
                             }
                         }
                     ]
@@ -567,12 +620,12 @@
                     regular: [
                         {
                             name: "P1",
-                            startTime: "13:56",
+                            startTime: "13:57",
                             endTime: "14:00",
                             students: {
-                                "qr_01": "ByronBR",
-                                "qr_02": "LaurelBR",
-                                "qr_03": "OliveBR"
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
                             }
                         }
                     ],
@@ -582,9 +635,9 @@
                             startTime: "14:01",
                             endTime: "23:59",
                             students: {
-                                "qr_01": "ByronBL",
-                                "qr_02": "LaurelBL",
-                                "qr_03": "OliveBL"
+                                "qr_01": "Byron",
+                                "qr_02": "Laurel",
+                                "qr_03": "Olive"
                             }
                         }
                     ]
@@ -595,177 +648,41 @@
         firebase.initializeApp(CONFIG.firebase);
         const database = firebase.database();
         
-        let activeScheduleType = null;
-        let activeStartType = null;
-        let kioskModeEnabled = false;
+        let currentSchedule = 'red';
+        let currentPeriod = 'P1';
+        let currentStartType = 'regular';
         let updateInterval = null;
         let timers = {};
 
-        // PIN System
-        function openSettings() {
-            document.getElementById('pinModal').classList.add('active');
-            document.getElementById('pin1').focus();
-        }
-
-        function closePinModal() {
-            document.getElementById('pinModal').classList.remove('active');
-            document.getElementById('pinError').style.display = 'none';
-            clearPinInputs();
-        }
-
-        function clearPinInputs() {
-            for (let i = 1; i <= 4; i++) {
-                document.getElementById(`pin${i}`).value = '';
-            }
-        }
-
-        function verifyPin() {
-            const pin = document.getElementById('pin1').value +
-                        document.getElementById('pin2').value +
-                        document.getElementById('pin3').value +
-                        document.getElementById('pin4').value;
-            
-            if (pin === CONFIG.pin) {
-                closePinModal();
-                document.getElementById('settingsModal').classList.add('active');
-            } else {
-                document.getElementById('pinError').style.display = 'block';
-                clearPinInputs();
-                document.getElementById('pin1').focus();
-            }
-        }
-
-        // PIN Input Navigation
-        document.querySelectorAll('.pin-digit').forEach((input, index) => {
-            input.addEventListener('input', (e) => {
-                if (e.target.value.length === 1 && index < 3) {
-                    document.getElementById(`pin${index + 2}`).focus();
-                }
-                if (index === 3 && e.target.value.length === 1) {
-                    verifyPin();
-                }
-            });
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
-                    document.getElementById(`pin${index}`).focus();
-                }
-            });
-        });
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function toggleKioskMode() {
-            kioskModeEnabled = !kioskModeEnabled;
-            const toggle = document.getElementById('kioskToggle');
-            
-            if (kioskModeEnabled) {
-                toggle.classList.add('active');
-                enableKioskMode();
-            } else {
-                toggle.classList.remove('active');
-                disableKioskMode();
-            }
-            
+        // Filter functions
+        function setSchedule(schedule, btn) {
+            document.querySelectorAll('.slider-button[data-schedule]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentSchedule = schedule;
             try {
-                localStorage.setItem('kioskMode', kioskModeEnabled);
-            } catch (e) {}
-        }
-
-        function enableKioskMode() {
-            // Prevent leaving page
-            window.onbeforeunload = function() {
-                return "Kiosk mode is enabled. Enter PIN to exit.";
-            };
-            
-            // Disable keyboard shortcuts
-            document.addEventListener('keydown', preventKeys);
-            
-            // Disable right-click
-            document.addEventListener('contextmenu', preventDefault);
-        }
-
-        function disableKioskMode() {
-            window.onbeforeunload = null;
-            document.removeEventListener('keydown', preventKeys);
-            document.removeEventListener('contextmenu', preventDefault);
-        }
-
-        function preventKeys(e) {
-            // Block F11, Ctrl+W, Ctrl+T, Alt+F4, etc.
-            if (e.key === 'F11' || 
-                (e.ctrlKey && (e.key === 'w' || e.key === 't')) ||
-                (e.altKey && e.key === 'F4')) {
-                e.preventDefault();
-            }
-        }
-
-        function preventDefault(e) {
-            e.preventDefault();
-        }
-
-        function changeSchedule() {
-            closeSettings();
-            document.getElementById('scheduleModal').classList.add('active');
-        }
-
-        function returnHome() {
-            if (kioskModeEnabled) {
-                disableKioskMode();
-            }
-            window.location.href = 'index.html';
-        }
-
-        // Schedule Selection
-        window.selectScheduleType = function(type) {
-            selectedScheduleType = type;
-            document.getElementById('modalContent').innerHTML = `
-                <h2>Select Start Type</h2>
-                <p>Choose the schedule for today</p>
-                <div class="schedule-buttons">
-                    <button class="schedule-button regular" onclick="selectSchedule('regular')">Regular Start</button>
-                    <button class="schedule-button late" onclick="selectSchedule('late')">Late Start</button>
-                </div>
-                <button class="back-button" onclick="goBackToScheduleType()">← Back</button>
-            `;
-        };
-
-        window.selectSchedule = function(startType) {
-            activeScheduleType = selectedScheduleType;
-            activeStartType = startType;
-            try {
-                localStorage.setItem('dashboard_scheduleType', activeScheduleType);
-                localStorage.setItem('dashboard_startType', activeStartType);
-            } catch (e) {}
-            
-            const labels = { 
-                red: 'Red Day', 
-                black: 'Black Day', 
-                regular: 'Regular', 
-                late: 'Late Start' 
-            };
-            document.getElementById('periodInfo').textContent = 
-                `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
-            document.getElementById('scheduleModal').classList.remove('active');
-            startDashboard();
-        };
-
-        window.goBackToScheduleType = function() {
-            document.getElementById('modalContent').innerHTML = `
-                <h2>Select Schedule</h2>
-                <p>Choose the active schedule for monitoring</p>
-                <div class="schedule-buttons">
-                    <button class="schedule-button red" onclick="selectScheduleType('red')">Red Day</button>
-                    <button class="schedule-button black" onclick="selectScheduleType('black')">Black Day</button>
-                </div>
-            `;
-        };
-
-        function startDashboard() {
+                localStorage.setItem('dashboard_schedule', currentSchedule);
+            } catch(e) {}
             loadStudents();
-            if (updateInterval) clearInterval(updateInterval);
-            updateInterval = setInterval(loadStudents, 1000);
+        }
+
+        function setPeriod(period, btn) {
+            document.querySelectorAll('.slider-button[data-period]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentPeriod = period;
+            try {
+                localStorage.setItem('dashboard_period', currentPeriod);
+            } catch(e) {}
+            loadStudents();
+        }
+
+        function setStartType(startType, btn) {
+            document.querySelectorAll('.slider-button[data-start]').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentStartType = startType;
+            try {
+                localStorage.setItem('dashboard_startType', currentStartType);
+            } catch(e) {}
+            loadStudents();
         }
 
         function formatTime(ms) {
@@ -775,30 +692,42 @@
             return `${minutes}:${secs.toString().padStart(2, '0')}`;
         }
 
-        function loadStudents() {
-            if (!activeScheduleType || !activeStartType) return;
+        function updatePeriodStatus() {
+            if (!currentSchedule || !currentPeriod || !currentStartType) return;
 
-            const schedule = CONFIG.schedules[activeScheduleType][activeStartType];
+            const schedule = CONFIG.schedules[currentSchedule][currentStartType];
             const now = new Date();
             const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             
-            let currentPeriod = null;
+            let currentPeriodObj = null;
             for (const period of schedule) {
-                if (currentTime >= period.startTime && currentTime <= period.endTime) {
-                    currentPeriod = period;
+                if (period.name === currentPeriod && currentTime >= period.startTime && currentTime <= period.endTime) {
+                    currentPeriodObj = period;
                     break;
                 }
             }
 
-            if (!currentPeriod) {
-                document.getElementById('periodInfo').innerHTML += ' • <span style="color: var(--color-danger);">No active period</span>';
-                return;
+            const statusBadge = document.getElementById('periodStatus');
+            if (currentPeriodObj) {
+                statusBadge.className = 'status-indicator-badge active';
+                statusBadge.innerHTML = '<span class="status-dot active"></span> Active';
+            } else {
+                statusBadge.className = 'status-indicator-badge inactive';
+                statusBadge.innerHTML = '<span class="status-dot inactive"></span> Not Active';
             }
+        }
 
+        function loadStudents() {
+            if (!currentSchedule || !currentPeriod || !currentStartType) return;
+
+            updatePeriodStatus();
+
+            // Build the schedule string to match Firebase data format
+            const scheduleString = `${currentSchedule}_${currentStartType}`;
+            
             const studentsRef = database.ref('students');
             studentsRef.once('value', snapshot => {
                 const students = [];
-                const allStudents = currentPeriod.students;
                 let inCount = 0;
                 let outCount = 0;
                 let uniqueOut = new Set();
@@ -808,45 +737,48 @@
                 let from5to10 = 0;
                 let over10 = 0;
 
+                console.log('Looking for schedule:', scheduleString, 'period:', currentPeriod);
+
                 snapshot.forEach(child => {
                     const data = child.val();
-                    const scheduleMatch = data.schedule && 
-                        data.schedule.includes(activeScheduleType);
-                    const periodMatch = data.period === currentPeriod.name;
+                    console.log('Student data:', data);
+                    
+                    // Match schedule and period
+                    const scheduleMatch = data.schedule && data.schedule === scheduleString;
+                    const periodMatch = data.period === currentPeriod;
                     
                     if (scheduleMatch && periodMatch) {
-                        const qrCode = data.qrCode;
-                        if (allStudents[qrCode]) {
-                            students.push({
-                                key: child.key,
-                                name: data.name,
-                                status: data.status,
-                                qrCode: qrCode,
-                                period: data.period,
-                                schedule: data.schedule,
-                                timestamp: data.timestamp,
-                                outTimestamp: data.outTimestamp
-                            });
+                        students.push({
+                            key: child.key,
+                            name: data.name,
+                            status: data.status,
+                            qrCode: data.qrCode,
+                            period: data.period,
+                            schedule: data.schedule,
+                            timestamp: data.timestamp,
+                            outTimestamp: data.outTimestamp
+                        });
 
-                            if (data.status === 'out') {
-                                outCount++;
-                                uniqueOut.add(data.name);
-                            } else {
-                                inCount++;
-                            }
+                        if (data.status === 'out') {
+                            outCount++;
+                            uniqueOut.add(data.name);
+                        } else {
+                            inCount++;
                         }
                     }
                 });
+
+                console.log('Found students:', students.length);
 
                 // Get today's logs for statistics
                 const today = new Date().toISOString().split('T')[0];
                 database.ref('logs').orderByChild('date').equalTo(today).once('value', logSnapshot => {
                     logSnapshot.forEach(child => {
                         const log = child.val();
-                        const scheduleMatch = log.schedule && log.schedule.includes(activeScheduleType);
-                        const periodMatch = log.period === currentPeriod.name;
+                        const scheduleMatch = log.schedule && log.schedule === scheduleString;
+                        const periodMatch = log.period === currentPeriod;
                         
-                        if (scheduleMatch && periodMatch && log.action === 'in' && log.duration) {
+                        if (scheduleMatch && periodMatch && (log.action === 'in' || log.action === 'manual-in') && log.duration) {
                             const minutes = log.duration / 60000;
                             totalTimeMs += log.duration;
                             tripCount++;
@@ -874,32 +806,20 @@
                 const grid = document.getElementById('studentsGrid');
                 grid.innerHTML = '';
 
+                if (students.length === 0) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--color-slate);">No students found for this schedule and period</div>';
+                }
+
                 students.forEach(student => {
                     const card = document.createElement('div');
                     card.className = `student-card ${student.status}`;
                     
-                    let statusBadge = '';
-                    let statusClass = student.status;
-                    
-                    // Check if it's a manual action
-                    database.ref('logs').orderByChild('qrCode').equalTo(student.qrCode).limitToLast(1).once('value', lastLog => {
-                        lastLog.forEach(logChild => {
-                            const log = logChild.val();
-                            if (log.action === 'manual-out') statusClass = 'manual-out';
-                            if (log.action === 'manual-in') statusClass = 'manual-in';
-                        });
-                        
-                        statusBadge = `<span class="status-badge ${statusClass}">
-                            ${statusClass === 'manual-out' ? 'Manual Out' : 
-                              statusClass === 'manual-in' ? 'Manual In' :
-                              statusClass === 'out' ? 'Out' : 'In'}
-                        </span>`;
-                    });
+                    let statusBadge = `<span class="status-badge ${student.status}">${student.status === 'out' ? 'Out' : 'In'}</span>`;
 
                     let timer = '';
                     if (student.status === 'out' && student.outTimestamp) {
                         const elapsed = Date.now() - student.outTimestamp;
-                        timer = `<div class="timer">${formatTime(elapsed)}</div>`;
+                        timer = `<div class="timer" id="timer-${student.key}">${formatTime(elapsed)}</div>`;
                         
                         // Update timer
                         if (!timers[student.key]) {
@@ -924,7 +844,7 @@
                         <div class="student-info">
                             <span>Period: ${student.period}</span>
                         </div>
-                        <div class="timer" id="timer-${student.key}">${student.status === 'out' && student.outTimestamp ? formatTime(Date.now() - student.outTimestamp) : ''}</div>
+                        ${timer}
                         <div class="student-actions">
                             <button class="action-button in-btn" 
                                 onclick="manualAction('${student.key}', 'in')"
@@ -983,30 +903,35 @@
 
         // Initialize
         window.addEventListener('load', () => {
-            const savedType = localStorage.getItem('dashboard_scheduleType');
-            const savedStart = localStorage.getItem('dashboard_startType');
-            const savedKiosk = localStorage.getItem('kioskMode');
+            try {
+                const savedSchedule = localStorage.getItem('dashboard_schedule');
+                const savedPeriod = localStorage.getItem('dashboard_period');
+                const savedStartType = localStorage.getItem('dashboard_startType');
+                
+                if (savedSchedule) {
+                    currentSchedule = savedSchedule;
+                    document.querySelector(`[data-schedule="${savedSchedule}"]`).classList.add('active');
+                    document.querySelector('[data-schedule]:not([data-schedule="' + savedSchedule + '"])').classList.remove('active');
+                }
+                if (savedPeriod) {
+                    currentPeriod = savedPeriod;
+                    document.querySelector(`[data-period="${savedPeriod}"]`).classList.add('active');
+                    document.querySelectorAll('[data-period]').forEach(b => {
+                        if (b.dataset.period !== savedPeriod) b.classList.remove('active');
+                    });
+                }
+                if (savedStartType) {
+                    currentStartType = savedStartType;
+                    document.querySelector(`[data-start="${savedStartType}"]`).classList.add('active');
+                    document.querySelectorAll('[data-start]').forEach(b => {
+                        if (b.dataset.start !== savedStartType) b.classList.remove('active');
+                    });
+                }
+            } catch (e) {}
             
-            if (savedKiosk === 'true') {
-                kioskModeEnabled = true;
-                document.getElementById('kioskToggle').classList.add('active');
-                enableKioskMode();
-            }
-            
-            if (savedType && savedStart) {
-                activeScheduleType = savedType;
-                activeStartType = savedStart;
-                const labels = { 
-                    red: 'Red Day', 
-                    black: 'Black Day', 
-                    regular: 'Regular', 
-                    late: 'Late Start' 
-                };
-                document.getElementById('periodInfo').textContent = 
-                    `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
-                document.getElementById('scheduleModal').style.display = 'none';
-                startDashboard();
-            }
+            loadStudents();
+            setInterval(loadStudents, 2000);
+            setInterval(updatePeriodStatus, 1000);
         });
     </script>
 </body>
