@@ -880,8 +880,17 @@
             database.ref('logs').once('value', snapshot => {
                 allLogs = [];
                 snapshot.forEach(child => {
-                    allLogs.push(child.val());
+                    const log = child.val();
+                    // Parse schedule format (A_P1, B_P2, etc.)
+                    if (log.schedule && log.schedule.includes('_')) {
+                        const parts = log.schedule.split('_');
+                        log.scheduleDay = parts[0]; // 'A' or 'B'
+                        log.period = parts[1]; // 'P1', 'P2', etc.
+                    }
+                    allLogs.push(log);
                 });
+                console.log('Total logs loaded:', allLogs.length);
+                console.log('Sample log:', allLogs[0]);
                 loadOverviewData();
             });
         }
@@ -889,11 +898,12 @@
         // OVERVIEW TAB
         function loadOverviewData() {
             const { schedule, period } = currentFilters.overview;
+            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
             const range14 = getDateRange(14);
             
             // Get most recent period data
             const recentPeriodLogs = allLogs
-                .filter(log => log.schedule === schedule && log.period === period)
+                .filter(log => log.scheduleDay === scheduleDay && log.period === period)
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
             
             const mostRecentDate = recentPeriodLogs.length > 0 ? recentPeriodLogs[0].date : null;
@@ -973,7 +983,7 @@
             
             // Top students table (filtered by schedule/period, last 14 days)
             const filteredLogs = logs14.filter(log => 
-                log.schedule === schedule && 
+                log.scheduleDay === scheduleDay && 
                 log.period === period
             );
             
@@ -1031,10 +1041,11 @@
         // BY CLASS TAB
         function loadClassData() {
             const { schedule, period } = currentFilters.class;
+            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
             const range = getTimeRangeDates('classTimeRange', 'classStartDate', 'classEndDate');
             
             const filtered = allLogs.filter(log =>
-                log.schedule === schedule &&
+                log.scheduleDay === scheduleDay &&
                 log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
@@ -1164,11 +1175,12 @@
         // BY STUDENT TAB
         function updateStudentList() {
             const { schedule, period } = currentFilters.student;
+            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
             const studentSelect = document.getElementById('studentSelect');
             
             const students = new Set();
             allLogs.forEach(log => {
-                if (log.schedule === schedule && log.period === period && log.studentName) {
+                if (log.scheduleDay === scheduleDay && log.period === period && log.studentName) {
                     students.add(log.studentName);
                 }
             });
