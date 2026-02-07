@@ -14,8 +14,10 @@
             --color-ink: #0f172a;
             --color-slate: #475569;
             --color-paper: #ffffff;
+            --color-primary: #667eea;
             --color-success: #10b981;
             --color-danger: #ef4444;
+            --color-cloud: #f1f5f9;
         }
         body {
             font-family: 'DM Sans', sans-serif;
@@ -95,16 +97,18 @@
             margin-top: 1rem;
         }
         .waiting-text { color: var(--color-slate); font-size: 1.125rem; font-weight: 500; }
+        
+        /* Modal */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0, 0, 0, 0.85);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(4px);
         }
+        .modal-overlay.active { display: flex; }
         .modal-content {
             background: white;
             border-radius: 24px;
@@ -112,14 +116,12 @@
             max-width: 400px;
             width: 90%;
             text-align: center;
-            animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-        @keyframes modalSlideUp {
-            from { opacity: 0; transform: translateY(20px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
         .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; }
-        .modal-content p { color: var(--color-slate); margin-bottom: 2rem; line-height: 1.6; }
+        .modal-content p { color: var(--color-slate); margin-bottom: 1.5rem; }
+        
+        /* Schedule Buttons */
         .schedule-buttons { display: flex; flex-direction: column; gap: 1rem; }
         .schedule-button {
             padding: 1.25rem;
@@ -128,35 +130,27 @@
             font-size: 1.125rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s;
+            color: white;
         }
         .schedule-button.red {
             background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
         .schedule-button.black {
             background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(51, 65, 85, 0.3);
         }
         .schedule-button.regular {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         .schedule-button.late {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
         .schedule-button:hover { transform: translateY(-2px); }
         .schedule-button:active { transform: translateY(0); }
         .back-button {
             margin-top: 1rem;
             padding: 0.75rem;
-            background: #f1f5f9;
+            background: var(--color-cloud);
             color: var(--color-slate);
             border: none;
             border-radius: 8px;
@@ -164,57 +158,128 @@
             cursor: pointer;
             width: 100%;
         }
-        .hidden-menu-trigger {
+        
+        /* PIN Input */
+        .pin-input-container {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        .pin-digit {
+            width: 50px;
+            height: 60px;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid var(--color-cloud);
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+        }
+        .pin-digit:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        
+        /* Settings Menu */
+        .settings-icon {
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             z-index: 100;
             transition: all 0.3s ease;
-        }
-        .hidden-menu-trigger:hover { background: white; transform: scale(1.1); }
-        .hidden-menu {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.9);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-            backdrop-filter: blur(8px);
-        }
-        .hidden-menu.show { display: flex; }
-        .hidden-menu-content {
-            background: white;
-            border-radius: 24px;
-            padding: 2.5rem;
-            max-width: 400px;
-            width: 90%;
-        }
-        .hidden-menu-content h2 { font-family: 'Fraunces', serif; font-size: 1.75rem; margin-bottom: 2rem; text-align: center; }
-        .menu-button {
-            width: 100%;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            background: #f1f5f9;
             border: none;
-            border-radius: 12px;
-            font-size: 1rem;
+        }
+        .settings-icon:hover { 
+            background: white; 
+            transform: scale(1.1); 
+        }
+        .settings-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .settings-menu {
+            text-align: left;
+        }
+        .settings-option {
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-cloud);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .settings-option:last-child {
+            border-bottom: none;
+        }
+        .settings-label {
+            font-weight: 600;
+            color: var(--color-ink);
+        }
+        .settings-description {
+            font-size: 0.875rem;
+            color: var(--color-slate);
+            margin-top: 0.25rem;
+        }
+        
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+            background: var(--color-cloud);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.active {
+            background: var(--color-primary);
+        }
+        .toggle-slider {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: transform 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.active .toggle-slider {
+            transform: translateX(22px);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.2s;
         }
-        .menu-button:hover { background: #e2e8f0; transform: translateX(4px); }
-        .menu-button.danger { background: rgba(239, 68, 68, 0.1); color: var(--color-danger); }
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+        .btn-secondary {
+            background: var(--color-cloud);
+            color: var(--color-slate);
+        }
     </style>
 </head>
 <body>
@@ -229,50 +294,90 @@
         </div>
     </div>
 
-    <div id="scheduleModal" class="modal-overlay" style="display: none;">
-        <div class="modal-content" id="modalContent">
-            <h2>Select Schedule Day</h2>
-            <p>Choose which schedule is active today</p>
-            <div class="schedule-buttons">
-                <button class="schedule-button red" onclick="selectScheduleType('red')">🔴 Red Day</button>
-                <button class="schedule-button black" onclick="selectScheduleType('black')">⚫ Black Day</button>
+    <!-- Settings Icon -->
+    <button class="settings-icon" onclick="openSettings()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+        </svg>
+    </button>
+
+    <!-- PIN Modal -->
+    <div id="pinModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Enter PIN</h2>
+            <p>Enter your 4-digit PIN to access settings</p>
+            <div class="pin-input-container">
+                <input type="password" class="pin-digit" maxlength="1" id="pin1" />
+                <input type="password" class="pin-digit" maxlength="1" id="pin2" />
+                <input type="password" class="pin-digit" maxlength="1" id="pin3" />
+                <input type="password" class="pin-digit" maxlength="1" id="pin4" />
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closePinModal()">Cancel</button>
+                <button class="btn-primary" onclick="verifyPin()">Enter</button>
+            </div>
+            <p id="pinError" style="color: var(--color-danger); margin-top: 1rem; display: none;">Incorrect PIN</p>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2>Settings</h2>
+            <div class="settings-menu">
+                <div class="settings-option">
+                    <div>
+                        <div class="settings-label">Lock Kiosk Mode</div>
+                        <div class="settings-description">Prevent leaving page</div>
+                    </div>
+                    <div class="toggle-switch" id="kioskToggle" onclick="toggleKioskMode()">
+                        <div class="toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="changeSchedule()">Change Schedule</button>
+                <button class="btn-primary" onclick="returnHome()">Return Home</button>
+            </div>
+            <div class="modal-buttons" style="margin-top: 0.5rem;">
+                <button class="btn-secondary" onclick="closeSettings()">Close</button>
             </div>
         </div>
     </div>
 
-    <div class="hidden-menu-trigger" onclick="toggleHiddenMenu()">⚙️</div>
-    <div id="hiddenMenu" class="hidden-menu">
-        <div class="hidden-menu-content">
-            <h2>Settings</h2>
-            <button class="menu-button" onclick="changeSchedule()">🔄 Change Schedule</button>
-            <button class="menu-button" onclick="window.location.href='index.html'">🏠 Back to Home</button>
-            <button class="menu-button danger" onclick="closeHiddenMenu()">✕ Close</button>
+    <!-- Schedule Modal -->
+    <div id="scheduleModal" class="modal-overlay">
+        <div class="modal-content" id="modalContent">
+            <h2>Select Schedule Day</h2>
+            <p>Choose which schedule is active today</p>
+            <div class="schedule-buttons">
+                <button class="schedule-button red" onclick="selectScheduleType('red')">Red Day</button>
+                <button class="schedule-button black" onclick="selectScheduleType('black')">Black Day</button>
+            </div>
         </div>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURATION - EDIT THIS SECTION ONLY
+        // CONFIGURATION
         // ============================================
-		const CONFIG = {
-            // Your Firebase credentials from Firebase Console
+        const CONFIG = {
             firebase: {
-			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-			  authDomain: "hallpass2-n244.firebaseapp.com",
-			  projectId: "hallpass2-n244",
-			  storageBucket: "hallpass2-n244.firebasestorage.app",
-			  messagingSenderId: "262508006458",
-			  appId: "1:262508006458:web:4cdebead1181506d833903",
-			  measurementId: "G-175T67QFGY"
+                apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+                authDomain: "hallpass2-n244.firebaseapp.com",
+                databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
+                projectId: "hallpass2-n244",
+                storageBucket: "hallpass2-n244.firebasestorage.app",
+                messagingSenderId: "262508006458",
+                appId: "1:262508006458:web:4cdebead1181506d833903",
+                measurementId: "G-175T67QFGY"
             },
-            
-            // Timing settings (milliseconds)
+            pin: "1891",
             timing: {
-                scanDebounce: 2000,        // Prevent duplicate scans
-                studentCooldown: 5000      // Cooldown after scan
+                scanDebounce: 2000,
+                studentCooldown: 5000
             },
-            
-            // Your class schedules
             schedules: {
                 red: {
                     regular: [
@@ -328,28 +433,179 @@
                 }
             }
         };
-        // ============================================
-        // SYSTEM CODE - DO NOT EDIT BELOW
-        // ============================================
-        
+
         firebase.initializeApp(CONFIG.firebase);
         const database = firebase.database();
         
         let activeScheduleType = null;
         let activeStartType = null;
+        let selectedScheduleType = null;
         let isProcessingScan = false;
         let lastScannedCode = null;
         let lastScannedTime = 0;
         let lastScanTimes = {};
-        let selectedScheduleType = null;
+        let kioskModeEnabled = false;
+
+        // PIN System
+        function openSettings() {
+            document.getElementById('pinModal').classList.add('active');
+            document.getElementById('pin1').focus();
+        }
+
+        function closePinModal() {
+            document.getElementById('pinModal').classList.remove('active');
+            document.getElementById('pinError').style.display = 'none';
+            clearPinInputs();
+        }
+
+        function clearPinInputs() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById(`pin${i}`).value = '';
+            }
+        }
+
+        function verifyPin() {
+            const pin = document.getElementById('pin1').value +
+                        document.getElementById('pin2').value +
+                        document.getElementById('pin3').value +
+                        document.getElementById('pin4').value;
+            
+            if (pin === CONFIG.pin) {
+                closePinModal();
+                document.getElementById('settingsModal').classList.add('active');
+            } else {
+                document.getElementById('pinError').style.display = 'block';
+                clearPinInputs();
+                document.getElementById('pin1').focus();
+            }
+        }
+
+        // PIN Input Navigation
+        document.querySelectorAll('.pin-digit').forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < 3) {
+                    document.getElementById(`pin${index + 2}`).focus();
+                }
+                if (index === 3 && e.target.value.length === 1) {
+                    verifyPin();
+                }
+            });
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && e.target.value === '' && index > 0) {
+                    document.getElementById(`pin${index}`).focus();
+                }
+            });
+        });
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+        }
+
+        function toggleKioskMode() {
+            kioskModeEnabled = !kioskModeEnabled;
+            const toggle = document.getElementById('kioskToggle');
+            
+            if (kioskModeEnabled) {
+                toggle.classList.add('active');
+                enableKioskMode();
+            } else {
+                toggle.classList.remove('active');
+                disableKioskMode();
+            }
+            
+            try {
+                localStorage.setItem('kioskMode', kioskModeEnabled);
+            } catch (e) {}
+        }
+
+        function enableKioskMode() {
+            window.onbeforeunload = function() {
+                return "Kiosk mode is enabled. Enter PIN to exit.";
+            };
+            document.addEventListener('keydown', preventKeys);
+            document.addEventListener('contextmenu', preventDefault);
+        }
+
+        function disableKioskMode() {
+            window.onbeforeunload = null;
+            document.removeEventListener('keydown', preventKeys);
+            document.removeEventListener('contextmenu', preventDefault);
+        }
+
+        function preventKeys(e) {
+            if (e.key === 'F11' || 
+                (e.ctrlKey && (e.key === 'w' || e.key === 't')) ||
+                (e.altKey && e.key === 'F4')) {
+                e.preventDefault();
+            }
+        }
+
+        function preventDefault(e) {
+            e.preventDefault();
+        }
+
+        function changeSchedule() {
+            closeSettings();
+            document.getElementById('scheduleModal').classList.add('active');
+        }
+
+        function returnHome() {
+            if (kioskModeEnabled) {
+                disableKioskMode();
+            }
+            window.location.href = 'index.html';
+        }
+
+        // Schedule Selection
+        window.selectScheduleType = function(type) {
+            selectedScheduleType = type;
+            document.getElementById('modalContent').innerHTML = `
+                <h2>Select Start Type</h2>
+                <p>Choose the schedule for today</p>
+                <div class="schedule-buttons">
+                    <button class="schedule-button regular" onclick="selectSchedule('regular')">Regular Start</button>
+                    <button class="schedule-button late" onclick="selectSchedule('late')">Late Start</button>
+                </div>
+                <button class="back-button" onclick="goBackToScheduleType()">← Back</button>
+            `;
+        };
+
+        window.selectSchedule = function(startType) {
+            activeScheduleType = selectedScheduleType;
+            activeStartType = startType;
+            try {
+                localStorage.setItem('scanner_scheduleType', activeScheduleType);
+                localStorage.setItem('scanner_startType', activeStartType);
+            } catch (e) {}
+            const labels = { 
+                red: 'Red Day', 
+                black: 'Black Day', 
+                regular: 'Regular', 
+                late: 'Late Start' 
+            };
+            document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
+            document.getElementById('scheduleModal').classList.remove('active');
+            startScanner();
+        };
+
+        window.goBackToScheduleType = function() {
+            document.getElementById('modalContent').innerHTML = `
+                <h2>Select Schedule Day</h2>
+                <p>Choose which schedule is active today</p>
+                <div class="schedule-buttons">
+                    <button class="schedule-button red" onclick="selectScheduleType('red')">Red Day</button>
+                    <button class="schedule-button black" onclick="selectScheduleType('black')">Black Day</button>
+                </div>
+            `;
+        };
 
         function getCurrentPeriod() {
             if (!activeScheduleType || !activeStartType) return null;
             const schedule = CONFIG.schedules[activeScheduleType][activeStartType];
             const now = new Date();
-            const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
             for (const period of schedule) {
-                if (currentTime >= period.startTime && currentTime < period.endTime) {
+                if (currentTime >= period.startTime && currentTime <= period.endTime) {
                     return period;
                 }
             }
@@ -359,11 +615,11 @@
         function getStudentInfo(qrCode) {
             const currentPeriod = getCurrentPeriod();
             if (!currentPeriod) {
-                return { error: 'No active class period right now', qrCode };
+                return { error: 'No active period right now' };
             }
             const studentName = currentPeriod.students[qrCode];
             if (!studentName) {
-                return { error: `QR code ${qrCode} not registered for ${currentPeriod.name}`, qrCode };
+                return { error: 'Student not found in this period' };
             }
             return {
                 uniqueId: `${activeScheduleType}_${activeStartType}_${qrCode}_${currentPeriod.name.replace(/\s+/g, '_')}`,
@@ -405,56 +661,6 @@
                 osc.stop(ctx.currentTime + 0.3);
             } catch (e) {}
         }
-
-        window.selectScheduleType = function(type) {
-            selectedScheduleType = type;
-            document.getElementById('modalContent').innerHTML = `
-                <h2>Select Start Type</h2>
-                <p>Choose the schedule for today</p>
-                <div class="schedule-buttons">
-                    <button class="schedule-button regular" onclick="selectSchedule('regular')">⏰ Regular Start</button>
-                    <button class="schedule-button late" onclick="selectSchedule('late')">🌅 Late Start</button>
-                </div>
-                <button class="back-button" onclick="goBackToScheduleType()">← Back</button>
-            `;
-        };
-
-        window.selectSchedule = function(startType) {
-            activeScheduleType = selectedScheduleType;
-            activeStartType = startType;
-            try {
-                localStorage.setItem('scanner_scheduleType', activeScheduleType);
-                localStorage.setItem('scanner_startType', activeStartType);
-            } catch (e) {}
-            const labels = { red: '🔴 Red Day', black: '⚫ Black Day', regular: '⏰ Regular', late: '🌅 Late Start' };
-            document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
-            document.getElementById('scheduleModal').style.display = 'none';
-            startScanner();
-        };
-
-        window.goBackToScheduleType = function() {
-            document.getElementById('modalContent').innerHTML = `
-                <h2>Select Schedule Day</h2>
-                <p>Choose which schedule is active today</p>
-                <div class="schedule-buttons">
-                    <button class="schedule-button red" onclick="selectScheduleType('red')">🔴 Red Day</button>
-                    <button class="schedule-button black" onclick="selectScheduleType('black')">⚫ Black Day</button>
-                </div>
-            `;
-        };
-
-        window.changeSchedule = function() {
-            closeHiddenMenu();
-            document.getElementById('scheduleModal').style.display = 'flex';
-        };
-
-        window.toggleHiddenMenu = function() {
-            document.getElementById('hiddenMenu').classList.add('show');
-        };
-
-        window.closeHiddenMenu = function() {
-            document.getElementById('hiddenMenu').classList.remove('show');
-        };
 
         const html5QrCode = new Html5Qrcode("reader");
         let scannerStarted = false;
@@ -541,7 +747,7 @@
 
         function showStatus(name, status) {
             const area = document.querySelector('.status-area');
-            const labels = { in: '✓ Scanned Back In', out: '⚠ Scanned Out' };
+            const labels = { in: 'Scanned Back In', out: 'Scanned Out' };
             area.innerHTML = `
                 <div class="student-name show">${name}</div>
                 <div class="status-badge ${status} show">${labels[status]}</div>
@@ -553,7 +759,7 @@
 
         function showError(msg) {
             const area = document.querySelector('.status-area');
-            area.innerHTML = `<div class="error-message">⚠️ ${msg}</div>`;
+            area.innerHTML = `<div class="error-message">${msg}</div>`;
             setTimeout(() => {
                 area.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
             }, 4000);
@@ -563,17 +769,30 @@
             try {
                 const savedType = localStorage.getItem('scanner_scheduleType');
                 const savedStart = localStorage.getItem('scanner_startType');
+                const savedKiosk = localStorage.getItem('kioskMode');
+                
+                if (savedKiosk === 'true') {
+                    kioskModeEnabled = true;
+                    document.getElementById('kioskToggle').classList.add('active');
+                    enableKioskMode();
+                }
+                
                 if (savedType && savedStart) {
                     activeScheduleType = savedType;
                     activeStartType = savedStart;
-                    const labels = { red: '🔴 Red Day', black: '⚫ Black Day', regular: '⏰ Regular', late: '🌅 Late Start' };
+                    const labels = { 
+                        red: 'Red Day', 
+                        black: 'Black Day', 
+                        regular: 'Regular', 
+                        late: 'Late Start' 
+                    };
                     document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
                     startScanner();
                 } else {
-                    document.getElementById('scheduleModal').style.display = 'flex';
+                    document.getElementById('scheduleModal').classList.add('active');
                 }
             } catch (e) {
-                document.getElementById('scheduleModal').style.display = 'flex';
+                document.getElementById('scheduleModal').classList.add('active');
             }
         });
     </script>
