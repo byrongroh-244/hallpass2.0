@@ -91,6 +91,52 @@
             margin-bottom: 1.5rem;
         }
         
+        /* Overview Filters */
+        .overview-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .filter-button-group {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--color-cloud);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+        .filter-button {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--color-slate);
+            font-size: 0.875rem;
+        }
+        .filter-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .filter-button.active {
+            background: white;
+            color: var(--color-primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .filter-label {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-slate);
+            margin-right: 0.5rem;
+        }
+        
         /* Stats Grid */
         .stats-grid {
             display: grid;
@@ -180,6 +226,11 @@
             align-items: center;
             padding: 1rem;
             border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .top-item:hover {
+            background: var(--color-cloud);
         }
         .top-item:last-child {
             border-bottom: none;
@@ -198,6 +249,10 @@
         .student-name {
             font-weight: 600;
             font-size: 1.125rem;
+            color: var(--color-primary);
+        }
+        .student-name:hover {
+            text-decoration: underline;
         }
         .student-details {
             font-size: 0.875rem;
@@ -322,6 +377,28 @@
 
     <!-- OVERVIEW TAB -->
     <div id="overview" class="tab-content active">
+        <div class="overview-filters">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="filter-label">Schedule:</span>
+                <div class="filter-button-group">
+                    <button class="filter-button active" data-filter="schedule" data-value="all" onclick="updateOverviewFilter('schedule', 'all')">All</button>
+                    <button class="filter-button" data-filter="schedule" data-value="red" onclick="updateOverviewFilter('schedule', 'red')">🔴 Red</button>
+                    <button class="filter-button" data-filter="schedule" data-value="black" onclick="updateOverviewFilter('schedule', 'black')">⚫ Black</button>
+                </div>
+            </div>
+            
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="filter-label">Period:</span>
+                <div class="filter-button-group">
+                    <button class="filter-button active" data-filter="period" data-value="all" onclick="updateOverviewFilter('period', 'all')">All</button>
+                    <button class="filter-button" data-filter="period" data-value="P1" onclick="updateOverviewFilter('period', 'P1')">P1</button>
+                    <button class="filter-button" data-filter="period" data-value="P2" onclick="updateOverviewFilter('period', 'P2')">P2</button>
+                    <button class="filter-button" data-filter="period" data-value="P3" onclick="updateOverviewFilter('period', 'P3')">P3</button>
+                    <button class="filter-button" data-filter="period" data-value="P4" onclick="updateOverviewFilter('period', 'P4')">P4</button>
+                </div>
+            </div>
+        </div>
+
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Trips (14 Days)</div>
@@ -351,7 +428,7 @@
 
             <div class="card">
                 <h2>🏆 Top 10 High Flyers</h2>
-                <p style="color: var(--color-slate); margin-bottom: 1rem; font-size: 0.875rem;">Most time out (last 14 days)</p>
+                <p style="color: var(--color-slate); margin-bottom: 1rem; font-size: 0.875rem;">Click to view student details</p>
                 <ul class="top-list" id="topFlyersList"></ul>
             </div>
         </div>
@@ -529,76 +606,32 @@
         // ============================================
         // CONFIGURATION - EDIT THIS SECTION ONLY
         // ============================================
-		const CONFIG = {
-            // Your Firebase credentials from Firebase Console
+        const CONFIG = {
             firebase: {
-			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-			  authDomain: "hallpass2-n244.firebaseapp.com",
-			  projectId: "hallpass2-n244",
-			  storageBucket: "hallpass2-n244.firebasestorage.app",
-			  messagingSenderId: "262508006458",
-			  appId: "1:262508006458:web:4cdebead1181506d833903",
-			  measurementId: "G-175T67QFGY"
+                apiKey: "YOUR_API_KEY",
+                authDomain: "YOUR_PROJECT.firebaseapp.com",
+                databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+                projectId: "YOUR_PROJECT_ID",
+                storageBucket: "YOUR_PROJECT.appspot.com",
+                messagingSenderId: "YOUR_SENDER_ID",
+                appId: "YOUR_APP_ID"
             },
-            
-            // Timing settings (milliseconds)
-            timing: {
-                scanDebounce: 2000,        // Prevent duplicate scans
-                studentCooldown: 5000      // Cooldown after scan
-            },
-            
-            // Your class schedules
             schedules: {
                 red: {
                     regular: [
-                        {
-                            name: "P1",
-                            startTime: "07:45",
-                            endTime: "09:13",
-                            students: {
-                                "qr_01": "Byron",
-                                "qr_02": "Laurel",
-                                "qr_03": "Olive"
-                            }
-                        },
+                        { name: "P1", students: { "qr_01": "Student A1", "qr_02": "Student A2" } },
+                        { name: "P2", students: { "qr_11": "Student B1" } }
                     ],
                     late: [
-                        {
-                            name: "P1",
-                            startTime: "08:50",
-                            endTime: "23:59",
-                            students: {
-                                "qr_01": "Byron",
-                                "qr_02": "Laurel",
-                                "qr_03": "Olive"
-                            }
-                        }
+                        { name: "P1", students: { "qr_01": "Student A1" } }
                     ]
                 },
                 black: {
                     regular: [
-                        {
-                            name: "P1",
-                            startTime: "07:45",
-                            endTime: "09:13",
-                            students: {
-                                "qr_01": "Byron",
-                                "qr_02": "Laurel",
-                                "qr_03": "Olive"
-                            }
-                        }
+                        { name: "P1", students: { "qr_11": "Student E1" } }
                     ],
                     late: [
-                        {
-                            name: "P1",
-                            startTime: "08:50",
-                            endTime: "23:59",
-                            students: {
-                                "qr_01": "Byron",
-                                "qr_02": "Laurel",
-                                "qr_03": "Olive"
-                            }
-                        }
+                        { name: "P1", students: { "qr_11": "Student E1" } }
                     ]
                 }
             }
@@ -612,8 +645,8 @@
         const database = firebase.database();
         let allLogs = [];
         let charts = {};
+        let overviewFilters = { schedule: 'all', period: 'all' };
 
-        // Utility functions
         function formatDurationHours(ms) {
             if (!ms || ms < 0) return '0m';
             const totalMinutes = Math.floor(ms / 60000);
@@ -641,7 +674,6 @@
             };
         }
 
-        // Tab switching
         window.switchTab = function(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -655,7 +687,6 @@
             }
         };
 
-        // Load all data on init
         async function loadAllData() {
             try {
                 const range = getDateRange(14);
@@ -676,17 +707,38 @@
             }
         }
 
-        // OVERVIEW TAB
+        // OVERVIEW TAB with filters
+        window.updateOverviewFilter = function(filterType, value) {
+            overviewFilters[filterType] = value;
+            
+            // Update button states
+            document.querySelectorAll(`[data-filter="${filterType}"]`).forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.value === value) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            loadOverviewData();
+        };
+
         function loadOverviewData() {
-            const completed = allLogs.filter(log => 
+            let filtered = allLogs.filter(log => 
                 log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset'
             );
             
-            // Stats
-            const totalTrips = completed.length;
-            const totalTime = completed.reduce((sum, log) => sum + (log.duration || 0), 0);
+            // Apply filters
+            if (overviewFilters.schedule !== 'all') {
+                filtered = filtered.filter(log => log.schedule?.includes(overviewFilters.schedule));
+            }
+            if (overviewFilters.period !== 'all') {
+                filtered = filtered.filter(log => log.period === overviewFilters.period);
+            }
+            
+            const totalTrips = filtered.length;
+            const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
             const avgDuration = totalTrips > 0 ? totalTime / totalTrips : 0;
-            const forgotCount = completed.filter(log => 
+            const forgotCount = filtered.filter(log => 
                 log.action === 'auto-reset' || log.action === 'manual-reset'
             ).length;
             const forgotRate = totalTrips > 0 ? (forgotCount / totalTrips * 100).toFixed(1) : 0;
@@ -698,7 +750,7 @@
             
             // Period chart
             const periodData = {};
-            completed.forEach(log => {
+            filtered.forEach(log => {
                 const period = log.period || 'Unknown';
                 periodData[period] = (periodData[period] || 0) + 1;
             });
@@ -731,7 +783,7 @@
             
             // Top 10
             const studentData = {};
-            completed.forEach(log => {
+            filtered.forEach(log => {
                 if (!studentData[log.studentName]) {
                     studentData[log.studentName] = { 
                         name: log.studentName, 
@@ -749,7 +801,7 @@
             
             const topList = document.getElementById('topFlyersList');
             topList.innerHTML = top10.map((student, index) => `
-                <li class="top-item">
+                <li class="top-item" onclick="jumpToStudent('${student.name}')">
                     <div class="rank">#${index + 1}</div>
                     <div class="student-info">
                         <div class="student-name">${student.name}</div>
@@ -799,13 +851,11 @@
                 return log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset';
             });
             
-            // Stats
             const students = new Set(filtered.map(log => log.studentName));
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
             const avgTripLength = totalTrips > 0 ? totalTime / totalTrips : 0;
             
-            // Count students with trips over 10 minutes
             const studentMaxTrips = {};
             filtered.forEach(log => {
                 const name = log.studentName;
@@ -820,7 +870,6 @@
             document.getElementById('classAvgTripLength').textContent = formatDurationHours(avgTripLength);
             document.getElementById('classOver10Min').textContent = over10Min;
             
-            // Table
             const studentData = {};
             filtered.forEach(log => {
                 if (!studentData[log.studentName]) {
@@ -865,28 +914,23 @@
         };
 
         window.jumpToStudent = function(studentName) {
-            // Switch to student tab
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab')[2].classList.add('active');
             document.getElementById('student').classList.add('active');
             
-            // Find student in logs and set filters
             const studentLog = allLogs.find(log => log.studentName === studentName);
             if (studentLog && studentLog.schedule) {
                 const scheduleParts = studentLog.schedule.split('_');
-                const scheduleDay = scheduleParts[0]; // red or black
+                const scheduleDay = scheduleParts[0];
                 
-                // Set schedule filter
                 document.getElementById('studentScheduleFilter').value = scheduleDay;
                 updateStudentPeriodFilter();
                 
-                // Set period
                 setTimeout(() => {
                     document.getElementById('studentPeriodFilter').value = studentLog.period;
                     updateStudentNameFilter();
                     
-                    // Set student
                     setTimeout(() => {
                         document.getElementById('studentSelect').value = studentName;
                         loadStudentData();
@@ -895,7 +939,7 @@
             }
         };
 
-        // STUDENT TAB - Cascading filters
+        // STUDENT TAB
         window.updateStudentPeriodFilter = function() {
             const scheduleDay = document.getElementById('studentScheduleFilter').value;
             const periodSelect = document.getElementById('studentPeriodFilter');
@@ -912,7 +956,6 @@
             
             periodSelect.disabled = false;
             
-            // Get unique periods for this schedule from logs
             const periods = new Set();
             allLogs.forEach(log => {
                 if (log.schedule && log.schedule.includes(scheduleDay) && log.period) {
@@ -939,7 +982,6 @@
             
             studentSelect.disabled = false;
             
-            // Get unique students for this schedule/period combo
             const students = new Set();
             allLogs.forEach(log => {
                 if (log.schedule && log.schedule.includes(scheduleDay) && 
@@ -979,7 +1021,6 @@
                 (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset')
             );
             
-            // Stats
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
             const avgDuration = totalTrips > 0 ? totalTime / totalTrips : 0;
@@ -999,7 +1040,6 @@
             document.getElementById('studentTripsPerDay').textContent = tripsPerDay;
             document.getElementById('studentForgotRate').textContent = forgotRate + '%';
             
-            // Day of week chart
             const dayData = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
             filtered.forEach(log => {
                 const date = new Date(log.date);
@@ -1033,7 +1073,6 @@
                 }
             });
             
-            // Recent trips table
             const recent = filtered.slice().reverse().slice(0, 20);
             let html = `
                 <table>
@@ -1091,7 +1130,6 @@
             a.click();
         };
 
-        // Initialize
         window.addEventListener('load', loadAllData);
     </script>
 </body>
