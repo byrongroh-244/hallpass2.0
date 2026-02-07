@@ -361,7 +361,23 @@
         // ============================================
         // CONFIGURATION - EDIT THIS SECTION ONLY
         // ============================================
-           schedules: {
+        const CONFIG = {
+            firebase: {
+			  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+			  authDomain: "hallpass2-n244.firebaseapp.com",
+			  projectId: "hallpass2-n244",
+			  storageBucket: "hallpass2-n244.firebasestorage.app",
+			  messagingSenderId: "262508006458",
+			  appId: "1:262508006458:web:4cdebead1181506d833903",
+			  measurementId: "G-175T67QFGY"
+            },
+            timing: {
+                timerUpdateInterval: 1000,
+                periodCheckInterval: 60000,
+                autoResetInterval: 30000
+            },
+            // Your class schedules
+            schedules: {
                 red: {
                     regular: [
                         {
