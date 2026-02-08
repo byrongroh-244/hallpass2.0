@@ -541,11 +541,8 @@
         </div>
         <div class="slider-group">
             <div class="slider-label">Period</div>
-            <div class="slider-buttons">
-                <button class="slider-button active" data-period="P1" onclick="setPeriod('P1', this)">P1</button>
-                <button class="slider-button" data-period="P2" onclick="setPeriod('P2', this)">P2</button>
-                <button class="slider-button" data-period="P3" onclick="setPeriod('P3', this)">P3</button>
-                <button class="slider-button" data-period="P4" onclick="setPeriod('P4', this)">P4</button>
+            <div class="slider-buttons" id="periodButtons">
+                <!-- Dynamically populated based on selected schedule -->
             </div>
         </div>
         <div class="slider-group">
@@ -996,17 +993,43 @@
         ]
     }
 }
-}
         };
 
         firebase.initializeApp(CONFIG.firebase);
         const database = firebase.database();
         
         let currentSchedule = 'red';
-        let currentPeriod = 'P1';
+        let currentPeriod = null;  // Will be set dynamically
         let currentStartType = 'regular';
         let updateInterval = null;
         let timers = {};
+
+        // Update period buttons based on selected schedule and start type
+        function updatePeriodButtons() {
+            const periodButtons = document.getElementById('periodButtons');
+            const schedule = CONFIG.schedules[currentSchedule]?.[currentStartType];
+            
+            if (!schedule || schedule.length === 0) {
+                periodButtons.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods available</div>';
+                return;
+            }
+            
+            // Build buttons for actual periods
+            let html = '';
+            schedule.forEach((period, index) => {
+                const isActive = (currentPeriod === period.name) || (!currentPeriod && index === 0) ? 'active' : '';
+                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setPeriod('${period.name}', this)">${period.name}</button>`;
+            });
+            
+            periodButtons.innerHTML = html;
+            
+            // Set first period as default if none selected
+            if (!currentPeriod || !schedule.find(p => p.name === currentPeriod)) {
+                currentPeriod = schedule[0].name;
+            }
+            
+            loadStudents();
+        }
 
         // Filter functions
         function setSchedule(schedule, btn) {
@@ -1016,7 +1039,7 @@
             try {
                 localStorage.setItem('dashboard_schedule', currentSchedule);
             } catch(e) {}
-            loadStudents();
+            updatePeriodButtons();
         }
 
         function setPeriod(period, btn) {
@@ -1036,7 +1059,7 @@
             try {
                 localStorage.setItem('dashboard_startType', currentStartType);
             } catch(e) {}
-            loadStudents();
+            updatePeriodButtons();
         }
 
         function returnHome() {
@@ -1267,26 +1290,39 @@
                 
                 if (savedSchedule) {
                     currentSchedule = savedSchedule;
-                    document.querySelector(`[data-schedule="${savedSchedule}"]`).classList.add('active');
-                    document.querySelector('[data-schedule]:not([data-schedule="' + savedSchedule + '"])').classList.remove('active');
-                }
-                if (savedPeriod) {
-                    currentPeriod = savedPeriod;
-                    document.querySelector(`[data-period="${savedPeriod}"]`).classList.add('active');
-                    document.querySelectorAll('[data-period]').forEach(b => {
-                        if (b.dataset.period !== savedPeriod) b.classList.remove('active');
-                    });
+                    document.querySelector(`[data-schedule="${savedSchedule}"]`)?.classList.add('active');
+                    document.querySelector('[data-schedule]:not([data-schedule="' + savedSchedule + '"])')?.classList.remove('active');
                 }
                 if (savedStartType) {
                     currentStartType = savedStartType;
-                    document.querySelector(`[data-start="${savedStartType}"]`).classList.add('active');
+                    document.querySelector(`[data-start="${savedStartType}"]`)?.classList.add('active');
                     document.querySelectorAll('[data-start]').forEach(b => {
                         if (b.dataset.start !== savedStartType) b.classList.remove('active');
                     });
                 }
-            } catch (e) {}
+                
+                // Populate period buttons based on current schedule/start type
+                updatePeriodButtons();
+                
+                // Restore saved period if it exists in current schedule
+                if (savedPeriod) {
+                    currentPeriod = savedPeriod;
+                    setTimeout(() => {
+                        const periodBtn = document.querySelector(`[data-period="${savedPeriod}"]`);
+                        if (periodBtn) {
+                            periodBtn.classList.add('active');
+                            document.querySelectorAll('[data-period]').forEach(b => {
+                                if (b.dataset.period !== savedPeriod) b.classList.remove('active');
+                            });
+                        }
+                    }, 100);
+                }
+            } catch (e) {
+                console.error('Initialization error:', e);
+                // Fallback: just populate periods with defaults
+                updatePeriodButtons();
+            }
             
-            loadStudents();
             setInterval(loadStudents, 2000);
             setInterval(updatePeriodStatus, 1000);
         });
