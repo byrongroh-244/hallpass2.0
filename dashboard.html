@@ -558,6 +558,7 @@
                 <span class="status-dot inactive"></span>
                 Not Active
             </span>
+            <span class="status-label" id="periodTimeDisplay" style="margin-left: 1rem; color: var(--color-slate); font-weight: 500;">--:-- - --:--</span>
         </div>
     </div>
 
@@ -1082,18 +1083,40 @@
             
             let currentPeriodObj = null;
             for (const period of schedule) {
-                if (period.name === currentPeriod && currentTime >= period.startTime && currentTime <= period.endTime) {
+                if (period.name === currentPeriod) {
                     currentPeriodObj = period;
                     break;
                 }
             }
 
             const statusBadge = document.getElementById('periodStatus');
+            const timeDisplay = document.getElementById('periodTimeDisplay');
+            
             if (currentPeriodObj) {
-                statusBadge.className = 'status-indicator-badge active';
-                statusBadge.innerHTML = '<span class="status-dot active"></span> Active';
-                return true;
+                // Format time display (convert 24hr to 12hr AM/PM)
+                const formatTime = (time) => {
+                    const [hours, minutes] = time.split(':').map(Number);
+                    const period = hours >= 12 ? 'PM' : 'AM';
+                    const displayHours = hours % 12 || 12;
+                    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+                };
+                
+                timeDisplay.textContent = `${formatTime(currentPeriodObj.startTime)} - ${formatTime(currentPeriodObj.endTime)}`;
+                
+                // Check if currently active
+                const isActive = currentTime >= currentPeriodObj.startTime && currentTime <= currentPeriodObj.endTime;
+                
+                if (isActive) {
+                    statusBadge.className = 'status-indicator-badge active';
+                    statusBadge.innerHTML = '<span class="status-dot active"></span> Active';
+                    return true;
+                } else {
+                    statusBadge.className = 'status-indicator-badge inactive';
+                    statusBadge.innerHTML = '<span class="status-dot inactive"></span> Not Active';
+                    return false;
+                }
             } else {
+                timeDisplay.textContent = '--:-- - --:--';
                 statusBadge.className = 'status-indicator-badge inactive';
                 statusBadge.innerHTML = '<span class="status-dot inactive"></span> Not Active';
                 return false;
@@ -1108,9 +1131,22 @@
             // Build the schedule string to match Firebase data format
             const scheduleString = `${currentSchedule}_${currentStartType}`;
             
+            // Get the roster for the current period
+            const schedule = CONFIG.schedules[currentSchedule][currentStartType];
+            const currentPeriodObj = schedule.find(p => p.name === currentPeriod);
+            
+            if (!currentPeriodObj || !currentPeriodObj.students) {
+                console.log('No roster found for period:', currentPeriod);
+                document.getElementById('studentsGrid').innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--color-slate);">No roster found for this period</div>';
+                return;
+            }
+            
+            const roster = currentPeriodObj.students; // { qr_01: "Liam", qr_02: "Flynn", ... }
+            
+            // Fetch Firebase data for students who have scanned
             const studentsRef = database.ref('students');
             studentsRef.once('value', snapshot => {
-                const students = [];
+                const scannedStudents = {};
                 let inCount = 0;
                 let outCount = 0;
                 let uniqueOut = new Set();
@@ -1122,16 +1158,16 @@
 
                 console.log('Looking for schedule:', scheduleString, 'period:', currentPeriod);
 
+                // Build map of scanned students
                 snapshot.forEach(child => {
                     const data = child.val();
-                    console.log('Student data:', data);
                     
                     // Match schedule and period
                     const scheduleMatch = data.schedule && data.schedule === scheduleString;
                     const periodMatch = data.period === currentPeriod;
                     
                     if (scheduleMatch && periodMatch) {
-                        students.push({
+                        scannedStudents[data.qrCode] = {
                             key: child.key,
                             name: data.name,
                             status: data.status,
@@ -1140,7 +1176,7 @@
                             schedule: data.schedule,
                             timestamp: data.timestamp,
                             outTimestamp: data.outTimestamp
-                        });
+                        };
 
                         if (data.status === 'out') {
                             outCount++;
@@ -1151,7 +1187,8 @@
                     }
                 });
 
-                console.log('Found students:', students.length);
+                console.log('Scanned students:', Object.keys(scannedStudents).length);
+                console.log('Roster size:', Object.keys(roster).length);
 
                 // Get today's logs for statistics
                 const today = new Date().toISOString().split('T')[0];
@@ -1185,55 +1222,58 @@
                     document.getElementById('tripsOver10').textContent = over10;
                 });
 
-                // Render student cards
+                // Render ALL students from roster
                 const grid = document.getElementById('studentsGrid');
                 grid.innerHTML = '';
 
-                if (students.length === 0) {
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--color-slate);">No students found for this schedule and period</div>';
-                }
-
-                students.forEach(student => {
-                    const card = document.createElement('div');
-                    card.className = `student-card ${student.status}${isPeriodActive ? '' : ' inactive'}`;
+                Object.entries(roster).forEach(([qrCode, name]) => {
+                    const scannedData = scannedStudents[qrCode];
+                    const hasScanned = !!scannedData;
+                    const status = hasScanned ? scannedData.status : 'in'; // Default to 'in' if never scanned
+                    const uniqueKey = hasScanned ? scannedData.key : `${scheduleString}_${qrCode}_${currentPeriod}`.replace(/\s+/g, '_');
                     
-                    let statusBadge = `<span class="status-badge ${student.status}">${student.status === 'out' ? 'Out' : 'In'}</span>`;
+                    const card = document.createElement('div');
+                    card.className = `student-card ${status}${isPeriodActive ? '' : ' inactive'}`;
+                    
+                    let statusBadge = hasScanned 
+                        ? `<span class="status-badge ${status}">${status === 'out' ? 'Out' : 'In'}</span>`
+                        : `<span class="status-badge" style="background: rgba(100, 116, 139, 0.1); color: var(--color-slate);">Not Scanned</span>`;
 
                     let timer = '';
-                    if (student.status === 'out' && student.outTimestamp) {
-                        const elapsed = Date.now() - student.outTimestamp;
-                        timer = `<div class="timer" id="timer-${student.key}">${formatTime(elapsed)}</div>`;
+                    if (hasScanned && status === 'out' && scannedData.outTimestamp) {
+                        const elapsed = Date.now() - scannedData.outTimestamp;
+                        timer = `<div class="timer" id="timer-${uniqueKey}">${formatTime(elapsed)}</div>`;
                         
                         // Update timer
-                        if (!timers[student.key]) {
-                            timers[student.key] = setInterval(() => {
-                                const elem = document.getElementById(`timer-${student.key}`);
+                        if (!timers[uniqueKey]) {
+                            timers[uniqueKey] = setInterval(() => {
+                                const elem = document.getElementById(`timer-${uniqueKey}`);
                                 if (elem) {
-                                    const newElapsed = Date.now() - student.outTimestamp;
+                                    const newElapsed = Date.now() - scannedData.outTimestamp;
                                     elem.textContent = formatTime(newElapsed);
                                 }
                             }, 1000);
                         }
-                    } else if (timers[student.key]) {
-                        clearInterval(timers[student.key]);
-                        delete timers[student.key];
+                    } else if (timers[uniqueKey]) {
+                        clearInterval(timers[uniqueKey]);
+                        delete timers[uniqueKey];
                     }
 
                     card.innerHTML = `
                         <div class="student-header">
-                            <div class="student-name">${student.name}</div>
+                            <div class="student-name">${name}</div>
                             ${statusBadge}
                         </div>
                         ${timer}
                         <div class="student-actions">
                             <button class="action-button in-btn" 
-                                onclick="manualAction('${student.key}', 'in')"
-                                ${student.status === 'in' || !isPeriodActive ? 'disabled' : ''}>
+                                onclick="manualAction('${uniqueKey}', 'in', '${qrCode}', '${name}')"
+                                ${status === 'in' || !isPeriodActive ? 'disabled' : ''}>
                                 Manual In
                             </button>
                             <button class="action-button out-btn" 
-                                onclick="manualAction('${student.key}', 'out')"
-                                ${student.status === 'out' || !isPeriodActive ? 'disabled' : ''}>
+                                onclick="manualAction('${uniqueKey}', 'out', '${qrCode}', '${name}')"
+                                ${status === 'out' || !isPeriodActive ? 'disabled' : ''}>
                                 Manual Out
                             </button>
                         </div>
@@ -1244,11 +1284,25 @@
             });
         }
 
-        window.manualAction = async function(studentKey, action) {
+        window.manualAction = async function(studentKey, action, qrCode, studentName) {
             try {
                 const ref = database.ref('students/' + studentKey);
                 const snap = await ref.once('value');
-                const curr = snap.val();
+                let curr = snap.val();
+                
+                const scheduleString = `${currentSchedule}_${currentStartType}`;
+                
+                // If student hasn't scanned yet, create initial record
+                if (!curr) {
+                    curr = {
+                        name: studentName,
+                        qrCode: qrCode,
+                        period: currentPeriod,
+                        schedule: scheduleString,
+                        status: 'in', // Starting status
+                        timestamp: Date.now()
+                    };
+                }
                 
                 const newStatus = action;
                 const data = {
@@ -1280,6 +1334,91 @@
                 alert('Error updating student status');
             }
         };
+
+        // Auto-reset function - runs when period ends
+        let lastPeriodState = null;
+        function checkPeriodEnd() {
+            if (!currentSchedule || !currentPeriod || !currentStartType) return;
+            
+            const schedule = CONFIG.schedules[currentSchedule][currentStartType];
+            const now = new Date();
+            const currentTime = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            let currentPeriodObj = null;
+            for (const period of schedule) {
+                if (period.name === currentPeriod) {
+                    currentPeriodObj = period;
+                    break;
+                }
+            }
+            
+            if (!currentPeriodObj) return;
+            
+            const isActive = currentTime >= currentPeriodObj.startTime && currentTime <= currentPeriodObj.endTime;
+            const periodJustEnded = lastPeriodState === true && isActive === false;
+            
+            if (periodJustEnded) {
+                console.log('Period just ended - auto-resetting students still marked "out"');
+                autoResetStudents();
+            }
+            
+            lastPeriodState = isActive;
+        }
+
+        async function autoResetStudents() {
+            try {
+                const scheduleString = `${currentSchedule}_${currentStartType}`;
+                const studentsRef = database.ref('students');
+                const snapshot = await studentsRef.once('value');
+                
+                const resetPromises = [];
+                
+                snapshot.forEach(child => {
+                    const data = child.val();
+                    
+                    // Match schedule and period
+                    const scheduleMatch = data.schedule && data.schedule === scheduleString;
+                    const periodMatch = data.period === currentPeriod;
+                    
+                    if (scheduleMatch && periodMatch && data.status === 'out') {
+                        console.log('Auto-resetting student:', data.name);
+                        
+                        // Update student status to 'in'
+                        const updatePromise = child.ref.update({
+                            status: 'in',
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            outTimestamp: null
+                        });
+                        
+                        // Create auto-reset log
+                        const logData = {
+                            studentName: data.name,
+                            qrCode: data.qrCode,
+                            period: data.period,
+                            schedule: data.schedule,
+                            action: 'auto-reset',
+                            timestamp: firebase.database.ServerValue.TIMESTAMP,
+                            date: new Date().toISOString().split('T')[0],
+                            outTime: data.outTimestamp || data.timestamp,
+                            inTime: Date.now(),
+                            duration: Date.now() - (data.outTimestamp || data.timestamp)
+                        };
+                        
+                        const logPromise = database.ref('logs').push().set(logData);
+                        
+                        resetPromises.push(updatePromise, logPromise);
+                    }
+                });
+                
+                if (resetPromises.length > 0) {
+                    await Promise.all(resetPromises);
+                    console.log('Auto-reset complete');
+                    loadStudents();
+                }
+            } catch (err) {
+                console.error('Error during auto-reset:', err);
+            }
+        }
 
         // Initialize
         window.addEventListener('load', () => {
@@ -1325,6 +1464,7 @@
             
             setInterval(loadStudents, 2000);
             setInterval(updatePeriodStatus, 1000);
+            setInterval(checkPeriodEnd, 30000); // Check every 30 seconds for period end
         });
     </script>
 </body>
