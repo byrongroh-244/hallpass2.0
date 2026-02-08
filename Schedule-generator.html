@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hall Pass Schedule Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .header h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 0.5rem; }
+        .header p { font-size: 1rem; opacity: 0.9; }
+        
+        .content { padding: 2rem; }
+        
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+        
+        .period-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .period-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .period-card h3 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+        
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+        }
+        
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .time-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        
+        .add-period-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .add-period-btn:hover {
+            background: #5568d3;
+        }
+        
+        .remove-btn {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 0.5rem;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 1.25rem;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.125rem;
+            font-weight: 700;
+            cursor: pointer;
+            margin: 2rem 0;
+        }
+        
+        .generate-btn:hover {
+            background: #059669;
+        }
+        
+        .output-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+        
+        .output-section h2 {
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: #0f172a;
+        }
+        
+        .code-output {
+            background: #0f172a;
+            color: #e2e8f0;
+            padding: 1.5rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            white-space: pre;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .copy-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+        
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+        
+        .info-box {
+            background: rgba(102, 126, 234, 0.1);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .info-box h3 {
+            font-size: 0.9375rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #667eea;
+        }
+        
+        .info-box p {
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #475569;
+        }
+        
+        .info-box code {
+            background: rgba(102, 126, 234, 0.15);
+            padding: 0.125rem 0.375rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8125rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📅 Hall Pass Schedule Generator</h1>
+            <p>Configure your class schedules and generate formatted code</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <h3>📌 Recommended Naming Format</h3>
+                <p>
+                    Use the format: <code>{Day}{Period}-{Subject}</code><br>
+                    Examples: <code>Red1-Algebra</code>, <code>Black2-Geometry</code>, <code>Red3-PreAlgebra</code><br><br>
+                    This format ensures each class has a unique identifier and makes filtering by period/subject easy in your dashboard and analytics.
+                </p>
+            </div>
+            
+            <!-- RED DAY REGULAR -->
+            <div class="section">
+                <h2>🔴 Red Day - Regular Schedule</h2>
+                <div id="redRegularPeriods"></div>
+                <button class="add-period-btn" onclick="addPeriod('red', 'regular')">+ Add Period</button>
+            </div>
+            
+            <!-- RED DAY LATE START -->
+            <div class="section">
+                <h2>🔴 Red Day - Late Start Schedule</h2>
+                <div id="redLatePeriods"></div>
+                <button class="add-period-btn" onclick="addPeriod('red', 'late')">+ Add Period</button>
+            </div>
+            
+            <!-- BLACK DAY REGULAR -->
+            <div class="section">
+                <h2>⚫ Black Day - Regular Schedule</h2>
+                <div id="blackRegularPeriods"></div>
+                <button class="add-period-btn" onclick="addPeriod('black', 'regular')">+ Add Period</button>
+            </div>
+            
+            <!-- BLACK DAY LATE START -->
+            <div class="section">
+                <h2>⚫ Black Day - Late Start Schedule</h2>
+                <div id="blackLatePeriods"></div>
+                <button class="add-period-btn" onclick="addPeriod('black', 'late')">+ Add Period</button>
+            </div>
+            
+            <button class="generate-btn" onclick="generateCode()">🚀 Generate Schedule Code</button>
+            
+            <div class="output-section" id="outputSection" style="display: none;">
+                <h2>Generated Code</h2>
+                <div class="code-output" id="codeOutput"></div>
+                <button class="copy-btn" onclick="copyCode()">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let periodCounter = 0;
+        
+        function addPeriod(day, startType) {
+            const containerId = `${day}${startType.charAt(0).toUpperCase() + startType.slice(1)}Periods`;
+            const container = document.getElementById(containerId);
+            
+            const periodId = `period_${periodCounter++}`;
+            
+            const periodCard = document.createElement('div');
+            periodCard.className = 'period-card';
+            periodCard.id = periodId;
+            
+            periodCard.innerHTML = `
+                <h3>Period Configuration</h3>
+                <div class="form-group">
+                    <label>Period Name (e.g., Red1-Algebra, Black2-Geometry)</label>
+                    <input type="text" class="period-name" placeholder="Red1-Algebra">
+                </div>
+                <div class="form-group">
+                    <label>Time Range</label>
+                    <div class="time-inputs">
+                        <input type="time" class="start-time" value="07:45">
+                        <input type="time" class="end-time" value="09:13">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Student Names (one per line - QR codes will be auto-generated)</label>
+                    <textarea class="students" placeholder="Alice Johnson
+Bob Smith
+Carol Davis"></textarea>
+                </div>
+                <button class="remove-btn" onclick="removePeriod('${periodId}')">Remove Period</button>
+            `;
+            
+            container.appendChild(periodCard);
+        }
+        
+        function removePeriod(periodId) {
+            const element = document.getElementById(periodId);
+            if (element) {
+                element.remove();
+            }
+        }
+        
+        function parseStudents(studentsText) {
+            const students = {};
+            const lines = studentsText.split('\n').filter(line => line.trim());
+            
+            lines.forEach((line, index) => {
+                const studentName = line.trim();
+                if (studentName) {
+                    // Auto-generate QR code as qr_01, qr_02, qr_03, etc.
+                    const qrCode = `qr_${String(index + 1).padStart(2, '0')}`;
+                    students[qrCode] = studentName;
+                }
+            });
+            
+            return students;
+        }
+        
+        function generateCode() {
+            const schedules = {
+                red: { regular: [], late: [] },
+                black: { regular: [], late: [] }
+            };
+            
+            // Collect all periods
+            ['red', 'black'].forEach(day => {
+                ['regular', 'late'].forEach(startType => {
+                    const containerId = `${day}${startType.charAt(0).toUpperCase() + startType.slice(1)}Periods`;
+                    const container = document.getElementById(containerId);
+                    const periodCards = container.querySelectorAll('.period-card');
+                    
+                    periodCards.forEach(card => {
+                        const name = card.querySelector('.period-name').value.trim();
+                        const startTime = card.querySelector('.start-time').value;
+                        const endTime = card.querySelector('.end-time').value;
+                        const studentsText = card.querySelector('.students').value;
+                        
+                        if (name && startTime && endTime) {
+                            schedules[day][startType].push({
+                                name,
+                                startTime,
+                                endTime,
+                                students: parseStudents(studentsText)
+                            });
+                        }
+                    });
+                });
+            });
+            
+            // Generate formatted JavaScript object
+            const code = `schedules: ${JSON.stringify(schedules, null, 4).replace(/"([^"]+)":/g, '$1:')}`;
+            
+            document.getElementById('codeOutput').textContent = code;
+            document.getElementById('outputSection').style.display = 'block';
+            document.getElementById('outputSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function copyCode() {
+            const code = document.getElementById('codeOutput').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                }, 2000);
+            });
+        }
+        
+        // Initialize with example periods
+        window.addEventListener('load', () => {
+            // Red Day Regular - Example
+            addPeriod('red', 'regular');
+            const redReg1 = document.querySelector('#redRegularPeriods .period-card:last-child');
+            redReg1.querySelector('.period-name').value = 'Red1-Algebra';
+            redReg1.querySelector('.start-time').value = '07:45';
+            redReg1.querySelector('.end-time').value = '09:13';
+            redReg1.querySelector('.students').value = 'Alice Johnson\nBob Smith\nCarol Davis';
+            
+            // Black Day Regular - Example
+            addPeriod('black', 'regular');
+            const blackReg1 = document.querySelector('#blackRegularPeriods .period-card:last-child');
+            blackReg1.querySelector('.period-name').value = 'Black2-Geometry';
+            blackReg1.querySelector('.start-time').value = '09:23';
+            blackReg1.querySelector('.end-time').value = '10:51';
+            blackReg1.querySelector('.students').value = 'Alice Johnson\nBob Smith\nDavid Lee';
+        });
+    </script>
+</body>
+</html>
