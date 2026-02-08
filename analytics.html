@@ -695,14 +695,13 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-                apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-                authDomain: "hallpass2-n244.firebaseapp.com",
-                databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-                projectId: "hallpass2-n244",
-                storageBucket: "hallpass2-n244.firebasestorage.app",
-                messagingSenderId: "262508006458",
-                appId: "1:262508006458:web:4cdebead1181506d833903",
-                measurementId: "G-175T67QFGY"
+            apiKey: "AIzaSyBs47mEKcIcBfyHE1Z8hfXLH0J0r5DXB7Y",
+            authDomain: "bathroom-passes-e9508.firebaseapp.com",
+            databaseURL: "https://bathroom-passes-e9508-default-rtdb.firebaseio.com",
+            projectId: "bathroom-passes-e9508",
+            storageBucket: "bathroom-passes-e9508.firebasestorage.app",
+            messagingSenderId: "444029601733",
+            appId: "1:444029601733:web:c5f3fc8d2e6d09be95a7a8"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -882,11 +881,11 @@
                 allLogs = [];
                 snapshot.forEach(child => {
                     const log = child.val();
-                    // Parse schedule format (A_P1, B_P2, etc.)
+                    // Parse schedule format (red_regular, black_late, etc.)
                     if (log.schedule && log.schedule.includes('_')) {
                         const parts = log.schedule.split('_');
-                        log.scheduleDay = parts[0]; // 'A' or 'B'
-                        log.period = parts[1]; // 'P1', 'P2', etc.
+                        log.scheduleDay = parts[0]; // 'red' or 'black' 
+                        log.startType = parts[1]; // 'regular' or 'late'
                     }
                     allLogs.push(log);
                 });
@@ -899,13 +898,17 @@
         // OVERVIEW TAB
         function loadOverviewData() {
             const { schedule, period } = currentFilters.overview;
-            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
+            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range14 = getDateRange(14);
+            
+            console.log('Overview: Looking for scheduleDay:', scheduleDay, 'period:', period);
             
             // Get most recent period data
             const recentPeriodLogs = allLogs
-                .filter(log => log.scheduleDay === scheduleDay && log.period === period)
+                .filter(log => log.scheduleDay === scheduleDay)
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            console.log('Found logs for schedule:', recentPeriodLogs.length);
             
             const mostRecentDate = recentPeriodLogs.length > 0 ? recentPeriodLogs[0].date : null;
             const recentPeriodData = mostRecentDate 
@@ -984,8 +987,7 @@
             
             // Top students table (filtered by schedule/period, last 14 days)
             const filteredLogs = logs14.filter(log => 
-                log.scheduleDay === scheduleDay && 
-                log.period === period
+                log.scheduleDay === scheduleDay
             );
             
             const studentStats = {};
@@ -1042,15 +1044,14 @@
         // BY CLASS TAB
         function loadClassData() {
             const { schedule, period } = currentFilters.class;
-            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
+            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range = getTimeRangeDates('classTimeRange', 'classStartDate', 'classEndDate');
             
             const filtered = allLogs.filter(log =>
                 log.scheduleDay === scheduleDay &&
-                log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
-                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset')
+                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
             );
             
             const uniqueStudents = new Set(filtered.map(log => log.studentName)).size;
@@ -1176,12 +1177,12 @@
         // BY STUDENT TAB
         function updateStudentList() {
             const { schedule, period } = currentFilters.student;
-            const scheduleDay = schedule === 'Red' ? 'A' : 'B'; // Map Red->A, Black->B
+            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const studentSelect = document.getElementById('studentSelect');
             
             const students = new Set();
             allLogs.forEach(log => {
-                if (log.scheduleDay === scheduleDay && log.period === period && log.studentName) {
+                if (log.scheduleDay === scheduleDay && log.studentName) {
                     students.add(log.studentName);
                 }
             });
