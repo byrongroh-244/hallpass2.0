@@ -1035,7 +1035,22 @@
                     allLogs.push(log);
                 });
                 console.log('Total logs loaded:', allLogs.length);
-                console.log('Sample log:', allLogs[0]);
+                if (allLogs.length > 0) {
+                    console.log('Sample log:', allLogs[0]);
+                    console.log('Parsed scheduleDay:', allLogs[0].scheduleDay);
+                    console.log('Parsed startType:', allLogs[0].startType);
+                    console.log('Period:', allLogs[0].period);
+                    
+                    // Show breakdown by schedule
+                    const bySchedule = {};
+                    allLogs.forEach(log => {
+                        const key = `${log.scheduleDay}_${log.startType}`;
+                        bySchedule[key] = (bySchedule[key] || 0) + 1;
+                    });
+                    console.log('Logs by schedule:', bySchedule);
+                } else {
+                    console.warn('No logs found in database!');
+                }
                 
                 // Initialize period buttons for all tabs
                 updateOverviewPeriodButtons();
@@ -1048,18 +1063,29 @@
 
         // OVERVIEW TAB
         function loadOverviewData() {
-            const { schedule, period } = currentFilters.overview;
+            const { schedule, startType, period } = currentFilters.overview;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range14 = getDateRange(14);
             
-            console.log('Overview: Looking for scheduleDay:', scheduleDay, 'period:', period);
+            console.log('=== OVERVIEW DATA LOAD ===');
+            console.log('Filters:', { schedule, startType, period, scheduleDay });
+            console.log('Total logs available:', allLogs.length);
             
             // Get most recent period data
             const recentPeriodLogs = allLogs
-                .filter(log => log.scheduleDay === scheduleDay)
+                .filter(log => {
+                    const matches = log.scheduleDay === scheduleDay;
+                    if (!matches) {
+                        console.log('Log rejected - scheduleDay mismatch:', log.scheduleDay, 'vs', scheduleDay, log);
+                    }
+                    return matches;
+                })
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
             
             console.log('Found logs for schedule:', recentPeriodLogs.length);
+            if (recentPeriodLogs.length > 0) {
+                console.log('Sample matching log:', recentPeriodLogs[0]);
+            }
             
             const mostRecentDate = recentPeriodLogs.length > 0 ? recentPeriodLogs[0].date : null;
             const recentPeriodData = mostRecentDate 
