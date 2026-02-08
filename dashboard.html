@@ -542,12 +542,10 @@
         <div class="slider-group">
             <div class="slider-label">Period</div>
             <div class="slider-buttons">
-                <button class="slider-button active" data-period="Red1-Algebra" onclick="setPeriod('Red1-Algebra', this)">Red1-Alg</button>
-                <button class="slider-button" data-period="Red2-Algebra" onclick="setPeriod('Red2-Algebra', this)">Red2-Alg</button>
-                <button class="slider-button" data-period="Red3-PreAlgebra" onclick="setPeriod('Red3-PreAlgebra', this)">Red3-PreAlg</button>
-                <button class="slider-button" data-period="Black2-Geometry" onclick="setPeriod('Black2-Geometry', this)">Blk2-Geo</button>
-                <button class="slider-button" data-period="Black3-Geometry" onclick="setPeriod('Black3-Geometry', this)">Blk3-Geo</button>
-                <button class="slider-button" data-period="Black4-Algebra" onclick="setPeriod('Black4-Algebra', this)">Blk4-Alg</button>
+                <button class="slider-button active" data-period="P1" onclick="setPeriod('P1', this)">P1</button>
+                <button class="slider-button" data-period="P2" onclick="setPeriod('P2', this)">P2</button>
+                <button class="slider-button" data-period="P3" onclick="setPeriod('P3', this)">P3</button>
+                <button class="slider-button" data-period="P4" onclick="setPeriod('P4', this)">P4</button>
             </div>
         </div>
         <div class="slider-group">
@@ -625,9 +623,7 @@
                 measurementId: "G-175T67QFGY"
             },
             pin: "1891",
-            // PASTE YOUR GENERATED SCHEDULE CODE HERE
-            // Use the Schedule Generator tool to create this configuration
-           schedules: {
+                       schedules: {
     red: {
         regular: [
             {
@@ -1000,13 +996,14 @@
         ]
     }
 }
+}
         };
 
         firebase.initializeApp(CONFIG.firebase);
         const database = firebase.database();
         
         let currentSchedule = 'red';
-        let currentPeriod = 'Red1-Algebra';
+        let currentPeriod = 'P1';
         let currentStartType = 'regular';
         let updateInterval = null;
         let timers = {};
