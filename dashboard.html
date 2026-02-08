@@ -628,8 +628,8 @@
                     regular: [
                         {
                             name: "P1",
-                            startTime: "00:00",
-                            endTime: "09:45",
+                            startTime: "13:45",
+                            endTime: "13:50",
                             students: {
                                 "qr_01": "Byron",
                                 "qr_02": "Laurel",
@@ -640,8 +640,8 @@
                     late: [
                         {
                             name: "P1",
-                            startTime: "09:50",
-                            endTime: "12:00",
+                            startTime: "13:51",
+                            endTime: "13:56",
                             students: {
                                 "qr_01": "Byron",
                                 "qr_02": "Laurel",
@@ -654,7 +654,7 @@
                     regular: [
                         {
                             name: "P1",
-                            startTime: "12:01",
+                            startTime: "13:57",
                             endTime: "14:00",
                             students: {
                                 "qr_01": "Byron",
@@ -856,9 +856,6 @@
                     
                     let statusBadge = `<span class="status-badge ${student.status}">${student.status === 'out' ? 'Out' : 'In'}</span>`;
 
-                    // Calculate total time out today from logs
-                    let totalTimeToday = 0;
-                    
                     let timer = '';
                     if (student.status === 'out' && student.outTimestamp) {
                         const elapsed = Date.now() - student.outTimestamp;
@@ -879,32 +876,12 @@
                         delete timers[student.key];
                     }
 
-                    // Get total time for today
-                    const today = new Date().toISOString().split('T')[0];
-                    database.ref('logs').orderByChild('date').equalTo(today).once('value', snapshot => {
-                        snapshot.forEach(child => {
-                            const log = child.val();
-                            if (log.studentName === student.name && log.duration) {
-                                totalTimeToday += log.duration;
-                            }
-                        });
-                        
-                        // Update total time display
-                        const totalElem = document.getElementById(`total-${student.key}`);
-                        if (totalElem) {
-                            totalElem.textContent = `Total Today: ${formatTime(totalTimeToday)}`;
-                        }
-                    });
-
                     card.innerHTML = `
                         <div class="student-header">
                             <div class="student-name">${student.name}</div>
                             ${statusBadge}
                         </div>
                         ${timer}
-                        <div class="student-info" id="total-${student.key}" style="text-align: center; font-weight: 600; color: var(--color-slate); margin: 0.5rem 0;">
-                            Total Today: 0:00
-                        </div>
                         <div class="student-actions">
                             <button class="action-button in-btn" 
                                 onclick="manualAction('${student.key}', 'in')"
