@@ -45,6 +45,26 @@
             color: var(--color-slate);
             font-size: 0.9375rem;
         }
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--color-cloud);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .settings-icon:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+        .settings-icon svg {
+            width: 20px;
+            height: 20px;
+        }
         
         /* Slider Filters */
         .slider-filters {
@@ -215,6 +235,15 @@
             background: rgba(239, 68, 68, 0.05);
             border-color: var(--color-danger);
         }
+        .student-card.inactive {
+            opacity: 0.5;
+            pointer-events: none;
+            background: var(--color-cloud);
+            border-color: var(--color-slate);
+        }
+        .student-card.inactive .student-name {
+            color: var(--color-slate);
+        }
         .student-header { 
             display: flex; 
             justify-content: space-between; 
@@ -243,7 +272,7 @@
             color: var(--color-danger);
         }
         .status-badge.manual-in {
-            background: rgba(59, 130, 246, 0.1);
+            background: rgba((16, 185, 129, 0.1));
             color: #3b82f6;
         }
         .status-badge.manual-out {
@@ -494,6 +523,11 @@
             <h1>Live Dashboard</h1>
             <p id="periodInfo">Select schedule and period</p>
         </div>
+        <button class="settings-icon" onclick="returnHome()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+        </button>
     </div>
 
     <!-- Slider Filters -->
@@ -685,6 +719,10 @@
             loadStudents();
         }
 
+        function returnHome() {
+            window.location.href = 'index.html';
+        }
+
         function formatTime(ms) {
             const seconds = Math.floor(ms / 1000);
             const minutes = Math.floor(seconds / 60);
@@ -693,7 +731,7 @@
         }
 
         function updatePeriodStatus() {
-            if (!currentSchedule || !currentPeriod || !currentStartType) return;
+            if (!currentSchedule || !currentPeriod || !currentStartType) return false;
 
             const schedule = CONFIG.schedules[currentSchedule][currentStartType];
             const now = new Date();
@@ -711,16 +749,18 @@
             if (currentPeriodObj) {
                 statusBadge.className = 'status-indicator-badge active';
                 statusBadge.innerHTML = '<span class="status-dot active"></span> Active';
+                return true;
             } else {
                 statusBadge.className = 'status-indicator-badge inactive';
                 statusBadge.innerHTML = '<span class="status-dot inactive"></span> Not Active';
+                return false;
             }
         }
 
         function loadStudents() {
             if (!currentSchedule || !currentPeriod || !currentStartType) return;
 
-            updatePeriodStatus();
+            const isPeriodActive = updatePeriodStatus();
 
             // Build the schedule string to match Firebase data format
             const scheduleString = `${currentSchedule}_${currentStartType}`;
@@ -812,7 +852,7 @@
 
                 students.forEach(student => {
                     const card = document.createElement('div');
-                    card.className = `student-card ${student.status}`;
+                    card.className = `student-card ${student.status}${isPeriodActive ? '' : ' inactive'}`;
                     
                     let statusBadge = `<span class="status-badge ${student.status}">${student.status === 'out' ? 'Out' : 'In'}</span>`;
 
@@ -848,12 +888,12 @@
                         <div class="student-actions">
                             <button class="action-button in-btn" 
                                 onclick="manualAction('${student.key}', 'in')"
-                                ${student.status === 'in' ? 'disabled' : ''}>
+                                ${student.status === 'in' || !isPeriodActive ? 'disabled' : ''}>
                                 Manual In
                             </button>
                             <button class="action-button out-btn" 
                                 onclick="manualAction('${student.key}', 'out')"
-                                ${student.status === 'out' ? 'disabled' : ''}>
+                                ${student.status === 'out' || !isPeriodActive ? 'disabled' : ''}>
                                 Manual Out
                             </button>
                         </div>
