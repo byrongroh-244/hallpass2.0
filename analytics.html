@@ -619,16 +619,6 @@
                         <option value="custom">Custom</option>
                     </select>
                 </div>
-                <div class="filter-group">
-                    <label>Status Filter</label>
-                    <select id="studentStatusFilter" onchange="loadStudentData()">
-                        <option value="all">All Trips</option>
-                        <option value="in">Normal In</option>
-                        <option value="out">Normal Out</option>
-                        <option value="manual-in">Manual In</option>
-                        <option value="manual-out">Manual Out</option>
-                    </select>
-                </div>
                 <div class="filter-group" id="studentCustomDates" style="display: none;">
                     <label>Start Date</label>
                     <input type="date" id="studentStartDate" onchange="loadStudentData()">
@@ -1216,19 +1206,13 @@
             document.getElementById('noStudentSelected').style.display = 'none';
             
             const range = getTimeRangeDates('studentTimeRange', 'studentStartDate', 'studentEndDate');
-            const statusFilter = document.getElementById('studentStatusFilter').value;
             
-            let filtered = allLogs.filter(log =>
+            const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
                 (log.action === 'in' || log.action === 'out' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in' || log.action === 'manual-out')
             );
-            
-            // Apply status filter
-            if (statusFilter !== 'all') {
-                filtered = filtered.filter(log => log.action === statusFilter);
-            }
             
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
