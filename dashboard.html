@@ -566,12 +566,12 @@
     <div class="stats-container">
         <div class="stats-left">
             <div class="stat-card large">
-                <div class="stat-label">In Classroom</div>
-                <div class="stat-value in" id="inCount">0</div>
-            </div>
-            <div class="stat-card large">
                 <div class="stat-label">Out of Room</div>
                 <div class="stat-value out" id="outCount">0</div>
+            </div>
+            <div class="stat-card large">
+                <div class="stat-label">In Classroom</div>
+                <div class="stat-value in" id="inCount">0</div>
             </div>
         </div>
         <div class="stats-right">
@@ -1190,28 +1190,60 @@
                 console.log('Scanned students:', Object.keys(scannedStudents).length);
                 console.log('Roster size:', Object.keys(roster).length);
 
-                // Get today's logs for statistics
+                // Count ALL roster students, not just those who scanned
+                const totalRosterSize = Object.keys(roster).length;
+                inCount = 0;
+                outCount = 0;
+                
+                // Count based on status of all students
+                Object.keys(roster).forEach(qrCode => {
+                    const scannedData = scannedStudents[qrCode];
+                    if (scannedData && scannedData.status === 'out') {
+                        outCount++;
+                        uniqueOut.add(scannedData.name);
+                    } else {
+                        // Either not scanned (default 'in') or scanned in
+                        inCount++;
+                    }
+                });
+                
+                console.log('Total roster:', totalRosterSize, 'In:', inCount, 'Out:', outCount);
+
+                // Get today's logs for statistics AND most recent trips
                 const today = new Date().toISOString().split('T')[0];
                 database.ref('logs').orderByChild('date').equalTo(today).once('value', logSnapshot => {
+                    const studentLastTrips = {}; // Track most recent trip per student
+                    
                     logSnapshot.forEach(child => {
                         const log = child.val();
                         const scheduleMatch = log.schedule && log.schedule === scheduleString;
                         const periodMatch = log.period === currentPeriod;
                         
-                        if (scheduleMatch && periodMatch && (log.action === 'in' || log.action === 'manual-in') && log.duration) {
-                            const minutes = log.duration / 60000;
-                            totalTimeMs += log.duration;
-                            tripCount++;
-                            
-                            if (minutes < 5) under5++;
-                            else if (minutes <= 10) from5to10++;
-                            else over10++;
+                        if (scheduleMatch && periodMatch) {
+                            // Track trip statistics
+                            if ((log.action === 'in' || log.action === 'manual-in' || log.action === 'auto-reset') && log.duration) {
+                                const minutes = log.duration / 60000;
+                                totalTimeMs += log.duration;
+                                tripCount++;
+                                
+                                if (minutes < 5) under5++;
+                                else if (minutes <= 10) from5to10++;
+                                else over10++;
+                                
+                                // Track most recent trip for each student
+                                if (!studentLastTrips[log.qrCode] || log.timestamp > studentLastTrips[log.qrCode].timestamp) {
+                                    studentLastTrips[log.qrCode] = {
+                                        duration: log.duration,
+                                        timestamp: log.timestamp
+                                    };
+                                }
+                            }
                         }
                     });
 
                     // Update stats
-                    document.getElementById('inCount').textContent = inCount;
                     document.getElementById('outCount').textContent = outCount;
+                    document.getElementById('inCount').textContent = inCount;
                     document.getElementById('uniqueStudents').textContent = uniqueOut.size;
                     document.getElementById('totalTime').textContent = 
                         Math.round(totalTimeMs / 60000) + 'm';
@@ -1220,6 +1252,9 @@
                     document.getElementById('tripsUnder5').textContent = under5;
                     document.getElementById('trips5to10').textContent = from5to10;
                     document.getElementById('tripsOver10').textContent = over10;
+                    
+                    // Store last trips for rendering
+                    window.studentLastTrips = studentLastTrips;
                 });
 
                 // Render ALL students from roster
@@ -1241,6 +1276,7 @@
 
                     let timer = '';
                     if (hasScanned && status === 'out' && scannedData.outTimestamp) {
+                        // Show live timer for students currently out
                         const elapsed = Date.now() - scannedData.outTimestamp;
                         timer = `<div class="timer" id="timer-${uniqueKey}">${formatTime(elapsed)}</div>`;
                         
@@ -1254,9 +1290,20 @@
                                 }
                             }, 1000);
                         }
-                    } else if (timers[uniqueKey]) {
-                        clearInterval(timers[uniqueKey]);
-                        delete timers[uniqueKey];
+                    } else {
+                        // Clear timer if they're back in
+                        if (timers[uniqueKey]) {
+                            clearInterval(timers[uniqueKey]);
+                            delete timers[uniqueKey];
+                        }
+                        
+                        // Show last trip duration if they've completed a trip today
+                        if (hasScanned && status === 'in' && window.studentLastTrips && window.studentLastTrips[qrCode]) {
+                            const lastTrip = window.studentLastTrips[qrCode];
+                            timer = `<div class="student-info" style="color: var(--color-slate); font-size: 0.8125rem;">
+                                Last trip: ${formatTime(lastTrip.duration)}
+                            </div>`;
+                        }
                     }
 
                     card.innerHTML = `
