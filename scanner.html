@@ -185,8 +185,8 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 65px;
+            height: 65px;
             background: rgba(255, 255, 255, 0.9);
             border-radius: 50%;
             display: flex;
@@ -203,8 +203,8 @@
             transform: scale(1.1); 
         }
         .settings-icon svg {
-            width: 24px;
-            height: 24px;
+            width: 30px;
+            height: 30px;
         }
         
         .settings-menu {
@@ -325,20 +325,9 @@
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
             <h2>Settings</h2>
-            <div class="settings-menu">
-                <div class="settings-option">
-                    <div>
-                        <div class="settings-label">Lock Kiosk Mode</div>
-                        <div class="settings-description">Prevent leaving page</div>
-                    </div>
-                    <div class="toggle-switch" id="kioskToggle" onclick="toggleKioskMode()">
-                        <div class="toggle-slider"></div>
-                    </div>
-                </div>
-            </div>
             <div class="modal-buttons">
-                <button class="btn-secondary" onclick="changeSchedule()">Change Schedule</button>
-                <button class="btn-primary" onclick="returnHome()">Return Home</button>
+                <button class="btn-secondary" onclick="changeSchedule()" style="padding: 1.25rem; font-size: 1.125rem;">Change Schedule</button>
+                <button class="btn-primary" onclick="returnHome()" style="padding: 1.25rem; font-size: 1.125rem;">Return Home</button>
             </div>
             <div class="modal-buttons" style="margin-top: 0.5rem;">
                 <button class="btn-secondary" onclick="closeSettings()">Close</button>
@@ -763,7 +752,6 @@
         let lastScannedCode = null;
         let lastScannedTime = 0;
         let lastScanTimes = {};
-        let kioskModeEnabled = false;
 
         // PIN System
         function openSettings() {
@@ -820,48 +808,6 @@
             document.getElementById('settingsModal').classList.remove('active');
         }
 
-        function toggleKioskMode() {
-            kioskModeEnabled = !kioskModeEnabled;
-            const toggle = document.getElementById('kioskToggle');
-            
-            if (kioskModeEnabled) {
-                toggle.classList.add('active');
-                enableKioskMode();
-            } else {
-                toggle.classList.remove('active');
-                disableKioskMode();
-            }
-            
-            try {
-                localStorage.setItem('kioskMode', kioskModeEnabled);
-            } catch (e) {}
-        }
-
-        function enableKioskMode() {
-            window.onbeforeunload = function() {
-                return "Kiosk mode is enabled. Enter PIN to exit.";
-            };
-            document.addEventListener('keydown', preventKeys);
-            document.addEventListener('contextmenu', preventDefault);
-        }
-
-        function disableKioskMode() {
-            window.onbeforeunload = null;
-            document.removeEventListener('keydown', preventKeys);
-            document.removeEventListener('contextmenu', preventDefault);
-        }
-
-        function preventKeys(e) {
-            if (e.key === 'F11' || 
-                (e.ctrlKey && (e.key === 'w' || e.key === 't')) ||
-                (e.altKey && e.key === 'F4')) {
-                e.preventDefault();
-            }
-        }
-
-        function preventDefault(e) {
-            e.preventDefault();
-        }
 
         function changeSchedule() {
             closeSettings();
@@ -869,9 +815,6 @@
         }
 
         function returnHome() {
-            if (kioskModeEnabled) {
-                disableKioskMode();
-            }
             window.location.href = 'index.html';
         }
 
@@ -1090,15 +1033,8 @@
             try {
                 const savedType = localStorage.getItem('scanner_scheduleType');
                 const savedStart = localStorage.getItem('scanner_startType');
-                const savedKiosk = localStorage.getItem('kioskMode');
                 
-                console.log('Saved values:', { savedType, savedStart, savedKiosk });
-                
-                if (savedKiosk === 'true') {
-                    kioskModeEnabled = true;
-                    document.getElementById('kioskToggle').classList.add('active');
-                    enableKioskMode();
-                }
+                console.log('Saved values:', { savedType, savedStart });
                 
                 // Always show schedule modal on first load or if values are missing
                 if (savedType && savedStart) {
