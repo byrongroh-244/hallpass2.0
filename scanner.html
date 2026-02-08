@@ -751,7 +751,6 @@
         ]
     }
 }
-}
         };
 
         firebase.initializeApp(CONFIG.firebase);
@@ -1086,10 +1085,14 @@
         }
 
         window.addEventListener('load', () => {
+            console.log('Scanner page loaded');
+            
             try {
                 const savedType = localStorage.getItem('scanner_scheduleType');
                 const savedStart = localStorage.getItem('scanner_startType');
                 const savedKiosk = localStorage.getItem('kioskMode');
+                
+                console.log('Saved values:', { savedType, savedStart, savedKiosk });
                 
                 if (savedKiosk === 'true') {
                     kioskModeEnabled = true;
@@ -1097,6 +1100,7 @@
                     enableKioskMode();
                 }
                 
+                // Always show schedule modal on first load or if values are missing
                 if (savedType && savedStart) {
                     activeScheduleType = savedType;
                     activeStartType = savedStart;
@@ -1107,13 +1111,20 @@
                         late: 'Late Start' 
                     };
                     document.getElementById('scheduleDisplay').textContent = `${labels[activeScheduleType]} • ${labels[activeStartType]}`;
+                    console.log('Starting scanner with saved schedule:', activeScheduleType, activeStartType);
                     startScanner();
                 } else {
+                    console.log('No saved schedule - showing selection modal');
                     document.getElementById('scheduleModal').classList.add('active');
                 }
             } catch (e) {
+                console.error('Initialization error:', e);
                 document.getElementById('scheduleModal').classList.add('active');
             }
+            
+            // Test that settings button is accessible
+            const settingsBtn = document.querySelector('.settings-icon');
+            console.log('Settings button found:', settingsBtn !== null);
         });
     </script>
 </body>
