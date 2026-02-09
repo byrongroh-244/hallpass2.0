@@ -804,8 +804,8 @@
         function updateOverviewPeriodButtons() {
             const container = document.getElementById('overviewPeriodButtons');
             const scheduleDay = currentFilters.overview.schedule === 'Red' ? 'red' : 'black';
-            const startType = currentFilters.overview.startType || 'regular';
-            const periods = CONFIG.schedules[scheduleDay]?.[startType] || [];
+            // Use regular schedule for button labels (same periods exist in late start)
+            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
             
             if (periods.length === 0) {
                 container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
@@ -821,6 +821,50 @@
             
             if (!currentFilters.overview.period) {
                 currentFilters.overview.period = periods[0].name;
+            }
+        }
+
+        function updateClassPeriodButtons() {
+            const container = document.getElementById('classPeriodButtons');
+            const scheduleDay = currentFilters.class.schedule === 'Red' ? 'red' : 'black';
+            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
+            
+            if (periods.length === 0) {
+                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
+                return;
+            }
+            
+            let html = '';
+            periods.forEach((period, index) => {
+                const isActive = (currentFilters.class.period === period.name) || (!currentFilters.class.period && index === 0) ? 'active' : '';
+                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setClassPeriod('${period.name}', this)">${period.name}</button>`;
+            });
+            container.innerHTML = html;
+            
+            if (!currentFilters.class.period) {
+                currentFilters.class.period = periods[0].name;
+            }
+        }
+
+        function updateStudentPeriodButtons() {
+            const container = document.getElementById('studentPeriodButtons');
+            const scheduleDay = currentFilters.student.schedule === 'Red' ? 'red' : 'black';
+            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
+            
+            if (periods.length === 0) {
+                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
+                return;
+            }
+            
+            let html = '';
+            periods.forEach((period, index) => {
+                const isActive = (currentFilters.student.period === period.name) || (!currentFilters.student.period && index === 0) ? 'active' : '';
+                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setStudentPeriod('${period.name}', this)">${period.name}</button>`;
+            });
+            container.innerHTML = html;
+            
+            if (!currentFilters.student.period) {
+                currentFilters.student.period = periods[0].name;
             }
         }
 
@@ -881,16 +925,6 @@
             loadOverviewData();
         }
 
-        function setOverviewStartType(startType, btn) {
-            document.querySelectorAll('#overview .slider-buttons button').forEach(b => {
-                if (b.dataset.start) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.overview.startType = startType;
-            updateOverviewPeriodButtons();
-            loadOverviewData();
-        }
-
         function setOverviewPeriod(period, btn) {
             document.querySelectorAll('#overview .slider-buttons button').forEach(b => {
                 if (b.dataset.period) b.classList.remove('active');
@@ -911,16 +945,6 @@
             loadClassData();
         }
 
-        function setClassStartType(startType, btn) {
-            document.querySelectorAll('#class .slider-buttons button').forEach(b => {
-                if (b.dataset.start) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.class.startType = startType;
-            updateClassPeriodButtons();
-            loadClassData();
-        }
-
         function setClassPeriod(period, btn) {
             document.querySelectorAll('#class .slider-buttons button').forEach(b => {
                 if (b.dataset.period) b.classList.remove('active');
@@ -937,16 +961,6 @@
             });
             btn.classList.add('active');
             currentFilters.student.schedule = schedule;
-            updateStudentPeriodButtons();
-            updateStudentList();
-        }
-
-        function setStudentStartType(startType, btn) {
-            document.querySelectorAll('#student .slider-buttons button').forEach(b => {
-                if (b.dataset.start) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.student.startType = startType;
             updateStudentPeriodButtons();
             updateStudentList();
         }
@@ -1056,33 +1070,31 @@
 
         // OVERVIEW TAB
         function loadOverviewData() {
-            const { schedule, startType, period } = currentFilters.overview;
+            const { schedule, period } = currentFilters.overview;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range14 = getDateRange(14);
             
             console.log('=== OVERVIEW DATA LOAD ===');
-            console.log('Filters:', { schedule, startType, period, scheduleDay });
+            console.log('Filters:', { schedule, period, scheduleDay });
             console.log('Total logs available:', allLogs.length);
             
-            // Get most recent period data - filter by ALL criteria
+            // Get most recent period data - filter by scheduleDay and period only (combines regular + late)
             const recentPeriodLogs = allLogs
                 .filter(log => {
                     const scheduleMatch = log.scheduleDay === scheduleDay;
-                    const startTypeMatch = log.startType === startType;
                     const periodMatch = log.period === period;
                     
-                    if (!scheduleMatch || !startTypeMatch || !periodMatch) {
+                    if (!scheduleMatch || !periodMatch) {
                         console.log('Log filtered out:', {
                             log: log.studentName + ' - ' + log.period,
                             scheduleMatch,
-                            startTypeMatch, 
                             periodMatch,
-                            expected: { scheduleDay, startType, period },
-                            actual: { scheduleDay: log.scheduleDay, startType: log.startType, period: log.period }
+                            expected: { scheduleDay, period },
+                            actual: { scheduleDay: log.scheduleDay, period: log.period }
                         });
                     }
                     
-                    return scheduleMatch && startTypeMatch && periodMatch;
+                    return scheduleMatch && periodMatch;
                 })
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
             
@@ -1101,12 +1113,11 @@
                 ? recentPeriodData.reduce((sum, log) => sum + (log.duration || 0), 0) / recentPeriodData.length
                 : 0;
             
-            // Get 14-day data - ALSO filter by all criteria
+            // Get 14-day data - filter by scheduleDay and period only (combines regular + late)
             const logs14 = allLogs.filter(log => 
                 log.date >= range14.startDate && 
                 log.date <= range14.endDate &&
                 log.scheduleDay === scheduleDay &&
-                log.startType === startType &&
                 log.period === period &&
                 (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset')
             );
@@ -1227,16 +1238,16 @@
 
         // BY CLASS TAB
         function loadClassData() {
-            const { schedule, startType, period } = currentFilters.class;
+            const { schedule, period } = currentFilters.class;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range = getTimeRangeDates('classTimeRange', 'classStartDate', 'classEndDate');
             
             console.log('=== CLASS DATA LOAD ===');
-            console.log('Filters:', { schedule, startType, period, scheduleDay });
+            console.log('Filters:', { schedule, period, scheduleDay });
             
+            // Filter by scheduleDay and period only (combines regular + late start data)
             const filtered = allLogs.filter(log =>
                 log.scheduleDay === scheduleDay &&
-                log.startType === startType &&
                 log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
@@ -1367,16 +1378,17 @@
 
         // BY STUDENT TAB
         function updateStudentList() {
-            const { schedule, startType } = currentFilters.student;
+            const { schedule, period } = currentFilters.student;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const studentSelect = document.getElementById('studentSelect');
             
             console.log('=== UPDATE STUDENT LIST ===');
-            console.log('Filters:', { schedule, startType, scheduleDay });
+            console.log('Filters:', { schedule, period, scheduleDay });
             
             const students = new Set();
             allLogs.forEach(log => {
-                if (log.scheduleDay === scheduleDay && log.startType === startType && log.studentName) {
+                // Filter by scheduleDay and period (combines regular + late start data)
+                if (log.scheduleDay === scheduleDay && log.period === period && log.studentName) {
                     students.add(log.studentName);
                 }
             });
@@ -1403,17 +1415,18 @@
             document.getElementById('studentDetailsContainer').style.display = 'block';
             document.getElementById('noStudentSelected').style.display = 'none';
             
-            const { schedule, startType } = currentFilters.student;
+            const { schedule, period } = currentFilters.student;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             const range = getTimeRangeDates('studentTimeRange', 'studentStartDate', 'studentEndDate');
             
             console.log('=== LOAD STUDENT DATA ===');
-            console.log('Student:', studentName, 'Filters:', { scheduleDay, startType });
+            console.log('Student:', studentName, 'Filters:', { scheduleDay, period });
             
+            // Filter by scheduleDay and period only (combines regular + late start data)
             const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
                 log.scheduleDay === scheduleDay &&
-                log.startType === startType &&
+                log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
                 (log.action === 'in' || log.action === 'out' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in' || log.action === 'manual-out')
