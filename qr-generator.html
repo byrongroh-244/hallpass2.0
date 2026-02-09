@@ -316,7 +316,7 @@
             
             <div class="download-section" id="downloadSection" style="display: none;">
                 <h3>QR Codes Generated Successfully</h3>
-                <button class="download-btn" onclick="downloadZip()">Download All as ZIP</button>
+                <button class="download-btn" onclick="downloadZip(event)">Download All as ZIP</button>
             </div>
             
             <a href="index.html" class="back-link">← Back to Home</a>
@@ -447,13 +447,13 @@
             }
         }
         
-        async function downloadZip() {
+        async function downloadZip(event) {
             if (generatedQRCodes.length === 0) {
                 alert('Please generate QR codes first!');
                 return;
             }
             
-            const btn = event.target;
+            const btn = event ? event.target : document.querySelector('.download-btn');
             btn.disabled = true;
             btn.textContent = 'Creating ZIP...';
             
