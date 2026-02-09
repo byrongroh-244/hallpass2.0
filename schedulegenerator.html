@@ -3,70 +3,159 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hall Pass Schedule Generator</title>
+    <title>Schedule Generator - HallPass 2.0</title>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-ink: #0f172a;
+            --color-slate: #475569;
+            --color-cloud: #f1f5f9;
+            --color-paper: #ffffff;
+            --color-primary: #667eea;
+            --color-success: #10b981;
+            --color-danger: #ef4444;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+        }
         body {
             font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             padding: 2rem;
+            color: var(--color-ink);
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 24px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
             padding: 2rem;
-            text-align: center;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
         }
-        .header h1 { font-family: 'Fraunces', serif; font-size: 2rem; margin-bottom: 0.5rem; }
-        .header p { font-size: 1rem; opacity: 0.9; }
+        .header h1 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem; 
+            margin-bottom: 0.5rem;
+        }
+        .header p { 
+            font-size: 0.9375rem;
+            color: var(--color-slate);
+        }
         
-        .content { padding: 2rem; }
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .info-box {
+            background: var(--color-cloud);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .info-box h3 {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--color-ink);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-box p {
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: var(--color-slate);
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-box code {
+            background: white;
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.8125rem;
+        }
         
         .section {
             margin-bottom: 2rem;
             padding: 1.5rem;
-            background: #f8fafc;
+            background: var(--color-cloud);
             border-radius: 12px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid var(--section-color);
         }
+        
+        .section[data-day="red"] { --section-color: #ef4444; }
+        .section[data-day="black"] { --section-color: #0f172a; }
+        
         .section h2 {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             margin-bottom: 1rem;
+            color: var(--color-ink);
+            font-weight: 700;
+        }
+        
+        .section-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .section-badge.red {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+        
+        .section-badge.black {
+            background: rgba(15, 23, 42, 0.1);
             color: #0f172a;
         }
         
         .period-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
             gap: 1rem;
-            margin-bottom: 1rem;
         }
         
         .period-card {
             background: white;
             padding: 1.5rem;
             border-radius: 8px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid white;
+            transition: all 0.2s;
+        }
+        
+        .period-card:hover {
+            border-color: var(--color-primary);
         }
         
         .period-card h3 {
-            font-size: 1rem;
+            font-size: 0.875rem;
             margin-bottom: 1rem;
-            color: #475569;
+            color: var(--color-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
         }
         
         .form-group {
             margin-bottom: 1rem;
+        }
+        
+        .form-group:last-child {
+            margin-bottom: 0;
         }
         
         .form-group label {
@@ -74,21 +163,22 @@
             font-size: 0.875rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
-            color: #475569;
+            color: var(--color-ink);
         }
         
         .form-group input, .form-group textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 6px;
+            border: 2px solid var(--color-cloud);
+            border-radius: 8px;
             font-family: inherit;
             font-size: 0.9375rem;
+            transition: border-color 0.2s;
         }
         
         .form-group input:focus, .form-group textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: var(--color-primary);
         }
         
         .form-group textarea {
@@ -106,62 +196,74 @@
         .add-period-btn {
             width: 100%;
             padding: 0.75rem;
-            background: #667eea;
+            background: var(--color-primary);
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 1rem;
+            transition: all 0.2s;
         }
         
         .add-period-btn:hover {
             background: #5568d3;
+            transform: translateY(-1px);
         }
         
         .remove-btn {
-            background: #ef4444;
+            background: var(--color-danger);
             color: white;
             border: none;
             padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
             font-weight: 600;
-            margin-top: 0.5rem;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+        
+        .remove-btn:hover {
+            background: #dc2626;
         }
         
         .generate-btn {
             width: 100%;
-            padding: 1.25rem;
-            background: #10b981;
+            padding: 1rem;
+            background: var(--color-success);
             color: white;
             border: none;
-            border-radius: 12px;
-            font-size: 1.125rem;
-            font-weight: 700;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
             margin: 2rem 0;
+            transition: all 0.2s;
         }
         
         .generate-btn:hover {
             background: #059669;
+            transform: translateY(-1px);
         }
         
         .output-section {
             margin-top: 2rem;
             padding: 1.5rem;
-            background: #f8fafc;
+            background: var(--color-cloud);
             border-radius: 12px;
+            border-left: 4px solid var(--color-success);
         }
         
         .output-section h2 {
-            font-size: 1.25rem;
+            font-size: 1rem;
             margin-bottom: 1rem;
-            color: #0f172a;
+            color: var(--color-ink);
+            font-weight: 700;
         }
         
         .code-output {
-            background: #0f172a;
+            background: var(--color-ink);
             color: #e2e8f0;
             padding: 1.5rem;
             border-radius: 8px;
@@ -176,101 +278,93 @@
         .copy-btn {
             width: 100%;
             padding: 0.75rem;
-            background: #667eea;
+            background: var(--color-primary);
             color: white;
             border: none;
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
             margin-top: 1rem;
+            transition: all 0.2s;
         }
         
         .copy-btn:hover {
             background: #5568d3;
+            transform: translateY(-1px);
         }
         
-        .info-box {
-            background: rgba(102, 126, 234, 0.1);
-            border: 2px solid rgba(102, 126, 234, 0.3);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
         }
         
-        .info-box h3 {
-            font-size: 0.9375rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: #667eea;
+        .back-link:hover {
+            color: #5568d3;
         }
         
-        .info-box p {
-            font-size: 0.875rem;
-            line-height: 1.6;
-            color: #475569;
-        }
-        
-        .info-box code {
-            background: rgba(102, 126, 234, 0.15);
-            padding: 0.125rem 0.375rem;
-            border-radius: 3px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.8125rem;
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header, .content { padding: 1.5rem; }
+            .time-inputs { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>📅 Hall Pass Schedule Generator</h1>
+            <h1>Schedule Generator</h1>
             <p>Configure your class schedules and generate formatted code</p>
         </div>
         
         <div class="content">
             <div class="info-box">
-                <h3>📌 Recommended Naming Format</h3>
-                <p>
-                    Use the format: <code>{Day}{Period}-{Subject}</code><br>
-                    Examples: <code>Red1-Algebra</code>, <code>Black2-Geometry</code>, <code>Red3-PreAlgebra</code><br><br>
-                    This format ensures each class has a unique identifier and makes filtering by period/subject easy in your dashboard and analytics.
-                </p>
+                <h3>Recommended Naming Format</h3>
+                <p>Use the format: <code>{Day}{Period}-{Subject}</code></p>
+                <p>Examples: <code>Red1-Algebra</code>, <code>Black2-Geometry</code>, <code>Red3-PreAlgebra</code></p>
+                <p style="margin-top: 0.5rem;">This format ensures each class has a unique identifier and makes filtering by period/subject easy in your dashboard and analytics.</p>
             </div>
             
             <!-- RED DAY REGULAR -->
-            <div class="section">
-                <h2>🔴 Red Day - Regular Schedule</h2>
-                <div id="redRegularPeriods"></div>
-                <button class="add-period-btn" onclick="addPeriod('red', 'regular')">+ Add Period</button>
+            <div class="section" data-day="red">
+                <h2>Red Day - Regular Schedule <span class="section-badge red">Regular</span></h2>
+                <div id="redRegularPeriods" class="period-grid"></div>
+                <button class="add-period-btn" onclick="addPeriod('red', 'regular')">Add Period</button>
             </div>
             
             <!-- RED DAY LATE START -->
-            <div class="section">
-                <h2>🔴 Red Day - Late Start Schedule</h2>
-                <div id="redLatePeriods"></div>
-                <button class="add-period-btn" onclick="addPeriod('red', 'late')">+ Add Period</button>
+            <div class="section" data-day="red">
+                <h2>Red Day - Late Start Schedule <span class="section-badge red">Late Start</span></h2>
+                <div id="redLatePeriods" class="period-grid"></div>
+                <button class="add-period-btn" onclick="addPeriod('red', 'late')">Add Period</button>
             </div>
             
             <!-- BLACK DAY REGULAR -->
-            <div class="section">
-                <h2>⚫ Black Day - Regular Schedule</h2>
-                <div id="blackRegularPeriods"></div>
-                <button class="add-period-btn" onclick="addPeriod('black', 'regular')">+ Add Period</button>
+            <div class="section" data-day="black">
+                <h2>Black Day - Regular Schedule <span class="section-badge black">Regular</span></h2>
+                <div id="blackRegularPeriods" class="period-grid"></div>
+                <button class="add-period-btn" onclick="addPeriod('black', 'regular')">Add Period</button>
             </div>
             
             <!-- BLACK DAY LATE START -->
-            <div class="section">
-                <h2>⚫ Black Day - Late Start Schedule</h2>
-                <div id="blackLatePeriods"></div>
-                <button class="add-period-btn" onclick="addPeriod('black', 'late')">+ Add Period</button>
+            <div class="section" data-day="black">
+                <h2>Black Day - Late Start Schedule <span class="section-badge black">Late Start</span></h2>
+                <div id="blackLatePeriods" class="period-grid"></div>
+                <button class="add-period-btn" onclick="addPeriod('black', 'late')">Add Period</button>
             </div>
             
-            <button class="generate-btn" onclick="generateCode()">🚀 Generate Schedule Code</button>
+            <button class="generate-btn" onclick="generateCode()">Generate Schedule Code</button>
             
             <div class="output-section" id="outputSection" style="display: none;">
                 <h2>Generated Code</h2>
                 <div class="code-output" id="codeOutput"></div>
-                <button class="copy-btn" onclick="copyCode()">📋 Copy to Clipboard</button>
+                <button class="copy-btn" onclick="copyCode()">Copy to Clipboard</button>
             </div>
+            
+            <a href="index.html" class="back-link">← Back to Home</a>
         </div>
     </div>
 
@@ -379,7 +473,7 @@ Carol Davis"></textarea>
             navigator.clipboard.writeText(code).then(() => {
                 const btn = event.target;
                 const originalText = btn.textContent;
-                btn.textContent = '✅ Copied!';
+                btn.textContent = 'Copied!';
                 setTimeout(() => {
                     btn.textContent = originalText;
                 }, 2000);
