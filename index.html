@@ -118,18 +118,6 @@
         .card[data-type="dashboard"] { --accent-color: #8b5cf6; }
         .card[data-type="analytics"] { --accent-color: #10b981; }
         
-        .card-icon {
-            width: 48px;
-            height: 48px;
-            background: var(--accent-color);
-            border-radius: 8px;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.1;
-        }
-        
         .card h2 {
             font-family: 'Fraunces', serif;
             font-size: 1.5rem;
@@ -197,14 +185,6 @@
             align-items: start;
         }
         
-        .feature-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--color-cloud);
-            border-radius: 8px;
-            flex-shrink: 0;
-        }
-        
         .feature-content strong {
             display: block;
             margin-bottom: 0.25rem;
@@ -247,6 +227,7 @@
         .tool-card[data-tool="generator"] { --tool-color: #10b981; }
         .tool-card[data-tool="qr"] { --tool-color: #667eea; }
         .tool-card[data-tool="diagnostic"] { --tool-color: #f59e0b; }
+        .tool-card[data-tool="docs"] { --tool-color: #8b5cf6; }
 
         .tool-number {
             font-family: 'Fraunces', serif;
@@ -326,21 +307,18 @@
         
         <section class="cards">
             <a href="scanner.html" class="card" data-type="scanner">
-                <div class="card-icon"></div>
                 <h2>Scanner Kiosk</h2>
                 <p class="card-description">Mount on your phone or tablet by the door. Students scan their QR codes when leaving and returning to class.</p>
                 <span class="card-badge">For Mobile</span>
             </a>
             
             <a href="dashboard.html" class="card" data-type="dashboard">
-                <div class="card-icon"></div>
                 <h2>Live Dashboard</h2>
                 <p class="card-description">Real-time monitoring of all students. See who's out, track duration with live timers, and use manual reset options.</p>
                 <span class="card-badge">For Desktop</span>
             </a>
             
             <a href="analytics.html" class="card" data-type="analytics">
-                <div class="card-icon"></div>
                 <h2>Analytics & Reports</h2>
                 <p class="card-description">View detailed statistics, track patterns over time, filter by individual students, and export data to CSV.</p>
                 <span class="card-badge">For Teachers</span>
@@ -370,6 +348,12 @@
                     <div class="tool-title">Diagnostic Tool</div>
                     <p class="tool-text">Test QR codes and verify they're syncing correctly with your schedule. Shows the unique ID generated for each scan.</p>
                 </a>
+
+                <a href="setup-guide.html" class="tool-card" data-tool="docs">
+                    <div class="tool-number">4</div>
+                    <div class="tool-title">Setup Documentation</div>
+                    <p class="tool-text">Step-by-step instructions for Firebase setup, schedule configuration, and system deployment. Everything you need to get started.</p>
+                </a>
             </div>
         </section>
         
@@ -377,7 +361,6 @@
             <h3>Key Features</h3>
             <div class="features-grid">
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Red/Black Day Support</strong>
                         Same 30 QR codes work for different students on different schedule days
@@ -385,7 +368,6 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Regular & Late Start</strong>
                         Flexible scheduling with adjusted period times for late start days
@@ -393,7 +375,6 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Auto-Reset</strong>
                         Students automatically marked "in" at period end if they forget to scan back
@@ -401,7 +382,6 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Complete Logging</strong>
                         Every scan tracked with timestamps, durations, and action types
@@ -409,7 +389,6 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Rich Analytics</strong>
                         Daily, weekly, and rolling averages with per-student filtering
@@ -417,7 +396,6 @@
                 </div>
                 
                 <div class="feature">
-                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Cloud Synced</strong>
                         Powered by Firebase for instant updates across all devices
