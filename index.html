@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classroom Management System</title>
+    <title>HallPass 2.0 - Classroom Management System</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
@@ -19,13 +19,13 @@
             --color-slate: #475569;
             --color-cloud: #f1f5f9;
             --color-paper: #ffffff;
-            --color-primary: #3b82f6;
+            --color-primary: #667eea;
             --color-success: #10b981;
             --color-warning: #f59e0b;
             --color-danger: #ef4444;
-            --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-            --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.12);
-            --shadow-lg: 0 20px 40px rgba(15, 23, 42, 0.16);
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+            --shadow-lg: 0 2px 12px rgba(0,0,0,0.12);
         }
         
         body {
@@ -35,49 +35,20 @@
             line-height: 1.6;
             min-height: 100vh;
             padding: 2rem;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
-            pointer-events: none;
-            animation: float 20s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(-20px, 20px); }
         }
         
         .container {
             max-width: 1280px;
             margin: 0 auto;
-            position: relative;
-            z-index: 1;
         }
         
         .hero {
             text-align: center;
-            margin-bottom: 4rem;
-            animation: fadeInUp 0.8s ease;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            margin-bottom: 3rem;
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
         }
         
         .hero h1 {
@@ -101,10 +72,9 @@
             gap: 0.5rem;
             padding: 0.5rem 1rem;
             background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 100px;
+            border-radius: 20px;
             font-size: 0.875rem;
-            font-weight: 500;
+            font-weight: 600;
             color: var(--color-success);
             margin-top: 1rem;
         }
@@ -114,24 +84,19 @@
             height: 8px;
             background: var(--color-success);
             border-radius: 50%;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.95); }
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
         }
         
         .cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-bottom: 4rem;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
         }
         
         .card {
             background: var(--color-paper);
-            border-radius: 1.5rem;
+            border-radius: 12px;
             padding: 2rem;
             box-shadow: var(--shadow-md);
             text-decoration: none;
@@ -140,52 +105,29 @@
             flex-direction: column;
             position: relative;
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            animation: fadeInUp 0.8s ease backwards;
+            transition: all 0.2s ease;
+            border-left: 4px solid var(--accent-color);
         }
 
-        .card:nth-child(1) { animation-delay: 0.1s; }
-        .card:nth-child(2) { animation-delay: 0.2s; }
-        .card:nth-child(3) { animation-delay: 0.3s; }
-        .card:nth-child(4) { animation-delay: 0.4s; }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--accent-color), transparent);
-            transform: scaleX(0);
-            transition: transform 0.3s ease;
-            transform-origin: left;
-        }
-
-        .card:hover::before {
-            transform: scaleX(1);
-        }
-        
         .card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-2px);
             box-shadow: var(--shadow-lg);
         }
 
-        .card[data-type="scanner"] { --accent-color: #3b82f6; }
+        .card[data-type="scanner"] { --accent-color: #667eea; }
         .card[data-type="dashboard"] { --accent-color: #8b5cf6; }
         .card[data-type="analytics"] { --accent-color: #10b981; }
-        .card[data-type="tester"] { --accent-color: #f59e0b; }
         
         .card-icon {
-            font-size: 3rem;
+            width: 48px;
+            height: 48px;
+            background: var(--accent-color);
+            border-radius: 8px;
             margin-bottom: 1.5rem;
-            display: block;
-            filter: grayscale(0.3);
-            transition: filter 0.3s ease;
-        }
-
-        .card:hover .card-icon {
-            filter: grayscale(0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.1;
         }
         
         .card h2 {
@@ -205,8 +147,8 @@
         
         .card-badge {
             display: inline-block;
-            padding: 0.5rem 1rem;
-            border-radius: 100px;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
@@ -216,8 +158,8 @@
         }
 
         .card[data-type="scanner"] .card-badge { 
-            --badge-bg: rgba(59, 130, 246, 0.1);
-            --badge-color: #3b82f6;
+            --badge-bg: rgba(102, 126, 234, 0.1);
+            --badge-color: #667eea;
         }
         .card[data-type="dashboard"] .card-badge { 
             --badge-bg: rgba(139, 92, 246, 0.1);
@@ -227,42 +169,39 @@
             --badge-bg: rgba(16, 185, 129, 0.1);
             --badge-color: #10b981;
         }
-        .card[data-type="tester"] .card-badge { 
-            --badge-bg: rgba(245, 158, 11, 0.1);
-            --badge-color: #f59e0b;
-        }
         
         .info-section {
             background: var(--color-paper);
-            border-radius: 1.5rem;
-            padding: 3rem;
+            border-radius: 12px;
+            padding: 2rem;
             box-shadow: var(--shadow-md);
-            margin-bottom: 3rem;
-            animation: fadeInUp 1s ease backwards;
-            animation-delay: 0.5s;
+            margin-bottom: 2rem;
         }
         
         .info-section h3 {
             font-family: 'Fraunces', serif;
-            font-size: 1.875rem;
-            margin-bottom: 2rem;
-            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
             color: var(--color-ink);
         }
         
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
         
         .feature {
             display: flex;
             gap: 1rem;
+            align-items: start;
         }
         
         .feature-icon {
-            font-size: 1.75rem;
+            width: 40px;
+            height: 40px;
+            background: var(--color-cloud);
+            border-radius: 8px;
             flex-shrink: 0;
         }
         
@@ -279,42 +218,53 @@
             line-height: 1.7;
         }
 
-        .steps-grid {
+        .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
-        .step {
-            padding: 2rem 1.5rem;
-            background: var(--color-cloud);
-            border-radius: 1rem;
+        .tool-card {
+            padding: 1.5rem;
+            background: white;
+            border-radius: 12px;
             position: relative;
-            border-left: 4px solid var(--color-primary);
-            transition: transform 0.3s ease;
+            border-left: 4px solid var(--tool-color);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            box-shadow: var(--shadow-sm);
         }
 
-        .step:hover {
-            transform: translateX(4px);
+        .tool-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
-        .step-number {
+        .tool-card[data-tool="generator"] { --tool-color: #10b981; }
+        .tool-card[data-tool="qr"] { --tool-color: #667eea; }
+        .tool-card[data-tool="diagnostic"] { --tool-color: #f59e0b; }
+
+        .tool-number {
             font-family: 'Fraunces', serif;
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            color: var(--color-primary);
+            color: var(--tool-color);
             opacity: 0.3;
             margin-bottom: 0.5rem;
         }
 
-        .step-title {
+        .tool-title {
             font-weight: 600;
+            font-size: 1rem;
             margin-bottom: 0.5rem;
             color: var(--color-ink);
         }
 
-        .step-text {
+        .tool-text {
             font-size: 0.875rem;
             color: var(--color-slate);
             line-height: 1.6;
@@ -325,14 +275,12 @@
             padding: 2rem 0;
             color: var(--color-slate);
             font-size: 0.875rem;
-            animation: fadeInUp 1s ease backwards;
-            animation-delay: 0.6s;
         }
 
         .footer a {
             color: var(--color-primary);
             text-decoration: none;
-            font-weight: 500;
+            font-weight: 600;
             transition: color 0.2s ease;
         }
 
@@ -359,7 +307,7 @@
             }
             
             .features-grid,
-            .steps-grid {
+            .tools-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -368,7 +316,7 @@
 <body>
     <div class="container">
         <header class="hero">
-            <h1>Classroom Management</h1>
+            <h1>HallPass 2.0</h1>
             <p class="hero-subtitle">Real-time hall pass tracking with QR codes and analytics</p>
             <div class="status-badge">
                 <span class="status-dot"></span>
@@ -378,57 +326,50 @@
         
         <section class="cards">
             <a href="scanner.html" class="card" data-type="scanner">
-                <span class="card-icon">📱</span>
+                <div class="card-icon"></div>
                 <h2>Scanner Kiosk</h2>
                 <p class="card-description">Mount on your phone or tablet by the door. Students scan their QR codes when leaving and returning to class.</p>
                 <span class="card-badge">For Mobile</span>
             </a>
             
             <a href="dashboard.html" class="card" data-type="dashboard">
-                <span class="card-icon">📊</span>
+                <div class="card-icon"></div>
                 <h2>Live Dashboard</h2>
                 <p class="card-description">Real-time monitoring of all students. See who's out, track duration with live timers, and use manual reset options.</p>
                 <span class="card-badge">For Desktop</span>
             </a>
             
             <a href="analytics.html" class="card" data-type="analytics">
-                <span class="card-icon">📈</span>
+                <div class="card-icon"></div>
                 <h2>Analytics & Reports</h2>
                 <p class="card-description">View detailed statistics, track patterns over time, filter by individual students, and export data to CSV.</p>
                 <span class="card-badge">For Teachers</span>
             </a>
-            
-            <a href="qr-tester.html" class="card" data-type="tester">
-                <span class="card-icon">🔍</span>
-                <h2>QR Code Tester</h2>
-                <p class="card-description">Test and verify your QR codes. See exactly what unique IDs are generated for troubleshooting and setup.</p>
-                <span class="card-badge">Diagnostic Tool</span>
-            </a>
         </section>
 
         <section class="info-section">
-            <h3>Quick Start Guide</h3>
-            <div class="steps-grid">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-title">Setup</div>
-                    <p class="step-text">Generate QR codes (qr_01 through qr_30) and configure your Firebase database</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-title">Configure</div>
-                    <p class="step-text">Edit config.js with your student rosters and schedule times</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-title">Scanner</div>
-                    <p class="step-text">Open scanner on phone, select schedule (Red/Black + Regular/Late)</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-title">Monitor</div>
-                    <p class="step-text">Open dashboard on computer with same schedule to track students in real-time</p>
-                </div>
+            <h3>Setup & Reset Tools</h3>
+            <p style="color: var(--color-slate); margin-bottom: 1.5rem;">
+                Starting fresh or setting up for the first time? Use these tools to configure your HallPass system at the beginning of the year.
+            </p>
+            <div class="tools-grid">
+                <a href="qr-generator.html" class="tool-card" data-tool="qr">
+                    <div class="tool-number">1</div>
+                    <div class="tool-title">QR Code Generator</div>
+                    <p class="tool-text">Generate the 30 static QR codes (qr_01 through qr_30) for your students. Print and laminate these at the start of the year.</p>
+                </a>
+
+                <a href="schedule-generator.html" class="tool-card" data-tool="generator">
+                    <div class="tool-number">2</div>
+                    <div class="tool-title">Schedule Generator</div>
+                    <p class="tool-text">Configure your Red/Black day schedules with student rosters. Generates formatted code to copy into your config file.</p>
+                </a>
+                
+                <a href="qr-tester.html" class="tool-card" data-tool="diagnostic">
+                    <div class="tool-number">3</div>
+                    <div class="tool-title">Diagnostic Tool</div>
+                    <p class="tool-text">Test QR codes and verify they're syncing correctly with your schedule. Shows the unique ID generated for each scan.</p>
+                </a>
             </div>
         </section>
         
@@ -436,7 +377,7 @@
             <h3>Key Features</h3>
             <div class="features-grid">
                 <div class="feature">
-                    <span class="feature-icon">🔴⚫</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Red/Black Day Support</strong>
                         Same 30 QR codes work for different students on different schedule days
@@ -444,7 +385,7 @@
                 </div>
                 
                 <div class="feature">
-                    <span class="feature-icon">⏰🌅</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Regular & Late Start</strong>
                         Flexible scheduling with adjusted period times for late start days
@@ -452,7 +393,7 @@
                 </div>
                 
                 <div class="feature">
-                    <span class="feature-icon">⏱️</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Auto-Reset</strong>
                         Students automatically marked "in" at period end if they forget to scan back
@@ -460,7 +401,7 @@
                 </div>
                 
                 <div class="feature">
-                    <span class="feature-icon">📝</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Complete Logging</strong>
                         Every scan tracked with timestamps, durations, and action types
@@ -468,7 +409,7 @@
                 </div>
                 
                 <div class="feature">
-                    <span class="feature-icon">📊</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Rich Analytics</strong>
                         Daily, weekly, and rolling averages with per-student filtering
@@ -476,7 +417,7 @@
                 </div>
                 
                 <div class="feature">
-                    <span class="feature-icon">☁️</span>
+                    <div class="feature-icon"></div>
                     <div class="feature-content">
                         <strong>Cloud Synced</strong>
                         Powered by Firebase for instant updates across all devices
@@ -487,7 +428,7 @@
         
         <footer class="footer">
             <p>Built for teachers • Powered by Firebase • <a href="https://firebase.google.com" target="_blank">Learn More</a></p>
-            <p style="margin-top: 0.5rem; opacity: 0.7;">v2.0 - Modular Architecture</p>
+            <p style="margin-top: 0.5rem; opacity: 0.7;">v2.0</p>
         </footer>
     </div>
 </body>
