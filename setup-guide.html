@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Documentation - HallPass 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-ink: #0f172a;
+            --color-slate: #475569;
+            --color-cloud: #f1f5f9;
+            --color-paper: #ffffff;
+            --color-primary: #667eea;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--color-ink);
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+        .header h1 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem; 
+            margin-bottom: 0.5rem;
+        }
+        .header p { 
+            font-size: 0.9375rem;
+            color: var(--color-slate);
+        }
+        
+        .content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .toc {
+            background: var(--color-cloud);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .toc h2 {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-ink);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .toc ul {
+            list-style: none;
+        }
+        
+        .toc li {
+            margin-bottom: 0.5rem;
+        }
+        
+        .toc a {
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: #5568d3;
+        }
+        
+        .section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--color-cloud);
+        }
+        
+        .section:last-of-type {
+            border-bottom: none;
+        }
+        
+        .section h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--color-ink);
+        }
+        
+        .section h3 {
+            font-size: 1.125rem;
+            margin: 1.5rem 0 0.75rem 0;
+            color: var(--color-ink);
+            font-weight: 700;
+        }
+        
+        .section p {
+            font-size: 0.9375rem;
+            line-height: 1.7;
+            color: var(--color-slate);
+            margin-bottom: 1rem;
+        }
+        
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+        }
+        
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 2rem;
+            height: 2rem;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        
+        .step-list li strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-ink);
+            font-weight: 600;
+        }
+        
+        .step-list li p {
+            margin: 0;
+        }
+        
+        .code-block {
+            background: var(--color-ink);
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .note-box {
+            background: rgba(102, 126, 234, 0.05);
+            border-left: 4px solid var(--color-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .note-box.warning {
+            background: rgba(245, 158, 11, 0.05);
+            border-left-color: var(--color-warning);
+        }
+        
+        .note-box strong {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--color-ink);
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .note-box p {
+            margin: 0;
+            font-size: 0.875rem;
+        }
+        
+        code {
+            background: var(--color-cloud);
+            padding: 0.125rem 0.375rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #5568d3;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header, .content { padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Setup Documentation</h1>
+            <p>Complete guide to setting up HallPass 2.0</p>
+        </div>
+        
+        <div class="content">
+            <div class="toc">
+                <h2>Table of Contents</h2>
+                <ul>
+                    <li><a href="#firebase">1. Firebase Setup</a></li>
+                    <li><a href="#qr-codes">2. Generating QR Codes</a></li>
+                    <li><a href="#schedule">3. Creating Your Schedule</a></li>
+                    <li><a href="#config">4. Configuration File</a></li>
+                    <li><a href="#deployment">5. Deployment</a></li>
+                    <li><a href="#testing">6. Testing & Verification</a></li>
+                </ul>
+            </div>
+
+            <div class="section" id="firebase">
+                <h2>1. Firebase Setup</h2>
+                <p>HallPass 2.0 uses Firebase Realtime Database to sync data across all devices in real-time.</p>
+                
+                <h3>Create a Firebase Account</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Go to Firebase Console</strong>
+                        <p>Visit <a href="https://console.firebase.google.com" target="_blank">console.firebase.google.com</a> and sign in with your Google account.</p>
+                    </li>
+                    <li>
+                        <strong>Create a New Project</strong>
+                        <p>Click "Add project" and give it a name (e.g., "HallPass-2024"). You can disable Google Analytics unless you want usage statistics.</p>
+                    </li>
+                    <li>
+                        <strong>Add a Web App</strong>
+                        <p>In your project dashboard, click the web icon (&lt;/&gt;) to add a web app. Give it a nickname like "HallPass Scanner".</p>
+                    </li>
+                    <li>
+                        <strong>Copy Your Configuration</strong>
+                        <p>Firebase will display your config object. Copy all the values - you'll need these later.</p>
+                    </li>
+                </ol>
+                
+                <div class="code-block">const firebaseConfig = {
+  apiKey: "your-api-key-here",
+  authDomain: "your-project.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "your-app-id",
+  measurementId: "G-XXXXXXXXXX"
+};</div>
+                
+                <h3>Enable Realtime Database</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Navigate to Realtime Database</strong>
+                        <p>In the Firebase Console sidebar, click "Build" → "Realtime Database".</p>
+                    </li>
+                    <li>
+                        <strong>Create Database</strong>
+                        <p>Click "Create Database" and select your preferred region (usually closest to your location).</p>
+                    </li>
+                    <li>
+                        <strong>Set Security Rules</strong>
+                        <p>Start in test mode for now (we'll secure it later). Click the "Rules" tab and paste these rules:</p>
+                    </li>
+                </ol>
+                
+                <div class="code-block">{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}</div>
+                
+                <div class="note-box warning">
+                    <strong>Important</strong>
+                    <p>These test rules allow anyone to read/write your database. For production use, implement proper authentication and security rules.</p>
+                </div>
+            </div>
+
+            <div class="section" id="qr-codes">
+                <h2>2. Generating QR Codes</h2>
+                <p>QR codes are the physical passes students will scan when leaving and returning to class.</p>
+                
+                <ol class="step-list">
+                    <li>
+                        <strong>Open the QR Code Generator</strong>
+                        <p>Navigate to the <a href="qr-generator.html">QR Code Generator</a> tool from the home page.</p>
+                    </li>
+                    <li>
+                        <strong>Generate Codes</strong>
+                        <p>Click "Generate QR Codes" to create 30 static QR codes (qr_01 through qr_30).</p>
+                    </li>
+                    <li>
+                        <strong>Download and Print</strong>
+                        <p>Click "Download All as ZIP" to save all codes. Print them on cardstock paper (recommended: 2x2 inches per code).</p>
+                    </li>
+                    <li>
+                        <strong>Laminate</strong>
+                        <p>Laminate the printed QR codes for durability. These will be reused throughout the year.</p>
+                    </li>
+                </ol>
+                
+                <div class="note-box">
+                    <strong>Pro Tip</strong>
+                    <p>The same 30 QR codes can be assigned to different students on Red and Black days, maximizing flexibility with minimal printing.</p>
+                </div>
+            </div>
+
+            <div class="section" id="schedule">
+                <h2>3. Creating Your Schedule</h2>
+                <p>Use the Schedule Generator to create your Red/Black day schedules with student rosters.</p>
+                
+                <ol class="step-list">
+                    <li>
+                        <strong>Open Schedule Generator</strong>
+                        <p>Navigate to the <a href="schedule-generator.html">Schedule Generator</a> tool from the home page.</p>
+                    </li>
+                    <li>
+                        <strong>Configure Periods</strong>
+                        <p>For each class period, click "Add Period" and fill in:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Period Name:</strong> Use format like "Red1-Algebra" or "Black2-Geometry"</li>
+                            <li><strong>Time Range:</strong> Start and end times for the period</li>
+                            <li><strong>Student Names:</strong> One name per line (QR codes auto-assigned)</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Generate Code</strong>
+                        <p>Click "Generate Schedule Code" when all periods are configured. This creates formatted JavaScript code.</p>
+                    </li>
+                    <li>
+                        <strong>Copy the Code</strong>
+                        <p>Click "Copy to Clipboard" to copy your complete schedule configuration.</p>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section" id="config">
+                <h2>4. Configuration File</h2>
+                <p>Now you'll create or update the config file that all HallPass pages use.</p>
+                
+                <h3>Create config.js File</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Create New File</strong>
+                        <p>In your HallPass folder, create a new file named <code>config.js</code>.</p>
+                    </li>
+                    <li>
+                        <strong>Add Firebase Configuration</strong>
+                        <p>Start with your Firebase config from Step 1:</p>
+                    </li>
+                </ol>
+                
+                <div class="code-block">const CONFIG = {
+    firebase: {
+        apiKey: "your-api-key-here",
+        authDomain: "your-project.firebaseapp.com",
+        projectId: "your-project-id",
+        storageBucket: "your-project.appspot.com",
+        messagingSenderId: "123456789",
+        appId: "your-app-id"
+    },
+    
+    timing: {
+        scanDebounce: 2000,
+        studentCooldown: 5000
+    },
+    
+    // Paste your schedule code from Step 3 below
+    schedules: {
+        // Your generated schedule goes here
+    }
+};</div>
+                
+                <ol class="step-list" style="counter-reset: step-counter 2;">
+                    <li>
+                        <strong>Add Your Schedule</strong>
+                        <p>Paste the schedule code you generated in Step 3 to replace the empty schedules object.</p>
+                    </li>
+                    <li>
+                        <strong>Save the File</strong>
+                        <p>Save <code>config.js</code> in the same folder as your HTML files.</p>
+                    </li>
+                </ol>
+                
+                <h3>Link Config to HTML Files</h3>
+                <p>Add this line to the <code>&lt;head&gt;</code> section of scanner.html, dashboard.html, and analytics.html:</p>
+                
+                <div class="code-block">&lt;script src="config.js"&gt;&lt;/script&gt;</div>
+            </div>
+
+            <div class="section" id="deployment">
+                <h2>5. Deployment</h2>
+                <p>Get your HallPass system running on your devices.</p>
+                
+                <h3>Option A: Local Files (Simplest)</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Place Files on Computer</strong>
+                        <p>Copy all HTML files and config.js to a folder on your teacher computer.</p>
+                    </li>
+                    <li>
+                        <strong>Open in Browser</strong>
+                        <p>Double-click <code>dashboard.html</code> to open your dashboard.</p>
+                    </li>
+                    <li>
+                        <strong>Setup Scanner Device</strong>
+                        <p>On your phone/tablet, open <code>scanner.html</code> (you may need to transfer files or use a local server).</p>
+                    </li>
+                </ol>
+                
+                <div class="note-box warning">
+                    <strong>Camera Access Note</strong>
+                    <p>QR scanning requires HTTPS or localhost. If the scanner doesn't work, you'll need to use a web server (Option B).</p>
+                </div>
+                
+                <h3>Option B: Web Hosting (Recommended)</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Choose a Host</strong>
+                        <p>Free options: GitHub Pages, Netlify, Vercel, or Firebase Hosting.</p>
+                    </li>
+                    <li>
+                        <strong>Upload Files</strong>
+                        <p>Upload all HTML files and config.js to your chosen hosting service.</p>
+                    </li>
+                    <li>
+                        <strong>Access via URL</strong>
+                        <p>You'll get a URL like <code>https://your-hallpass.netlify.app</code> that works on all devices.</p>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section" id="testing">
+                <h2>6. Testing & Verification</h2>
+                <p>Before using with students, test your complete system.</p>
+                
+                <ol class="step-list">
+                    <li>
+                        <strong>Test QR Codes</strong>
+                        <p>Open the <a href="qr-tester.html">Diagnostic Tool</a>, select your schedule, and scan a QR code. Verify it shows the correct student name and unique ID.</p>
+                    </li>
+                    <li>
+                        <strong>Test Scanner → Dashboard Sync</strong>
+                        <p>Open dashboard on computer and scanner on phone. Scan a QR code and verify the student appears as "Out" on the dashboard.</p>
+                    </li>
+                    <li>
+                        <strong>Test Complete Cycle</strong>
+                        <p>Scan the same QR code again to mark student as "In". Verify the dashboard updates immediately.</p>
+                    </li>
+                    <li>
+                        <strong>Check Analytics</strong>
+                        <p>Open analytics.html and verify logs are being recorded with timestamps and durations.</p>
+                    </li>
+                </ol>
+                
+                <div class="note-box">
+                    <strong>Troubleshooting</strong>
+                    <p>If sync isn't working, check your Firebase console to ensure data is being written. Common issues: incorrect Firebase config, blocked database rules, or network connectivity.</p>
+                </div>
+            </div>
+            
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+</body>
+</html>
