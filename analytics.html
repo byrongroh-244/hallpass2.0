@@ -474,7 +474,8 @@
                     <!-- Dynamically populated -->
                 </div>
             </div>
-            <div class="slider-group">
+            <div class="slider-group" style="margin-left: auto;">
+                <div class="slider-label">&nbsp;</div>
                 <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
@@ -536,14 +537,6 @@
                     <!-- Dynamically populated -->
                 </div>
             </div>
-            <div class="slider-group">
-                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
-            </div>
             <div class="additional-filters">
                 <div class="filter-group">
                     <label>Time Range</label>
@@ -561,6 +554,15 @@
                 <div class="filter-group" id="classCustomDatesEnd" style="display: none;">
                     <label>End Date</label>
                     <input type="date" id="classEndDate" onchange="loadClassData()">
+                </div>
+                <div class="filter-group" style="margin-left: auto;">
+                    <label>&nbsp;</label>
+                    <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.75rem 1.5rem;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
                 </div>
             </div>
         </div>
@@ -609,14 +611,6 @@
                     <!-- Dynamically populated -->
                 </div>
             </div>
-            <div class="slider-group">
-                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
-            </div>
             <div class="additional-filters">
                 <div class="filter-group">
                     <label>Student</label>
@@ -640,6 +634,15 @@
                 <div class="filter-group" id="studentCustomDatesEnd" style="display: none;">
                     <label>End Date</label>
                     <input type="date" id="studentEndDate" onchange="loadStudentData()">
+                </div>
+                <div class="filter-group" style="margin-left: auto;">
+                    <label>&nbsp;</label>
+                    <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.75rem 1.5rem;">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                        Refresh
+                    </button>
                 </div>
             </div>
         </div>
@@ -770,11 +773,44 @@
         
         // Jump to student function - switches to By Student tab and selects the student
         function jumpToStudent(studentName) {
+            console.log('Jumping to student:', studentName);
+            
             // Switch to student tab
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.querySelectorAll('.tab')[2].classList.add('active'); // Third tab (By Student)
             document.getElementById('student').classList.add('active');
+            
+            // Find which schedule/period this student belongs to by checking current context
+            // Use the current filters from whichever tab we're coming from
+            let targetSchedule = currentFilters.class?.schedule || currentFilters.overview?.schedule || 'Red';
+            let targetPeriod = currentFilters.class?.period || currentFilters.overview?.period;
+            
+            // If we need to find the period, look through all logs for this student
+            if (!targetPeriod) {
+                const studentLog = allLogs.find(log => log.studentName === studentName);
+                if (studentLog) {
+                    targetPeriod = studentLog.period;
+                    targetSchedule = studentLog.scheduleDay === 'red' ? 'Red' : 'Black';
+                }
+            }
+            
+            // Set the student tab filters to match
+            if (targetSchedule && targetPeriod) {
+                currentFilters.student.schedule = targetSchedule;
+                currentFilters.student.period = targetPeriod;
+                
+                // Update the UI buttons
+                document.querySelectorAll('#student .slider-buttons button').forEach(btn => {
+                    if (btn.dataset.schedule === targetSchedule) {
+                        btn.classList.add('active');
+                        if (targetSchedule === 'Red') btn.classList.add('red');
+                        if (targetSchedule === 'Black') btn.classList.add('black');
+                    } else {
+                        btn.classList.remove('active', 'red', 'black');
+                    }
+                });
+            }
             
             // Update student list first
             updateStudentList();
@@ -782,9 +818,23 @@
             // Select the student in dropdown after a brief delay to ensure list is populated
             setTimeout(() => {
                 const studentSelect = document.getElementById('studentSelect');
-                studentSelect.value = studentName;
-                loadStudentData();
-            }, 100);
+                // Try to find the student in the dropdown
+                const option = Array.from(studentSelect.options).find(opt => opt.value === studentName);
+                if (option) {
+                    studentSelect.value = studentName;
+                    loadStudentData();
+                } else {
+                    console.warn('Student not found in dropdown:', studentName);
+                    // Try again with a longer delay
+                    setTimeout(() => {
+                        const option2 = Array.from(studentSelect.options).find(opt => opt.value === studentName);
+                        if (option2) {
+                            studentSelect.value = studentName;
+                            loadStudentData();
+                        }
+                    }, 200);
+                }
+            }, 150);
         }
 
         // Settings functions
