@@ -416,10 +416,9 @@
             <h1>Analytics Dashboard</h1>
             <p>Track and analyze student frequency and duration</p>
         </div>
-        <button class="settings-icon" onclick="openSettings()">
+        <button class="settings-icon" onclick="returnHome()" title="Return Home">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
         </button>
     </div>
@@ -470,17 +469,18 @@
                 </div>
             </div>
             <div class="slider-group">
-                <div class="slider-label">Start Type</div>
-                <div class="slider-buttons">
-                    <button class="slider-button active" data-start="regular" onclick="setOverviewStartType('regular', this)">Regular</button>
-                    <button class="slider-button" data-start="late" onclick="setOverviewStartType('late', this)">Late</button>
-                </div>
-            </div>
-            <div class="slider-group">
                 <div class="slider-label">Period</div>
                 <div class="slider-buttons" id="overviewPeriodButtons">
                     <!-- Dynamically populated -->
                 </div>
+            </div>
+            <div class="slider-group">
+                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                    </svg>
+                    Refresh
+                </button>
             </div>
         </div>
 
@@ -528,13 +528,6 @@
                 <div class="slider-buttons">
                     <button class="slider-button red active" data-schedule="Red" onclick="setClassSchedule('Red', this)">Red</button>
                     <button class="slider-button black" data-schedule="Black" onclick="setClassSchedule('Black', this)">Black</button>
-                </div>
-            </div>
-            <div class="slider-group">
-                <div class="slider-label">Start Type</div>
-                <div class="slider-buttons">
-                    <button class="slider-button active" data-start="regular" onclick="setClassStartType('regular', this)">Regular</button>
-                    <button class="slider-button" data-start="late" onclick="setClassStartType('late', this)">Late</button>
                 </div>
             </div>
             <div class="slider-group">
@@ -600,13 +593,6 @@
                 <div class="slider-buttons">
                     <button class="slider-button red active" data-schedule="Red" onclick="setStudentSchedule('Red', this)">Red</button>
                     <button class="slider-button black" data-schedule="Black" onclick="setStudentSchedule('Black', this)">Black</button>
-                </div>
-            </div>
-            <div class="slider-group">
-                <div class="slider-label">Start Type</div>
-                <div class="slider-buttons">
-                    <button class="slider-button active" data-start="regular" onclick="setStudentStartType('regular', this)">Regular</button>
-                    <button class="slider-button" data-start="late" onclick="setStudentStartType('late', this)">Late</button>
                 </div>
             </div>
             <div class="slider-group">
@@ -755,10 +741,16 @@
         
         // Current filters - will be set dynamically after periods are populated
         let currentFilters = {
-            overview: { schedule: 'Red', startType: 'regular', period: null },
-            class: { schedule: 'Red', startType: 'regular', period: null },
-            student: { schedule: 'Red', startType: 'regular', period: null }
+            overview: { schedule: 'Red', period: null },
+            class: { schedule: 'Red', period: null },
+            student: { schedule: 'Red', period: null }
         };
+        
+        // Refresh function
+        function refreshAnalytics() {
+            console.log('Refreshing analytics data...');
+            loadAllData();
+        }
 
         // Settings functions
         function openSettings() {
