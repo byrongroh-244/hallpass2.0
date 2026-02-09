@@ -315,6 +315,12 @@
                     <button onclick="selectStartType('late')">Late Start</button>
                 </div>
             </div>
+            <div class="setting-group">
+                <label>Period</label>
+                <div class="button-group" id="periodButtons">
+                    <button disabled style="cursor: not-allowed;">Select schedule first</button>
+                </div>
+            </div>
         </div>
         
         <div id="reader"></div>
@@ -322,7 +328,7 @@
             <div class="empty-state">
                 <div class="empty-state-icon"></div>
                 <strong>Ready to Scan</strong>
-                Select your schedule above and scan a QR code to begin testing
+                Select schedule, start type, and period above, then scan a QR code to begin testing
             </div>
         </div>
         
@@ -375,12 +381,50 @@
         
         let scheduleType = null;
         let startType = null;
+        let selectedPeriod = null;
+
+        function updatePeriodButtons() {
+            const periodButtons = document.getElementById('periodButtons');
+            
+            if (!scheduleType || !startType) {
+                periodButtons.innerHTML = '<button disabled style="cursor: not-allowed;">Select schedule first</button>';
+                return;
+            }
+            
+            const schedule = CONFIG.schedules[scheduleType][startType];
+            if (!schedule || schedule.length === 0) {
+                periodButtons.innerHTML = '<button disabled style="cursor: not-allowed;">No periods configured</button>';
+                return;
+            }
+            
+            periodButtons.innerHTML = '';
+            schedule.forEach((period, index) => {
+                const btn = document.createElement('button');
+                btn.textContent = period.name;
+                btn.onclick = () => selectPeriod(period.name);
+                periodButtons.appendChild(btn);
+            });
+        }
+
+        function selectPeriod(periodName) {
+            selectedPeriod = periodName;
+            document.querySelectorAll('#periodButtons button').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent === periodName);
+            });
+            checkIfReady();
+        }
 
         function getCurrentPeriod() {
             if (!scheduleType || !startType) return null;
             const schedule = CONFIG.schedules[scheduleType][startType];
             if (!schedule || schedule.length === 0) return null;
             
+            // If a period is manually selected, use that
+            if (selectedPeriod) {
+                return schedule.find(p => p.name === selectedPeriod);
+            }
+            
+            // Otherwise, try to determine based on current time
             const now = new Date();
             const currentTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
             
@@ -452,24 +496,28 @@
 
         window.selectScheduleType = function(type) {
             scheduleType = type;
+            selectedPeriod = null; // Reset period selection
             document.querySelectorAll('.settings .button-group')[0].querySelectorAll('button').forEach(btn => {
                 const btnType = btn.textContent.toLowerCase().includes('red') ? 'red' : 'black';
                 btn.classList.toggle('active', btnType === type);
             });
+            updatePeriodButtons();
             checkIfReady();
         };
 
         window.selectStartType = function(type) {
             startType = type;
+            selectedPeriod = null; // Reset period selection
             document.querySelectorAll('.settings .button-group')[1].querySelectorAll('button').forEach(btn => {
                 const btnType = btn.textContent.toLowerCase().includes('late') ? 'late' : 'regular';
                 btn.classList.toggle('active', btnType === type);
             });
+            updatePeriodButtons();
             checkIfReady();
         };
 
         function checkIfReady() {
-            if (scheduleType && startType) {
+            if (scheduleType && startType && selectedPeriod) {
                 startScanner();
             }
         }
@@ -541,6 +589,10 @@
                         <div class="info-item">
                             <label>Schedule</label>
                             <div class="value">${scheduleType} ${startType}</div>
+                        </div>
+                        <div class="info-item" style="grid-column: span 2;">
+                            <label>Selected Period</label>
+                            <div class="value">${selectedPeriod || 'None'}</div>
                         </div>
                     </div>
                     <div class="expected-format">
