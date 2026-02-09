@@ -414,11 +414,12 @@
     <div class="header">
         <div class="header-content">
             <h1>Analytics Dashboard</h1>
-            <p>Track and analyze student frequency and duration</p>
+            <p>Track and analyze bathroom pass usage</p>
         </div>
-        <button class="settings-icon" onclick="returnHome()" title="Return Home">
+        <button class="settings-icon" onclick="openSettings()">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
             </svg>
         </button>
     </div>
@@ -470,43 +471,38 @@
             </div>
             <div class="slider-group">
                 <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="overviewPeriodButtons">
-                    <!-- Dynamically populated -->
+                <div class="slider-buttons">
+                    <button class="slider-button active" data-period="P1" onclick="setOverviewPeriod('P1', this)">P1</button>
+                    <button class="slider-button" data-period="P2" onclick="setOverviewPeriod('P2', this)">P2</button>
+                    <button class="slider-button" data-period="P3" onclick="setOverviewPeriod('P3', this)">P3</button>
+                    <button class="slider-button" data-period="P4" onclick="setOverviewPeriod('P4', this)">P4</button>
                 </div>
-            </div>
-            <div class="slider-group">
-                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
             </div>
         </div>
 
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Student Frequency (Most Recent Period)</div>
+                <div class="stat-label">Students (Most Recent Period)</div>
                 <div class="stat-value" id="overviewRecentStudents">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Avg. Duration (Most Recent Period)</div>
+                <div class="stat-label">Avg Duration (Recent Period)</div>
                 <div class="stat-value" id="overviewRecentAvg">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Student Frequency (Last 14 Days)</div>
+                <div class="stat-label">Total Trips (14 Days)</div>
                 <div class="stat-value" id="overviewTotal14">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Avg. Duration (Last 14 Days)</div>
+                <div class="stat-label">Avg Duration (14 Days)</div>
                 <div class="stat-value" id="overviewAvg14">-</div>
             </div>
         </div>
 
         <!-- Chart -->
         <div class="card">
-            <h2>14-Day Trend </h2>
+            <h2>Students Out Per Day (Last 14 Days)</h2>
             <div class="chart-container">
                 <canvas id="overviewChart"></canvas>
             </div>
@@ -532,8 +528,11 @@
             </div>
             <div class="slider-group">
                 <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="classPeriodButtons">
-                    <!-- Dynamically populated -->
+                <div class="slider-buttons">
+                    <button class="slider-button active" data-period="P1" onclick="setClassPeriod('P1', this)">P1</button>
+                    <button class="slider-button" data-period="P2" onclick="setClassPeriod('P2', this)">P2</button>
+                    <button class="slider-button" data-period="P3" onclick="setClassPeriod('P3', this)">P3</button>
+                    <button class="slider-button" data-period="P4" onclick="setClassPeriod('P4', this)">P4</button>
                 </div>
             </div>
             <div class="additional-filters">
@@ -560,11 +559,11 @@
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-label">Student Frequency</div>
+                <div class="stat-label">Number of Students</div>
                 <div class="stat-value" id="classStudentCount">-</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Total Scans</div>
+                <div class="stat-label">Total Trips</div>
                 <div class="stat-value" id="classTotalTrips">-</div>
             </div>
             <div class="stat-card">
@@ -597,8 +596,11 @@
             </div>
             <div class="slider-group">
                 <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="studentPeriodButtons">
-                    <!-- Dynamically populated -->
+                <div class="slider-buttons">
+                    <button class="slider-button active" data-period="P1" onclick="setStudentPeriod('P1', this)">P1</button>
+                    <button class="slider-button" data-period="P2" onclick="setStudentPeriod('P2', this)">P2</button>
+                    <button class="slider-button" data-period="P3" onclick="setStudentPeriod('P3', this)">P3</button>
+                    <button class="slider-button" data-period="P4" onclick="setStudentPeriod('P4', this)">P4</button>
                 </div>
             </div>
             <div class="additional-filters">
@@ -632,7 +634,7 @@
             <!-- Stats -->
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total Frequency</div>
+                    <div class="stat-label">Total Trips</div>
                     <div class="stat-value" id="studentTotalTrips">-</div>
                 </div>
                 <div class="stat-card">
@@ -640,7 +642,7 @@
                     <div class="stat-value" id="studentTotalTime">-</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Average Duration</div>
+                    <div class="stat-label">Average Time</div>
                     <div class="stat-value" id="studentAvgTime">-</div>
                 </div>
                 <div class="stat-card">
@@ -660,13 +662,13 @@
             <!-- Charts -->
             <div class="two-charts">
                 <div class="card">
-                    <h2>Frequency by Day of Week</h2>
+                    <h2>Trips by Day of Week</h2>
                     <div class="chart-container">
                         <canvas id="studentTripsChart"></canvas>
                     </div>
                 </div>
                 <div class="card">
-                    <h2>Duration by Day of Week</h2>
+                    <h2>Time Out by Day of Week</h2>
                     <div class="chart-container">
                         <canvas id="studentTimeChart"></canvas>
                     </div>
@@ -689,68 +691,32 @@
             </div>
         </div>
     </div>
+    </div>
 
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-            authDomain: "hallpass2-n244.firebaseapp.com",
-            databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-            projectId: "hallpass2-n244",
-            storageBucket: "hallpass2-n244.firebasestorage.app",
-            messagingSenderId: "262508006458",
-            appId: "1:262508006458:web:4cdebead1181506d833903",
-            measurementId: "G-175T67QFGY"
+            apiKey: "AIzaSyBs47mEKcIcBfyHE1Z8hfXLH0J0r5DXB7Y",
+            authDomain: "bathroom-passes-e9508.firebaseapp.com",
+            databaseURL: "https://bathroom-passes-e9508-default-rtdb.firebaseio.com",
+            projectId: "bathroom-passes-e9508",
+            storageBucket: "bathroom-passes-e9508.firebasestorage.app",
+            messagingSenderId: "444029601733",
+            appId: "1:444029601733:web:c5f3fc8d2e6d09be95a7a8"
         };
 
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
         
-        // Schedule configuration - needed for dynamic period buttons
-        const CONFIG = {
-            schedules: {
-                red: {
-                    regular: [
-                        { name: "Red1-Algebra" },
-                        { name: "Red2-Algebra" },
-                        { name: "Red3-PreAlgebra" }
-                    ],
-                    late: [
-                        { name: "Red1-Algebra" },
-                        { name: "Red2-Algebra" },
-                        { name: "Red3-PreAlgebra" }
-                    ]
-                },
-                black: {
-                    regular: [
-                        { name: "Black2-Geometry" },
-                        { name: "Black3-Geometry" },
-                        { name: "Black4-Algebra" }
-                    ],
-                    late: [
-                        { name: "Black2-Geometry" },
-                        { name: "Black3-Geometry" },
-                        { name: "Black4-Algebra" }
-                    ]
-                }
-            }
-        };
-        
         let allLogs = [];
         let charts = {};
         
-        // Current filters - will be set dynamically after periods are populated
+        // Current filters
         let currentFilters = {
-            overview: { schedule: 'Red', period: null },
-            class: { schedule: 'Red', period: null },
-            student: { schedule: 'Red', period: null }
+            overview: { schedule: 'Red', period: 'P1' },
+            class: { schedule: 'Red', period: 'P1' },
+            student: { schedule: 'Red', period: 'P1' }
         };
-        
-        // Refresh function
-        function refreshAnalytics() {
-            console.log('Refreshing analytics data...');
-            loadAllData();
-        }
 
         // Settings functions
         function openSettings() {
@@ -800,120 +766,6 @@
             else if (tab === 'student') updateStudentList();
         }
 
-        // Dynamic period button updates
-        function updateOverviewPeriodButtons() {
-            const container = document.getElementById('overviewPeriodButtons');
-            const scheduleDay = currentFilters.overview.schedule === 'Red' ? 'red' : 'black';
-            // Use regular schedule for button labels (same periods exist in late start)
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.overview.period === period.name) || (!currentFilters.overview.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setOverviewPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.overview.period) {
-                currentFilters.overview.period = periods[0].name;
-            }
-        }
-
-        function updateClassPeriodButtons() {
-            const container = document.getElementById('classPeriodButtons');
-            const scheduleDay = currentFilters.class.schedule === 'Red' ? 'red' : 'black';
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.class.period === period.name) || (!currentFilters.class.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setClassPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.class.period) {
-                currentFilters.class.period = periods[0].name;
-            }
-        }
-
-        function updateStudentPeriodButtons() {
-            const container = document.getElementById('studentPeriodButtons');
-            const scheduleDay = currentFilters.student.schedule === 'Red' ? 'red' : 'black';
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.student.period === period.name) || (!currentFilters.student.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setStudentPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.student.period) {
-                currentFilters.student.period = periods[0].name;
-            }
-        }
-
-        function updateClassPeriodButtons() {
-            const container = document.getElementById('classPeriodButtons');
-            const scheduleDay = currentFilters.class.schedule === 'Red' ? 'red' : 'black';
-            const startType = currentFilters.class.startType || 'regular';
-            const periods = CONFIG.schedules[scheduleDay]?.[startType] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.class.period === period.name) || (!currentFilters.class.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setClassPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.class.period) {
-                currentFilters.class.period = periods[0].name;
-            }
-        }
-
-        function updateStudentPeriodButtons() {
-            const container = document.getElementById('studentPeriodButtons');
-            const scheduleDay = currentFilters.student.schedule === 'Red' ? 'red' : 'black';
-            const startType = currentFilters.student.startType || 'regular';
-            const periods = CONFIG.schedules[scheduleDay]?.[startType] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.student.period === period.name) || (!currentFilters.student.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setStudentPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.student.period) {
-                currentFilters.student.period = periods[0].name;
-            }
-        }
-
         // Filter functions - Overview
         function setOverviewSchedule(schedule, btn) {
             document.querySelectorAll('#overview .slider-buttons button').forEach(b => {
@@ -921,7 +773,6 @@
             });
             btn.classList.add('active');
             currentFilters.overview.schedule = schedule;
-            updateOverviewPeriodButtons();
             loadOverviewData();
         }
 
@@ -941,7 +792,6 @@
             });
             btn.classList.add('active');
             currentFilters.class.schedule = schedule;
-            updateClassPeriodButtons();
             loadClassData();
         }
 
@@ -961,7 +811,6 @@
             });
             btn.classList.add('active');
             currentFilters.student.schedule = schedule;
-            updateStudentPeriodButtons();
             updateStudentList();
         }
 
@@ -1042,28 +891,7 @@
                     allLogs.push(log);
                 });
                 console.log('Total logs loaded:', allLogs.length);
-                if (allLogs.length > 0) {
-                    console.log('Sample log:', allLogs[0]);
-                    console.log('Parsed scheduleDay:', allLogs[0].scheduleDay);
-                    console.log('Parsed startType:', allLogs[0].startType);
-                    console.log('Period:', allLogs[0].period);
-                    
-                    // Show breakdown by schedule
-                    const bySchedule = {};
-                    allLogs.forEach(log => {
-                        const key = `${log.scheduleDay}_${log.startType}`;
-                        bySchedule[key] = (bySchedule[key] || 0) + 1;
-                    });
-                    console.log('Logs by schedule:', bySchedule);
-                } else {
-                    console.warn('No logs found in database!');
-                }
-                
-                // Initialize period buttons for all tabs
-                updateOverviewPeriodButtons();
-                updateClassPeriodButtons();
-                updateStudentPeriodButtons();
-                
+                console.log('Sample log:', allLogs[0]);
                 loadOverviewData();
             });
         }
@@ -1074,34 +902,14 @@
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range14 = getDateRange(14);
             
-            console.log('=== OVERVIEW DATA LOAD ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
-            console.log('Total logs available:', allLogs.length);
+            console.log('Overview: Looking for scheduleDay:', scheduleDay, 'period:', period);
             
-            // Get most recent period data - filter by scheduleDay and period only (combines regular + late)
+            // Get most recent period data
             const recentPeriodLogs = allLogs
-                .filter(log => {
-                    const scheduleMatch = log.scheduleDay === scheduleDay;
-                    const periodMatch = log.period === period;
-                    
-                    if (!scheduleMatch || !periodMatch) {
-                        console.log('Log filtered out:', {
-                            log: log.studentName + ' - ' + log.period,
-                            scheduleMatch,
-                            periodMatch,
-                            expected: { scheduleDay, period },
-                            actual: { scheduleDay: log.scheduleDay, period: log.period }
-                        });
-                    }
-                    
-                    return scheduleMatch && periodMatch;
-                })
+                .filter(log => log.scheduleDay === scheduleDay)
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            console.log('Found logs matching all filters:', recentPeriodLogs.length);
-            if (recentPeriodLogs.length > 0) {
-                console.log('Sample matching log:', recentPeriodLogs[0]);
-            }
+            console.log('Found logs for schedule:', recentPeriodLogs.length);
             
             const mostRecentDate = recentPeriodLogs.length > 0 ? recentPeriodLogs[0].date : null;
             const recentPeriodData = mostRecentDate 
@@ -1113,12 +921,10 @@
                 ? recentPeriodData.reduce((sum, log) => sum + (log.duration || 0), 0) / recentPeriodData.length
                 : 0;
             
-            // Get 14-day data - filter by scheduleDay and period only (combines regular + late)
+            // Get 14-day data
             const logs14 = allLogs.filter(log => 
                 log.date >= range14.startDate && 
                 log.date <= range14.endDate &&
-                log.scheduleDay === scheduleDay &&
-                log.period === period &&
                 (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset')
             );
             
@@ -1242,19 +1048,12 @@
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const range = getTimeRangeDates('classTimeRange', 'classStartDate', 'classEndDate');
             
-            console.log('=== CLASS DATA LOAD ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
-            
-            // Filter by scheduleDay and period only (combines regular + late start data)
             const filtered = allLogs.filter(log =>
                 log.scheduleDay === scheduleDay &&
-                log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
                 (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
             );
-            
-            console.log('Filtered logs for class:', filtered.length);
             
             const uniqueStudents = new Set(filtered.map(log => log.studentName)).size;
             const totalTrips = filtered.length;
@@ -1382,18 +1181,12 @@
             const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
             const studentSelect = document.getElementById('studentSelect');
             
-            console.log('=== UPDATE STUDENT LIST ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
-            
             const students = new Set();
             allLogs.forEach(log => {
-                // Filter by scheduleDay and period (combines regular + late start data)
-                if (log.scheduleDay === scheduleDay && log.period === period && log.studentName) {
+                if (log.scheduleDay === scheduleDay && log.studentName) {
                     students.add(log.studentName);
                 }
             });
-            
-            console.log('Found students:', students.size);
             
             studentSelect.innerHTML = '<option value="">-- Select student --</option>';
             Array.from(students).sort().forEach(name => {
@@ -1415,24 +1208,14 @@
             document.getElementById('studentDetailsContainer').style.display = 'block';
             document.getElementById('noStudentSelected').style.display = 'none';
             
-            const { schedule, period } = currentFilters.student;
-            const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             const range = getTimeRangeDates('studentTimeRange', 'studentStartDate', 'studentEndDate');
             
-            console.log('=== LOAD STUDENT DATA ===');
-            console.log('Student:', studentName, 'Filters:', { scheduleDay, period });
-            
-            // Filter by scheduleDay and period only (combines regular + late start data)
             const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
-                log.scheduleDay === scheduleDay &&
-                log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
                 (log.action === 'in' || log.action === 'out' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in' || log.action === 'manual-out')
             );
-            
-            console.log('Filtered student logs:', filtered.length);
             
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
