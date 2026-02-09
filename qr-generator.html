@@ -330,6 +330,11 @@
             const count = parseInt(document.getElementById('qrCount').value);
             const size = parseInt(document.getElementById('qrSize').value);
             
+            if (count < 1 || count > 50) {
+                alert('Please enter a number between 1 and 50');
+                return;
+            }
+            
             const btn = document.querySelector('.generate-btn');
             btn.disabled = true;
             btn.textContent = 'Generating...';
@@ -341,76 +346,105 @@
             
             progress.style.display = 'block';
             previewContainer.innerHTML = '<div class="preview-grid" id="previewGrid"></div>';
+            document.getElementById('downloadSection').style.display = 'none';
             
             const previewGrid = document.getElementById('previewGrid');
             generatedQRCodes = [];
             
-            for (let i = 1; i <= count; i++) {
-                const qrCode = `qr_${String(i).padStart(2, '0')}`;
-                const label = `Student ${i}`;
-                
-                // Create preview container
-                const previewDiv = document.createElement('div');
-                previewDiv.className = 'qr-preview';
-                previewDiv.innerHTML = `
-                    <canvas id="qr_${i}"></canvas>
-                    <div class="label">${qrCode}</div>
-                `;
-                previewGrid.appendChild(previewDiv);
-                
-                // Generate QR code
-                const canvas = document.getElementById(`qr_${i}`);
-                await QRCode.toCanvas(canvas, qrCode, {
-                    width: size,
-                    margin: 2,
-                    color: {
-                        dark: '#000000',
-                        light: '#FFFFFF'
+            try {
+                for (let i = 1; i <= count; i++) {
+                    const qrCode = `qr_${String(i).padStart(2, '0')}`;
+                    const label = `Student ${i}`;
+                    
+                    // Create preview container
+                    const previewDiv = document.createElement('div');
+                    previewDiv.className = 'qr-preview';
+                    const canvasId = `qr_canvas_${i}`;
+                    previewDiv.innerHTML = `
+                        <canvas id="${canvasId}"></canvas>
+                        <div class="label">${qrCode}</div>
+                    `;
+                    previewGrid.appendChild(previewDiv);
+                    
+                    // Small delay to ensure DOM updates
+                    await new Promise(resolve => setTimeout(resolve, 10));
+                    
+                    // Generate QR code
+                    const canvas = document.getElementById(canvasId);
+                    if (!canvas) {
+                        console.error('Canvas not found:', canvasId);
+                        continue;
                     }
-                });
+                    
+                    try {
+                        await QRCode.toCanvas(canvas, qrCode, {
+                            width: size,
+                            margin: 2,
+                            color: {
+                                dark: '#000000',
+                                light: '#FFFFFF'
+                            }
+                        });
+                        
+                        // Create labeled version for download
+                        const labeledCanvas = document.createElement('canvas');
+                        const ctx = labeledCanvas.getContext('2d');
+                        
+                        // Set canvas size (QR + label space)
+                        labeledCanvas.width = size;
+                        labeledCanvas.height = size + 60;
+                        
+                        // White background
+                        ctx.fillStyle = '#FFFFFF';
+                        ctx.fillRect(0, 0, labeledCanvas.width, labeledCanvas.height);
+                        
+                        // Draw QR code
+                        ctx.drawImage(canvas, 0, 0);
+                        
+                        // Draw label
+                        ctx.fillStyle = '#000000';
+                        ctx.font = 'bold 24px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(label, labeledCanvas.width / 2, size + 35);
+                        
+                        // Store for ZIP download
+                        const blob = await new Promise(resolve => {
+                            labeledCanvas.toBlob(resolve, 'image/png');
+                        });
+                        
+                        generatedQRCodes.push({
+                            filename: `${qrCode}.png`,
+                            blob: blob
+                        });
+                        
+                    } catch (qrError) {
+                        console.error('Error generating QR code:', i, qrError);
+                    }
+                    
+                    // Update progress
+                    const percent = Math.round((i / count) * 100);
+                    progressFill.style.width = `${percent}%`;
+                    progressText.textContent = `Generated ${i} of ${count} codes`;
+                }
                 
-                // Create labeled version for download
-                const labeledCanvas = document.createElement('canvas');
-                const ctx = labeledCanvas.getContext('2d');
+                // Complete
+                progress.style.display = 'none';
+                document.getElementById('downloadSection').style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Generate QR Codes';
                 
-                // Set canvas size (QR + label space)
-                labeledCanvas.width = size;
-                labeledCanvas.height = size + 60;
+                // Scroll to download section
+                setTimeout(() => {
+                    document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+                }, 100);
                 
-                // White background
-                ctx.fillStyle = '#FFFFFF';
-                ctx.fillRect(0, 0, labeledCanvas.width, labeledCanvas.height);
-                
-                // Draw QR code
-                ctx.drawImage(canvas, 0, 0);
-                
-                // Draw label
-                ctx.fillStyle = '#000000';
-                ctx.font = 'bold 24px Arial';
-                ctx.textAlign = 'center';
-                ctx.fillText(label, labeledCanvas.width / 2, size + 35);
-                
-                // Store for ZIP download
-                const blob = await new Promise(resolve => labeledCanvas.toBlob(resolve, 'image/png'));
-                generatedQRCodes.push({
-                    filename: `${qrCode}.png`,
-                    blob: blob
-                });
-                
-                // Update progress
-                const percent = Math.round((i / count) * 100);
-                progressFill.style.width = `${percent}%`;
-                progressText.textContent = `Generated ${i} of ${count} codes`;
+            } catch (error) {
+                console.error('Generation error:', error);
+                alert('An error occurred while generating QR codes. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Generate QR Codes';
+                progress.style.display = 'none';
             }
-            
-            // Complete
-            progress.style.display = 'none';
-            document.getElementById('downloadSection').style.display = 'block';
-            btn.disabled = false;
-            btn.textContent = 'Generate QR Codes';
-            
-            // Scroll to download section
-            document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
         }
         
         async function downloadZip() {
@@ -423,21 +457,33 @@
             btn.disabled = true;
             btn.textContent = 'Creating ZIP...';
             
-            const zip = new JSZip();
-            
-            // Add all QR codes to ZIP
-            for (const qr of generatedQRCodes) {
-                zip.file(qr.filename, qr.blob);
+            try {
+                const zip = new JSZip();
+                
+                // Add all QR codes to ZIP
+                for (const qr of generatedQRCodes) {
+                    zip.file(qr.filename, qr.blob);
+                }
+                
+                // Generate ZIP file
+                const zipBlob = await zip.generateAsync({ 
+                    type: 'blob',
+                    compression: 'DEFLATE',
+                    compressionOptions: { level: 6 }
+                });
+                
+                // Download
+                saveAs(zipBlob, 'hallpass_qr_codes.zip');
+                
+                btn.disabled = false;
+                btn.textContent = 'Download All as ZIP';
+                
+            } catch (error) {
+                console.error('ZIP creation error:', error);
+                alert('An error occurred while creating the ZIP file. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Download All as ZIP';
             }
-            
-            // Generate ZIP file
-            const zipBlob = await zip.generateAsync({ type: 'blob' });
-            
-            // Download
-            saveAs(zipBlob, 'hallpass_qr_codes.zip');
-            
-            btn.disabled = false;
-            btn.textContent = 'Download All as ZIP';
         }
     </script>
 </body>
