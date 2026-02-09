@@ -200,7 +200,7 @@
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.5rem;
             margin-top: 1.5rem;
         }
@@ -284,7 +284,7 @@
             }
 
             .info-section {
-                padding: 2rem 1.5rem;
+                padding: 2rem;
             }
             
             .features-grid,
@@ -297,7 +297,7 @@
 <body>
     <div class="container">
         <header class="hero">
-            <h1>HallPass 2.0</h1>
+            <h1>HallPass</h1>
             <p class="hero-subtitle">Real-time hall pass tracking with QR codes and analytics</p>
             <div class="status-badge">
                 <span class="status-dot"></span>
@@ -331,28 +331,28 @@
                 Starting fresh or setting up for the first time? Use these tools to configure your HallPass system at the beginning of the year.
             </p>
             <div class="tools-grid">
-                <a href="qr-generator.html" class="tool-card" data-tool="qr">
+                <a href="setup-guide.html" class="tool-card" data-tool="docs">
                     <div class="tool-number">1</div>
+                    <div class="tool-title">Setup Documentation</div>
+                    <p class="tool-text">Step-by-step instructions for Firebase setup, schedule configuration, and system deployment. Everything you need to get started.</p>
+                </a>
+
+                <a href="qr-generator.html" class="tool-card" data-tool="qr">
+                    <div class="tool-number">2</div>
                     <div class="tool-title">QR Code Generator</div>
                     <p class="tool-text">Generate the 30 static QR codes (qr_01 through qr_30) for your students. Print and laminate these at the start of the year.</p>
                 </a>
 
                 <a href="schedule-generator.html" class="tool-card" data-tool="generator">
-                    <div class="tool-number">2</div>
+                    <div class="tool-number">3</div>
                     <div class="tool-title">Schedule Generator</div>
                     <p class="tool-text">Configure your Red/Black day schedules with student rosters. Generates formatted code to copy into your config file.</p>
                 </a>
                 
                 <a href="qr-tester.html" class="tool-card" data-tool="diagnostic">
-                    <div class="tool-number">3</div>
+                    <div class="tool-number">4</div>
                     <div class="tool-title">Diagnostic Tool</div>
                     <p class="tool-text">Test QR codes and verify they're syncing correctly with your schedule. Shows the unique ID generated for each scan.</p>
-                </a>
-
-                <a href="setup-guide.html" class="tool-card" data-tool="docs">
-                    <div class="tool-number">4</div>
-                    <div class="tool-title">Setup Documentation</div>
-                    <p class="tool-text">Step-by-step instructions for Firebase setup, schedule configuration, and system deployment. Everything you need to get started.</p>
                 </a>
             </div>
         </section>
