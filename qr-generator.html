@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Generator - HallPass 2.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --color-ink: #0f172a;
+            --color-slate: #475569;
+            --color-cloud: #f1f5f9;
+            --color-paper: #ffffff;
+            --color-primary: #667eea;
+            --color-success: #10b981;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: var(--color-ink);
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+        }
+        .header h1 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem; 
+            margin-bottom: 0.5rem;
+            color: var(--color-ink);
+        }
+        .header p { 
+            font-size: 0.9375rem;
+            color: var(--color-slate);
+        }
+        
+        .content { 
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .info-box {
+            background: var(--color-cloud);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--color-primary);
+        }
+        
+        .info-box h3 {
+            font-size: 0.875rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--color-ink);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .info-box p {
+            font-size: 0.875rem;
+            line-height: 1.7;
+            color: var(--color-slate);
+            margin-bottom: 0.5rem;
+        }
+        
+        .info-box ul {
+            margin-left: 1.5rem;
+            margin-top: 0.75rem;
+        }
+        
+        .info-box li {
+            margin-bottom: 0.5rem;
+            color: var(--color-slate);
+            font-size: 0.875rem;
+            line-height: 1.7;
+        }
+        
+        .controls {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .control-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .control-group label {
+            font-weight: 600;
+            min-width: 150px;
+            font-size: 0.875rem;
+            color: var(--color-ink);
+        }
+        
+        .control-group input {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid var(--color-cloud);
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            transition: border-color 0.2s;
+        }
+        
+        .control-group input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--color-success);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 2rem;
+            transition: all 0.2s;
+        }
+        
+        .generate-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .generate-btn:disabled {
+            background: var(--color-slate);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress {
+            display: none;
+            margin-bottom: 2rem;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: var(--color-cloud);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--color-success);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--color-slate);
+            font-weight: 600;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .qr-preview {
+            background: var(--color-cloud);
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .qr-preview:hover {
+            border-color: var(--color-primary);
+        }
+        
+        .qr-preview canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            background: white;
+        }
+        
+        .qr-preview .label {
+            margin-top: 0.75rem;
+            font-weight: 600;
+            color: var(--color-ink);
+            font-size: 0.875rem;
+        }
+        
+        .download-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: var(--color-cloud);
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .download-section h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--color-ink);
+        }
+        
+        .download-btn {
+            padding: 1rem 2rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #5568d3;
+            transform: translateY(-1px);
+        }
+        
+        .download-btn:disabled {
+            background: var(--color-slate);
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin-top: 2rem;
+            color: var(--color-primary);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        
+        .back-link:hover {
+            color: #5568d3;
+        }
+        
+        @media (max-width: 768px) {
+            body { padding: 1rem; }
+            .header, .content { padding: 1.5rem; }
+            .control-group { flex-direction: column; align-items: flex-start; }
+            .control-group label { min-width: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>QR Code Generator</h1>
+            <p>Generate static QR codes for your HallPass system</p>
+        </div>
+        
+        <div class="content">
+            <div class="info-box">
+                <h3>How to Use</h3>
+                <p>This tool generates 30 static QR codes (qr_01 through qr_30) for your classroom:</p>
+                <ul>
+                    <li><strong>Step 1:</strong> Click "Generate QR Codes" to create all 30 codes</li>
+                    <li><strong>Step 2:</strong> Preview the codes below</li>
+                    <li><strong>Step 3:</strong> Click "Download All as ZIP" to save them</li>
+                    <li><strong>Step 4:</strong> Print and laminate the QR codes</li>
+                    <li><strong>Step 5:</strong> Assign them to students (the same 30 codes can be reused for different students on Red/Black days)</li>
+                </ul>
+            </div>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="qrCount">Number of QR Codes:</label>
+                    <input type="number" id="qrCount" value="30" min="1" max="50">
+                </div>
+                <div class="control-group">
+                    <label for="qrSize">QR Code Size (px):</label>
+                    <input type="number" id="qrSize" value="256" min="128" max="512" step="32">
+                </div>
+            </div>
+            
+            <button class="generate-btn" onclick="generateQRCodes()">Generate QR Codes</button>
+            
+            <div class="progress" id="progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text" id="progressText">Generating...</div>
+            </div>
+            
+            <div id="previewContainer"></div>
+            
+            <div class="download-section" id="downloadSection" style="display: none;">
+                <h3>QR Codes Generated Successfully</h3>
+                <button class="download-btn" onclick="downloadZip()">Download All as ZIP</button>
+            </div>
+            
+            <a href="index.html" class="back-link">← Back to Home</a>
+        </div>
+    </div>
+
+    <script>
+        let generatedQRCodes = [];
+        
+        async function generateQRCodes() {
+            const count = parseInt(document.getElementById('qrCount').value);
+            const size = parseInt(document.getElementById('qrSize').value);
+            
+            const btn = document.querySelector('.generate-btn');
+            btn.disabled = true;
+            btn.textContent = 'Generating...';
+            
+            const progress = document.getElementById('progress');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const previewContainer = document.getElementById('previewContainer');
+            
+            progress.style.display = 'block';
+            previewContainer.innerHTML = '<div class="preview-grid" id="previewGrid"></div>';
+            
+            const previewGrid = document.getElementById('previewGrid');
+            generatedQRCodes = [];
+            
+            for (let i = 1; i <= count; i++) {
+                const qrCode = `qr_${String(i).padStart(2, '0')}`;
+                const label = `Student ${i}`;
+                
+                // Create preview container
+                const previewDiv = document.createElement('div');
+                previewDiv.className = 'qr-preview';
+                previewDiv.innerHTML = `
+                    <canvas id="qr_${i}"></canvas>
+                    <div class="label">${qrCode}</div>
+                `;
+                previewGrid.appendChild(previewDiv);
+                
+                // Generate QR code
+                const canvas = document.getElementById(`qr_${i}`);
+                await QRCode.toCanvas(canvas, qrCode, {
+                    width: size,
+                    margin: 2,
+                    color: {
+                        dark: '#000000',
+                        light: '#FFFFFF'
+                    }
+                });
+                
+                // Create labeled version for download
+                const labeledCanvas = document.createElement('canvas');
+                const ctx = labeledCanvas.getContext('2d');
+                
+                // Set canvas size (QR + label space)
+                labeledCanvas.width = size;
+                labeledCanvas.height = size + 60;
+                
+                // White background
+                ctx.fillStyle = '#FFFFFF';
+                ctx.fillRect(0, 0, labeledCanvas.width, labeledCanvas.height);
+                
+                // Draw QR code
+                ctx.drawImage(canvas, 0, 0);
+                
+                // Draw label
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, labeledCanvas.width / 2, size + 35);
+                
+                // Store for ZIP download
+                const blob = await new Promise(resolve => labeledCanvas.toBlob(resolve, 'image/png'));
+                generatedQRCodes.push({
+                    filename: `${qrCode}.png`,
+                    blob: blob
+                });
+                
+                // Update progress
+                const percent = Math.round((i / count) * 100);
+                progressFill.style.width = `${percent}%`;
+                progressText.textContent = `Generated ${i} of ${count} codes`;
+            }
+            
+            // Complete
+            progress.style.display = 'none';
+            document.getElementById('downloadSection').style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Generate QR Codes';
+            
+            // Scroll to download section
+            document.getElementById('downloadSection').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        async function downloadZip() {
+            if (generatedQRCodes.length === 0) {
+                alert('Please generate QR codes first!');
+                return;
+            }
+            
+            const btn = event.target;
+            btn.disabled = true;
+            btn.textContent = 'Creating ZIP...';
+            
+            const zip = new JSZip();
+            
+            // Add all QR codes to ZIP
+            for (const qr of generatedQRCodes) {
+                zip.file(qr.filename, qr.blob);
+            }
+            
+            // Generate ZIP file
+            const zipBlob = await zip.generateAsync({ type: 'blob' });
+            
+            // Download
+            saveAs(zipBlob, 'hallpass_qr_codes.zip');
+            
+            btn.disabled = false;
+            btn.textContent = 'Download All as ZIP';
+        }
+    </script>
+</body>
+</html>
