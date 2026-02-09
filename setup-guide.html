@@ -242,8 +242,9 @@
                     <li><a href="#qr-codes">2. Generating QR Codes</a></li>
                     <li><a href="#schedule">3. Creating Your Schedule</a></li>
                     <li><a href="#config">4. Configuration File</a></li>
-                    <li><a href="#deployment">5. Deployment</a></li>
+                    <li><a href="#deployment">5. Deployment (GitHub Pages)</a></li>
                     <li><a href="#testing">6. Testing & Verification</a></li>
+                    <li><a href="#updating">7. Updating Your Configuration</a></li>
                 </ul>
             </div>
 
@@ -370,23 +371,59 @@
 
             <div class="section" id="config">
                 <h2>4. Configuration File</h2>
-                <p>Now you'll create or update the config file that all HallPass pages use.</p>
+                <p>You'll need to embed your configuration directly into each HTML file since GitHub Pages doesn't support loading external JavaScript config files.</p>
                 
-                <h3>Create config.js File</h3>
+                <h3>Understanding the Configuration</h3>
+                <p>Your configuration contains three main parts:</p>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>Firebase credentials:</strong> Connects to your database</li>
+                    <li><strong>Timing settings:</strong> Controls scan debounce and cooldowns</li>
+                    <li><strong>Schedules:</strong> Your class periods and student rosters</li>
+                </ul>
+                
+                <h3>Embed Configuration in Each File</h3>
                 <ol class="step-list">
                     <li>
-                        <strong>Create New File</strong>
-                        <p>In your HallPass folder, create a new file named <code>config.js</code>.</p>
+                        <strong>Open scanner.html</strong>
+                        <p>Find the section that says <code>// CONFIGURATION - EDIT THIS SECTION ONLY</code> (usually near line 150).</p>
                     </li>
                     <li>
-                        <strong>Add Firebase Configuration</strong>
-                        <p>Start with your Firebase config from Step 1:</p>
+                        <strong>Replace Firebase Config</strong>
+                        <p>Update the firebase section with your credentials from Step 1:</p>
                     </li>
                 </ol>
                 
+                <div class="code-block">firebase: {
+    apiKey: "your-api-key-here",
+    authDomain: "your-project.firebaseapp.com",
+    projectId: "your-project-id",
+    storageBucket: "your-project.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "your-app-id"
+}</div>
+                
+                <ol class="step-list" style="counter-reset: step-counter 2;">
+                    <li>
+                        <strong>Paste Your Schedule</strong>
+                        <p>Replace the schedules section with the code you generated in Step 3.</p>
+                    </li>
+                    <li>
+                        <strong>Repeat for Other Files</strong>
+                        <p>Copy the exact same configuration into dashboard.html, analytics.html, and qr-tester.html. Each file has a CONFIG section that needs to be updated.</p>
+                    </li>
+                </ol>
+                
+                <div class="note-box warning">
+                    <strong>Important</strong>
+                    <p>You must update the CONFIG section in all four files (scanner.html, dashboard.html, analytics.html, qr-tester.html) with identical configuration for the system to work properly.</p>
+                </div>
+                
+                <h3>Configuration Template</h3>
+                <p>Here's the complete structure you'll be editing in each file:</p>
+                
                 <div class="code-block">const CONFIG = {
     firebase: {
-        apiKey: "your-api-key-here",
+        apiKey: "your-api-key",
         authDomain: "your-project.firebaseapp.com",
         projectId: "your-project-id",
         storageBucket: "your-project.appspot.com",
@@ -399,69 +436,115 @@
         studentCooldown: 5000
     },
     
-    // Paste your schedule code from Step 3 below
     schedules: {
-        // Your generated schedule goes here
+        red: {
+            regular: [
+                {
+                    name: "Red1-Algebra",
+                    startTime: "07:45",
+                    endTime: "09:13",
+                    students: {
+                        qr_01: "Student Name",
+                        qr_02: "Student Name"
+                    }
+                }
+            ],
+            late: []
+        },
+        black: {
+            regular: [],
+            late: []
+        }
     }
 };</div>
-                
-                <ol class="step-list" style="counter-reset: step-counter 2;">
-                    <li>
-                        <strong>Add Your Schedule</strong>
-                        <p>Paste the schedule code you generated in Step 3 to replace the empty schedules object.</p>
-                    </li>
-                    <li>
-                        <strong>Save the File</strong>
-                        <p>Save <code>config.js</code> in the same folder as your HTML files.</p>
-                    </li>
-                </ol>
-                
-                <h3>Link Config to HTML Files</h3>
-                <p>Add this line to the <code>&lt;head&gt;</code> section of scanner.html, dashboard.html, and analytics.html:</p>
-                
-                <div class="code-block">&lt;script src="config.js"&gt;&lt;/script&gt;</div>
             </div>
 
             <div class="section" id="deployment">
                 <h2>5. Deployment</h2>
                 <p>Get your HallPass system running on your devices.</p>
                 
-                <h3>Option A: Local Files (Simplest)</h3>
+                <h3>Option A: GitHub Pages (Recommended)</h3>
+                <p>GitHub Pages provides free HTTPS hosting, which is required for camera access on mobile devices.</p>
+                
+                <ol class="step-list">
+                    <li>
+                        <strong>Create GitHub Account</strong>
+                        <p>If you don't have one, sign up at <a href="https://github.com" target="_blank">github.com</a> (it's free).</p>
+                    </li>
+                    <li>
+                        <strong>Create New Repository</strong>
+                        <p>Click the "+" icon in the top right, select "New repository". Name it something like "hallpass-2024". Make it Public and check "Add a README file".</p>
+                    </li>
+                    <li>
+                        <strong>Upload Your Files</strong>
+                        <p>Click "Add file" → "Upload files". Drag and drop all your HTML files:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>index.html</li>
+                            <li>scanner.html</li>
+                            <li>dashboard.html</li>
+                            <li>analytics.html</li>
+                            <li>qr-tester.html</li>
+                            <li>qr-generator.html</li>
+                            <li>schedule-generator.html</li>
+                            <li>setup-guide.html</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;">Click "Commit changes" to upload.</p>
+                    </li>
+                    <li>
+                        <strong>Enable GitHub Pages</strong>
+                        <p>Go to your repository Settings → Pages (in the left sidebar). Under "Source", select "Deploy from a branch", choose "main" branch, and click Save.</p>
+                    </li>
+                    <li>
+                        <strong>Wait for Deployment</strong>
+                        <p>GitHub will deploy your site in 1-2 minutes. You'll see a green checkmark and your URL will appear at the top of the Pages settings.</p>
+                    </li>
+                    <li>
+                        <strong>Access Your Site</strong>
+                        <p>Your HallPass system will be available at: <code>https://your-username.github.io/hallpass-2024/</code></p>
+                    </li>
+                    <li>
+                        <strong>Bookmark URLs</strong>
+                        <p>Save these bookmarks for quick access:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li><strong>Dashboard (computer):</strong> .../dashboard.html</li>
+                            <li><strong>Scanner (phone/tablet):</strong> .../scanner.html</li>
+                            <li><strong>Analytics:</strong> .../analytics.html</li>
+                        </ul>
+                    </li>
+                </ol>
+                
+                <div class="note-box">
+                    <strong>Updating Your Site</strong>
+                    <p>When you need to change schedules or settings, edit the HTML files directly on GitHub. Click the file → pencil icon (Edit) → make changes → Commit. Changes appear in 1-2 minutes.</p>
+                </div>
+                
+                <h3>Option B: Local Files</h3>
+                <p>For desktop-only use (dashboard and analytics), you can run files locally.</p>
+                
                 <ol class="step-list">
                     <li>
                         <strong>Place Files on Computer</strong>
-                        <p>Copy all HTML files and config.js to a folder on your teacher computer.</p>
+                        <p>Copy all HTML files to a folder on your teacher computer.</p>
                     </li>
                     <li>
                         <strong>Open in Browser</strong>
-                        <p>Double-click <code>dashboard.html</code> to open your dashboard.</p>
-                    </li>
-                    <li>
-                        <strong>Setup Scanner Device</strong>
-                        <p>On your phone/tablet, open <code>scanner.html</code> (you may need to transfer files or use a local server).</p>
+                        <p>Double-click <code>index.html</code> to open the home page, then navigate to dashboard or analytics.</p>
                     </li>
                 </ol>
                 
                 <div class="note-box warning">
-                    <strong>Camera Access Note</strong>
-                    <p>QR scanning requires HTTPS or localhost. If the scanner doesn't work, you'll need to use a web server (Option B).</p>
+                    <strong>Camera Access Limitation</strong>
+                    <p>The scanner will NOT work with local files because QR code scanning requires HTTPS. You must use GitHub Pages (Option A) or another web host for the scanner to function on mobile devices.</p>
                 </div>
                 
-                <h3>Option B: Web Hosting (Recommended)</h3>
-                <ol class="step-list">
-                    <li>
-                        <strong>Choose a Host</strong>
-                        <p>Free options: GitHub Pages, Netlify, Vercel, or Firebase Hosting.</p>
-                    </li>
-                    <li>
-                        <strong>Upload Files</strong>
-                        <p>Upload all HTML files and config.js to your chosen hosting service.</p>
-                    </li>
-                    <li>
-                        <strong>Access via URL</strong>
-                        <p>You'll get a URL like <code>https://your-hallpass.netlify.app</code> that works on all devices.</p>
-                    </li>
-                </ol>
+                <h3>Option C: Other Free Hosts</h3>
+                <p>Alternative hosting services that also provide HTTPS:</p>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>Netlify:</strong> Drag and drop your folder, instant deployment</li>
+                    <li><strong>Vercel:</strong> Similar to Netlify, very fast</li>
+                    <li><strong>Firebase Hosting:</strong> Good if you're already using Firebase</li>
+                </ul>
+                <p>All of these work the same way: upload your HTML files and get an HTTPS URL.</p>
             </div>
 
             <div class="section" id="testing">
@@ -491,6 +574,61 @@
                     <strong>Troubleshooting</strong>
                     <p>If sync isn't working, check your Firebase console to ensure data is being written. Common issues: incorrect Firebase config, blocked database rules, or network connectivity.</p>
                 </div>
+            </div>
+            
+            <div class="section" id="updating">
+                <h2>7. Updating Your Configuration</h2>
+                <p>When you need to change student rosters or schedules throughout the year.</p>
+                
+                <h3>If Hosted on GitHub Pages</h3>
+                <ol class="step-list">
+                    <li>
+                        <strong>Navigate to Your Repository</strong>
+                        <p>Go to github.com and open your hallpass repository.</p>
+                    </li>
+                    <li>
+                        <strong>Edit the File</strong>
+                        <p>Click the file you want to update (e.g., scanner.html), then click the pencil icon (Edit this file).</p>
+                    </li>
+                    <li>
+                        <strong>Find the CONFIG Section</strong>
+                        <p>Scroll to the JavaScript section with <code>const CONFIG = {</code> (usually around line 150-200).</p>
+                    </li>
+                    <li>
+                        <strong>Update Schedules</strong>
+                        <p>You can either:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Manually edit student names and times directly in the code</li>
+                            <li>Use the Schedule Generator to create new code and paste it in</li>
+                        </ul>
+                    </li>
+                    <li>
+                        <strong>Commit Changes</strong>
+                        <p>Scroll down, add a commit message like "Updated Period 1 roster", and click "Commit changes".</p>
+                    </li>
+                    <li>
+                        <strong>Repeat for All Files</strong>
+                        <p>Remember to update the CONFIG in dashboard.html, analytics.html, and qr-tester.html with the same changes.</p>
+                    </li>
+                    <li>
+                        <strong>Wait for Deployment</strong>
+                        <p>Changes will be live in 1-2 minutes. Refresh your browser to see updates.</p>
+                    </li>
+                </ol>
+                
+                <div class="note-box warning">
+                    <strong>Keep Config Synchronized</strong>
+                    <p>All four files (scanner, dashboard, analytics, qr-tester) must have identical CONFIG sections. If they don't match, you'll see inconsistent student names or missing data.</p>
+                </div>
+                
+                <h3>Quick Mid-Year Updates</h3>
+                <p>Common scenarios:</p>
+                <ul style="margin-left: 1.5rem; margin-bottom: 1rem;">
+                    <li><strong>New student:</strong> Add their name to the students list, assigned to an available qr_XX code</li>
+                    <li><strong>Student moved classes:</strong> Move their name from one period to another</li>
+                    <li><strong>Schedule change:</strong> Update the startTime and endTime for affected periods</li>
+                    <li><strong>Semester change:</strong> Use Schedule Generator to create completely new schedules and replace the entire schedules object</li>
+                </ul>
             </div>
             
             <a href="index.html" class="back-link">← Back to Home</a>
