@@ -21,7 +21,7 @@
         }
         body {
             font-family: 'DM Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -32,18 +32,19 @@
             width: 100%;
             max-width: 500px;
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             overflow: hidden;
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: white;
+            color: var(--color-ink);
             padding: 2rem;
             text-align: center;
+            border-bottom: 1px solid var(--color-cloud);
         }
         .header h1 { font-family: 'Fraunces', serif; font-size: 1.75rem; margin-bottom: 0.5rem; }
-        .header p { font-size: 0.9375rem; opacity: 0.95; }
+        .header p { font-size: 0.9375rem; color: var(--color-slate); }
         #reader { width: 100%; border: none; }
         .status-area {
             padding: 2rem;
@@ -102,7 +103,7 @@
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             align-items: center;
             justify-content: center;
@@ -111,41 +112,62 @@
         .modal-overlay.active { display: flex; }
         .modal-content {
             background: white;
-            border-radius: 24px;
+            border-radius: 16px;
             padding: 2.5rem;
             max-width: 400px;
             width: 90%;
             text-align: center;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
         }
-        .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; }
-        .modal-content p { color: var(--color-slate); margin-bottom: 1.5rem; }
+        .modal-content h2 { font-family: 'Fraunces', serif; font-size: 1.875rem; margin-bottom: 1rem; color: var(--color-ink); }
+        .modal-content p { color: var(--color-slate); margin-bottom: 1.5rem; line-height: 1.6; }
         
         /* Schedule Buttons */
         .schedule-buttons { display: flex; flex-direction: column; gap: 1rem; }
         .schedule-button {
-            padding: 1.25rem;
-            border: none;
-            border-radius: 12px;
-            font-size: 1.125rem;
+            padding: 1rem;
+            border: 2px solid var(--color-cloud);
+            border-radius: 8px;
+            font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            color: white;
+            color: var(--color-ink);
+            background: white;
         }
         .schedule-button.red {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .schedule-button.red:hover {
+            background: #ef4444;
+            color: white;
         }
         .schedule-button.black {
-            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
+            border-color: #0f172a;
+            color: #0f172a;
+        }
+        .schedule-button.black:hover {
+            background: #0f172a;
+            color: white;
         }
         .schedule-button.regular {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-color: var(--color-success);
+            color: var(--color-success);
+        }
+        .schedule-button.regular:hover {
+            background: var(--color-success);
+            color: white;
         }
         .schedule-button.late {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-color: #f59e0b;
+            color: #f59e0b;
         }
-        .schedule-button:hover { transform: translateY(-2px); }
+        .schedule-button.late:hover {
+            background: #f59e0b;
+            color: white;
+        }
+        .schedule-button:hover { transform: translateY(-1px); }
         .schedule-button:active { transform: translateY(0); }
         .back-button {
             margin-top: 1rem;
@@ -280,6 +302,11 @@
             background: var(--color-cloud);
             color: var(--color-slate);
         }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -343,6 +370,10 @@
             <div class="schedule-buttons">
                 <button class="schedule-button red" onclick="selectScheduleType('red')">Red Day</button>
                 <button class="schedule-button black" onclick="selectScheduleType('black')">Black Day</button>
+            </div>
+            <div style="margin-top: 1.5rem; padding: 1rem; background: var(--color-cloud); border-radius: 8px; font-size: 0.875rem; color: var(--color-slate); text-align: left; line-height: 1.6;">
+                <strong style="display: block; margin-bottom: 0.5rem; color: var(--color-ink);">Camera Access Required</strong>
+                When you select a schedule, your browser will prompt you to allow camera access. This is necessary for scanning QR codes.
             </div>
         </div>
     </div>
@@ -929,20 +960,41 @@
 
         function startScanner() {
             if (scannerStarted) return;
+            
+            // Show a helpful message while waiting for camera permission
+            const statusArea = document.querySelector('.status-area');
+            statusArea.innerHTML = `
+                <div style="padding: 2rem; text-align: center;">
+                    <div style="width: 64px; height: 64px; margin: 0 auto 1rem; border: 3px solid var(--color-primary); border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                    <div style="font-weight: 600; color: var(--color-ink); margin-bottom: 0.5rem;">Requesting Camera Access</div>
+                    <div style="font-size: 0.875rem; color: var(--color-slate); line-height: 1.6;">Please allow camera permission when prompted by your browser</div>
+                </div>
+            `;
+            
             html5QrCode.start(
                 { facingMode: "environment" },
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (text) => processStudentScan(text.trim()),
                 () => {}
-            ).catch(err => {
+            ).then(() => {
+                // Camera started successfully
+                statusArea.innerHTML = '<div class="waiting-text">Waiting for scan...</div>';
+                scannerStarted = true;
+            }).catch(err => {
                 let msg = 'Camera Error: ';
-                if (err.name === 'NotAllowedError') msg += 'Permission denied. Allow camera access and refresh.';
-                else if (err.name === 'NotFoundError') msg += 'No camera found.';
-                else if (err.name === 'NotReadableError') msg += 'Camera in use by another app.';
-                else msg += 'HTTPS required for camera access.';
+                if (err.name === 'NotAllowedError') {
+                    msg = 'Camera permission denied. Please allow camera access in your browser settings and refresh the page.';
+                } else if (err.name === 'NotFoundError') {
+                    msg = 'No camera found on this device.';
+                } else if (err.name === 'NotReadableError') {
+                    msg = 'Camera is in use by another application. Please close other apps and try again.';
+                } else if (err.message && err.message.includes('secure')) {
+                    msg = 'Camera access requires HTTPS. Please make sure you are accessing this page via https:// or localhost.';
+                } else {
+                    msg = 'Unable to access camera. ' + (err.message || 'Please check your browser settings.');
+                }
                 showError(msg);
             });
-            scannerStarted = true;
         }
 
         async function processStudentScan(qrCode) {
