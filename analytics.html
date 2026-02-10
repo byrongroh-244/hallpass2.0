@@ -1443,7 +1443,7 @@
             students.forEach(student => {
                 html += `
                     <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
+                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${schedule}', '${period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
                         <td>${student.trips}</td>
                         <td>${formatDurationHours(student.totalTime)}</td>
                         <td>${formatDurationHours(student.avgDuration)}</td>
@@ -1506,7 +1506,7 @@
             data.forEach(student => {
                 html += `
                     <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
+                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${currentFilters.class.schedule}', '${currentFilters.class.period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
                         <td>${student.trips}</td>
                         <td>${formatDurationHours(student.totalTime)}</td>
                         <td>${formatDurationHours(student.avgDuration)}</td>
@@ -1565,13 +1565,14 @@
             console.log('Student:', studentName, 'Filters:', { scheduleDay, period });
             
             // Filter by scheduleDay and period only (combines regular + late start data)
+            // Only count 'in' actions as trips (not 'out'), since a trip is one in+out cycle
             const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
                 log.scheduleDay === scheduleDay &&
                 log.period === period &&
                 log.date >= range.startDate &&
                 log.date <= range.endDate &&
-                (log.action === 'in' || log.action === 'out' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in' || log.action === 'manual-out')
+                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
             );
             
             console.log('Filtered student logs:', filtered.length);
