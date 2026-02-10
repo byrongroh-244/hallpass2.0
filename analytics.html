@@ -712,15 +712,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-		  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-		  authDomain: "hallpass2-n244.firebaseapp.com",
-		  databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-		  projectId: "hallpass2-n244",
-		  storageBucket: "hallpass2-n244.firebasestorage.app",
-		  messagingSenderId: "262508006458",
-		  appId: "1:262508006458:web:4cdebead1181506d833903",
-		  measurementId: "G-175T67QFGY"
-
+            apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
+            authDomain: "hallpass2-n244.firebaseapp.com",
+            databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
+            projectId: "hallpass2-n244",
+            storageBucket: "hallpass2-n244.firebasestorage.app",
+            messagingSenderId: "262508006458",
+            appId: "1:262508006458:web:4cdebead1181506d833903",
+            measurementId: "G-175T67QFGY"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -769,12 +768,49 @@
         // Refresh function
         function refreshAnalytics() {
             console.log('Refreshing analytics data...');
-            loadAllData();
+            
+            // Determine which tab is currently active
+            const activeTab = document.querySelector('.tab-content.active');
+            const activeTabId = activeTab ? activeTab.id : 'overview';
+            
+            // Reload data from Firebase
+            database.ref('logs').once('value', snapshot => {
+                allLogs = [];
+                snapshot.forEach(child => {
+                    const log = child.val();
+                    // Parse schedule format (red_regular, black_late, etc.)
+                    if (log.schedule && log.schedule.includes('_')) {
+                        const parts = log.schedule.split('_');
+                        log.scheduleDay = parts[0]; // 'red' or 'black' 
+                        log.startType = parts[1]; // 'regular' or 'late'
+                    }
+                    allLogs.push(log);
+                });
+                
+                console.log('Data refreshed, reloading active tab:', activeTabId);
+                
+                // Reload the appropriate tab based on what's active
+                if (activeTabId === 'overview') {
+                    updateOverviewPeriodButtons();
+                    loadOverviewData();
+                } else if (activeTabId === 'class') {
+                    updateClassPeriodButtons();
+                    loadClassData();
+                } else if (activeTabId === 'student') {
+                    updateStudentPeriodButtons();
+                    updateStudentList();
+                    // If a student is selected, reload their data too
+                    const selectedStudent = document.getElementById('studentSelect')?.value;
+                    if (selectedStudent) {
+                        loadStudentData();
+                    }
+                }
+            });
         }
         
         // Jump to student function - switches to By Student tab and selects the student
-        function jumpToStudent(studentName) {
-            console.log('Jumping to student:', studentName);
+        function jumpToStudent(studentName, schedule, period) {
+            console.log('Jumping to student:', studentName, 'Schedule:', schedule, 'Period:', period);
             
             // Switch to student tab
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -782,12 +818,11 @@
             document.querySelectorAll('.tab')[2].classList.add('active'); // Third tab (By Student)
             document.getElementById('student').classList.add('active');
             
-            // Find which schedule/period this student belongs to by checking current context
-            // Use the current filters from whichever tab we're coming from
-            let targetSchedule = currentFilters.class?.schedule || currentFilters.overview?.schedule || 'Red';
-            let targetPeriod = currentFilters.class?.period || currentFilters.overview?.period;
+            // Determine which schedule/period to use
+            let targetSchedule = schedule || currentFilters.overview?.schedule || currentFilters.class?.schedule || 'Red';
+            let targetPeriod = period || currentFilters.overview?.period || currentFilters.class?.period;
             
-            // If we need to find the period, look through all logs for this student
+            // If we still need to find the period, look through all logs for this student
             if (!targetPeriod) {
                 const studentLog = allLogs.find(log => log.studentName === studentName);
                 if (studentLog) {
@@ -796,21 +831,35 @@
                 }
             }
             
-            // Set the student tab filters to match
+            console.log('Using filters - Schedule:', targetSchedule, 'Period:', targetPeriod);
+            
+            // Set the student tab filters
             if (targetSchedule && targetPeriod) {
                 currentFilters.student.schedule = targetSchedule;
                 currentFilters.student.period = targetPeriod;
                 
-                // Update the UI buttons
-                document.querySelectorAll('#student .slider-buttons button').forEach(btn => {
-                    if (btn.dataset.schedule === targetSchedule) {
+                // Update the schedule buttons
+                document.querySelectorAll('#student .slider-group:first-child .slider-button').forEach(btn => {
+                    if (btn.textContent.trim() === targetSchedule) {
                         btn.classList.add('active');
-                        if (targetSchedule === 'Red') btn.classList.add('red');
-                        if (targetSchedule === 'Black') btn.classList.add('black');
                     } else {
-                        btn.classList.remove('active', 'red', 'black');
+                        btn.classList.remove('active');
                     }
                 });
+                
+                // Update period buttons - need to regenerate them for the correct schedule
+                updateStudentPeriodButtons();
+                
+                // Then set the active period button
+                setTimeout(() => {
+                    document.querySelectorAll('#student .slider-group:nth-child(2) .slider-button').forEach(btn => {
+                        if (btn.textContent.trim() === targetPeriod) {
+                            btn.classList.add('active');
+                        } else {
+                            btn.classList.remove('active');
+                        }
+                    });
+                }, 50);
             }
             
             // Update student list first
@@ -1313,7 +1362,7 @@
             sortedStudents.forEach(student => {
                 html += `
                     <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
+                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${schedule}', '${period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
                         <td>${student.trips}</td>
                         <td>${formatDurationHours(student.totalTime)}</td>
                         <td>${formatDurationHours(student.avgDuration)}</td>
