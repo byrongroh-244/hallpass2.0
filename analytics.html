@@ -768,7 +768,46 @@
         // Refresh function
         function refreshAnalytics() {
             console.log('Refreshing analytics data...');
-            loadAllData();
+            
+            // Reload from Firebase
+            database.ref('logs').once('value', snapshot => {
+                allLogs = [];
+                snapshot.forEach(child => {
+                    const log = child.val();
+                    // Parse schedule format
+                    if (log.schedule && log.schedule.includes('_')) {
+                        const parts = log.schedule.split('_');
+                        log.scheduleDay = parts[0];
+                        log.startType = parts[1];
+                    }
+                    allLogs.push(log);
+                });
+                
+                console.log('Refreshed - Total logs:', allLogs.length);
+                
+                // Update period buttons for all tabs
+                updateOverviewPeriodButtons();
+                updateClassPeriodButtons();
+                updateStudentPeriodButtons();
+                
+                // Reload current active tab's data
+                const activeTabs = document.querySelectorAll('.tab.active');
+                if (activeTabs.length > 0) {
+                    const activeTabText = activeTabs[0].textContent.toLowerCase().trim();
+                    if (activeTabText === 'overview') {
+                        loadOverviewData();
+                    } else if (activeTabText.includes('class')) {
+                        loadClassData();
+                    } else if (activeTabText.includes('student')) {
+                        const studentName = document.getElementById('studentSelect').value;
+                        if (studentName) {
+                            loadStudentData();
+                        } else {
+                            updateStudentList();
+                        }
+                    }
+                }
+            });
         }
         
         // Jump to student function - switches to By Student tab and selects the student
@@ -874,11 +913,56 @@
 
         // Tab switching
         function switchTab(tab) {
+            // Get current tab name before switching
+            const currentTab = document.querySelector('.tab-content.active')?.id;
+            
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
-            event.target.classList.add('active');
+            // Find and activate the clicked tab button
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(btn => {
+                if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(`'${tab}'`)) {
+                    btn.classList.add('active');
+                }
+            });
             document.getElementById(tab).classList.add('active');
+            
+            // Copy filters from current tab to new tab if they exist
+            if (currentTab && currentFilters[currentTab]) {
+                const currentSchedule = currentFilters[currentTab].schedule;
+                const currentPeriod = currentFilters[currentTab].period;
+                
+                if (currentSchedule && currentPeriod && currentFilters[tab]) {
+                    currentFilters[tab].schedule = currentSchedule;
+                    currentFilters[tab].period = currentPeriod;
+                    
+                    // Update UI buttons for the new tab
+                    if (tab === 'overview') {
+                        // Update schedule buttons
+                        document.querySelectorAll('#overview .slider-buttons')[0].querySelectorAll('button').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.schedule === currentSchedule);
+                            if (currentSchedule === 'Red') btn.classList.toggle('red', btn.classList.contains('active'));
+                            if (currentSchedule === 'Black') btn.classList.toggle('black', btn.classList.contains('active'));
+                        });
+                        updateOverviewPeriodButtons();
+                    } else if (tab === 'class') {
+                        document.querySelectorAll('#class .slider-buttons')[0].querySelectorAll('button').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.schedule === currentSchedule);
+                            if (currentSchedule === 'Red') btn.classList.toggle('red', btn.classList.contains('active'));
+                            if (currentSchedule === 'Black') btn.classList.toggle('black', btn.classList.contains('active'));
+                        });
+                        updateClassPeriodButtons();
+                    } else if (tab === 'student') {
+                        document.querySelectorAll('#student .slider-buttons')[0].querySelectorAll('button').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.schedule === currentSchedule);
+                            if (currentSchedule === 'Red') btn.classList.toggle('red', btn.classList.contains('active'));
+                            if (currentSchedule === 'Black') btn.classList.toggle('black', btn.classList.contains('active'));
+                        });
+                        updateStudentPeriodButtons();
+                    }
+                }
+            }
             
             if (tab === 'overview') loadOverviewData();
             else if (tab === 'class') loadClassData();
@@ -1234,8 +1318,8 @@
             });
             
             const chartLabels = Object.keys(dailyStudents).map(date => {
-                const d = new Date(date);
-                return (d.getMonth() + 1) + '/' + d.getDate();
+                const [year, month, day] = date.split('-');
+                return `${parseInt(month)}/${parseInt(day)}`;
             });
             const chartData = Object.values(dailyStudents).map(set => set.size);
             
@@ -1507,25 +1591,60 @@
             console.log('=== LOAD STUDENT DATA ===');
             console.log('Student:', studentName, 'Filters:', { scheduleDay, period });
             
-            // Filter by scheduleDay and period only (combines regular + late start data)
+            // Filter logs for this student
             const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
                 log.scheduleDay === scheduleDay &&
                 log.period === period &&
                 log.date >= range.startDate &&
-                log.date <= range.endDate &&
-                (log.action === 'in' || log.action === 'out' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in' || log.action === 'manual-out')
+                log.date <= range.endDate
             );
             
             console.log('Filtered student logs:', filtered.length);
             
-            const totalTrips = filtered.length;
-            const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
+            // Process into trips (pair out/in scans)
+            const sortedLogs = filtered.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            const trips = [];
+            let currentTrip = null;
+            
+            sortedLogs.forEach(log => {
+                if (log.action === 'out' || log.action === 'manual-out') {
+                    // Start new trip
+                    if (currentTrip) {
+                        // Previous trip was never closed, mark as incomplete
+                        currentTrip.incomplete = true;
+                        trips.push(currentTrip);
+                    }
+                    currentTrip = {
+                        outTime: log.timestamp,
+                        date: log.date,
+                        period: log.period,
+                        studentName: log.studentName,
+                        action: log.action
+                    };
+                } else if ((log.action === 'in' || log.action === 'manual-in' || log.action === 'auto-reset' || log.action === 'manual-reset') && currentTrip) {
+                    // Complete the trip
+                    currentTrip.inTime = log.timestamp;
+                    currentTrip.duration = log.duration || 0;
+                    currentTrip.returnAction = log.action;
+                    trips.push(currentTrip);
+                    currentTrip = null;
+                }
+            });
+            
+            // Handle incomplete trip (still out)
+            if (currentTrip) {
+                currentTrip.incomplete = true;
+                trips.push(currentTrip);
+            }
+            
+            const totalTrips = trips.length;
+            const totalTime = trips.reduce((sum, trip) => sum + (trip.duration || 0), 0);
             const avgTime = totalTrips > 0 ? totalTime / totalTrips : 0;
-            const longestTrip = Math.max(...filtered.map(log => log.duration || 0), 0);
-            const tripsOver10 = filtered.filter(log => (log.duration || 0) > 600000).length;
-            const forgotCount = filtered.filter(log => 
-                log.action === 'auto-reset' || log.action === 'manual-reset'
+            const longestTrip = Math.max(...trips.map(trip => trip.duration || 0), 0);
+            const tripsOver10 = trips.filter(trip => (trip.duration || 0) > 600000).length;
+            const forgotCount = trips.filter(trip => 
+                trip.returnAction === 'auto-reset' || trip.returnAction === 'manual-reset'
             ).length;
             const forgotRate = totalTrips > 0 ? (forgotCount / totalTrips * 100).toFixed(1) : 0;
             
@@ -1540,12 +1659,13 @@
             const dayTrips = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
             const dayTime = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
             
-            filtered.forEach(log => {
-                const date = new Date(log.date);
-                const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
-                if (dayTrips[day] !== undefined) {
-                    dayTrips[day]++;
-                    dayTime[day] += log.duration || 0;
+            trips.forEach(trip => {
+                const [year, month, day] = trip.date.split('-');
+                const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][date.getDay()];
+                if (dayTrips[dayName] !== undefined) {
+                    dayTrips[dayName]++;
+                    dayTime[dayName] += trip.duration || 0;
                 }
             });
             
@@ -1603,7 +1723,7 @@
             });
             
             // Recent trips table
-            const recent = filtered.slice().reverse().slice(0, 20);
+            const recent = trips.slice().reverse().slice(0, 20);
             let html = `
                 <table>
                     <thead>
@@ -1617,9 +1737,10 @@
                     <tbody>
             `;
             
-            recent.forEach(log => {
-                const date = new Date(log.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-                const duration = log.duration || 0;
+            recent.forEach(trip => {
+                const [year, month, day] = trip.date.split('-');
+                const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                const duration = trip.duration || 0;
                 const minutes = Math.floor(duration / 60000);
                 
                 let durationClass = 'duration-green';
@@ -1627,21 +1748,33 @@
                 else if (minutes >= 5) durationClass = 'duration-yellow';
                 
                 let badge = '';
-                if (log.action === 'in') badge = '<span class="badge success">Normal In</span>';
-                else if (log.action === 'out') badge = '<span class="badge success">Normal Out</span>';
-                else if (log.action === 'manual-in') badge = '<span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Manual In</span>';
-                else if (log.action === 'manual-out') badge = '<span class="badge warning">Manual Out</span>';
-                else if (log.action === 'auto-reset') badge = '<span class="badge warning">Auto Reset</span>';
-                else badge = '<span class="badge danger">Manual Reset</span>';
+                if (trip.incomplete) {
+                    badge = '<span class="badge warning">Still Out</span>';
+                } else if (trip.returnAction === 'in') {
+                    badge = '<span class="badge success">Normal Return</span>';
+                } else if (trip.returnAction === 'manual-in') {
+                    badge = '<span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Manual In</span>';
+                } else if (trip.returnAction === 'auto-reset') {
+                    badge = '<span class="badge warning">Auto Reset</span>';
+                } else if (trip.returnAction === 'manual-reset') {
+                    badge = '<span class="badge danger">Manual Reset</span>';
+                } else {
+                    badge = '<span class="badge">Unknown</span>';
+                }
                 
                 html += `
                     <tr>
                         <td>${date}</td>
-                        <td>${log.period}</td>
+                        <td>${trip.period}</td>
                         <td class="${durationClass}">${formatDurationHours(duration)}</td>
                         <td>${badge}</td>
                     </tr>
                 `;
+            });
+            
+            html += '</tbody></table>';
+            document.getElementById('studentRecentTable').innerHTML = html;
+        }
             });
             
             if (recent.length === 0) {
