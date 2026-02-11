@@ -24,557 +24,393 @@
         }
         body {
             font-family: 'DM Sans', sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+            padding: 2rem;
             color: var(--color-ink);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden; /* Prevents whole-page scroll */
-            padding: 1.5rem;
         }
-
-        /* HEADER & TABS - Tightened */
         .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
         }
-        .header-content h1 { font-family: 'Fraunces', serif; font-size: 1.5rem; }
-        .header-content p { color: var(--color-slate); font-size: 0.85rem; }
+        .header-content h1 { 
+            font-family: 'Fraunces', serif; 
+            font-size: 2rem; 
+            margin-bottom: 0.5rem;
+        }
+        .header-content p {
+            color: var(--color-slate);
+            font-size: 0.9375rem;
+        }
+        .settings-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: var(--color-cloud);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .settings-icon:hover {
+            background: var(--color-primary);
+            color: white;
+        }
+        .settings-icon svg {
+            width: 20px;
+            height: 20px;
+        }
         
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        .modal-content h2 {
+            font-family: 'Fraunces', serif;
+            margin-bottom: 1.5rem;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .modal-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--color-primary);
+            color: white;
+        }
+        .btn-danger {
+            background: var(--color-danger);
+            color: white;
+        }
+        .btn-secondary {
+            background: var(--color-cloud);
+            color: var(--color-slate);
+        }
+        
+        /* Tabs */
         .tabs {
             display: flex;
             gap: 0.5rem;
+            margin-bottom: 2rem;
             background: white;
-            padding: 0.35rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 1rem;
-            width: fit-content;
+            padding: 0.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         .tab {
-            padding: 0.5rem 1.5rem;
+            flex: 1;
+            padding: 1rem;
+            background: transparent;
             border: none;
-            border-radius: 7px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+            transition: all 0.2s;
             color: var(--color-slate);
-            font-size: 0.9rem;
-            background: transparent;
         }
-        .tab.active { background: var(--color-primary); color: white; }
-
-        /* SCROLLABLE CONTENT AREA */
-        .main-container {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+        .tab:hover { background: var(--color-cloud); }
+        .tab.active {
+            background: var(--color-primary);
+            color: white;
         }
-        .tab-content { display: none; height: 100%; flex-direction: column; }
-        .tab-content.active { display: flex; }
-
-        /* FILTERS BAR */
+        
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Slider Filters */
         .slider-filters {
             display: flex;
-            gap: 1.5rem;
-            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
             background: white;
-            padding: 0.75rem 1.25rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        .slider-group { display: flex; align-items: center; gap: 0.75rem; }
-        .slider-label { font-size: 0.75rem; font-weight: 700; color: var(--color-slate); text-transform: uppercase; }
-        .slider-buttons { display: flex; background: var(--color-cloud); padding: 0.2rem; border-radius: 6px; }
-        .slider-button { padding: 0.3rem 0.8rem; border: none; border-radius: 4px; font-weight: 600; cursor: pointer; font-size: 0.8rem; color: var(--color-slate); }
-        .slider-button.active { background: white; color: var(--color-ink); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .slider-button.red.active { background: var(--color-red); color: white; }
-        .slider-button.black.active { background: var(--color-black); color: white; }
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .slider-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .slider-buttons {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--color-cloud);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+        .slider-button {
+            padding: 0.5rem 1rem;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--color-slate);
+            font-size: 0.875rem;
+        }
+        .slider-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .slider-button.active {
+            background: white;
+            color: var(--color-ink);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .slider-button.red.active {
+            background: var(--color-red);
+            color: white;
+        }
+        .slider-button.black.active {
+            background: var(--color-black);
+            color: white;
+        }
+        
+        /* Additional Filters */
+        .additional-filters {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .filter-group label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--color-slate);
+        }
+        .filter-group select,
+        .filter-group input {
+            padding: 0.75rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 0.9375rem;
+            min-width: 150px;
+        }
+        
+        /* Cards */
+        .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        .card h2 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        /* NEW: Overview Side-by-Side Layout */
+        .overview-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
 
-        /* STATS - Compact Row */
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 1rem;
-            margin-bottom: 1rem;
+            margin-bottom: 2rem;
         }
         .stat-card {
             background: white;
-            padding: 0.75rem 1rem;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            border-left: 4px solid var(--color-primary);
-        }
-        .stat-label { font-size: 0.7rem; color: var(--color-slate); text-transform: uppercase; margin-bottom: 0.2rem; font-weight: 600; }
-        .stat-value { font-family: 'Fraunces', serif; font-size: 1.4rem; color: var(--color-ink); }
-
-        /* DASHBOARD GRID (SIDE BY SIDE) */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 1rem;
-            flex: 1;
-            min-height: 0; /* Important for inner scrolling */
-        }
-        .card {
-            background: white;
-            padding: 1.25rem;
+            padding: 1.5rem;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            min-height: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
-        .card h2 { font-family: 'Fraunces', serif; font-size: 1.1rem; margin-bottom: 1rem; }
-
-        /* TABLES - Internal Scroll */
-        .table-wrapper {
-            flex: 1;
-            overflow-y: auto;
-            border: 1px solid var(--color-cloud);
-            border-radius: 8px;
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--color-slate);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { position: sticky; top: 0; background: var(--color-cloud); padding: 0.75rem; text-align: left; font-weight: 700; z-index: 10; }
-        td { padding: 0.75rem; border-top: 1px solid var(--color-cloud); }
+        .stat-value {
+            font-family: 'Fraunces', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-ink);
+        }
         
-        .chart-container { flex: 1; position: relative; min-height: 0; }
-
-        /* Settings Button */
-        .settings-icon {
-            width: 36px; height: 36px; border-radius: 8px; background: white;
-            display: flex; align-items: center; justify-content: center; cursor: pointer; border: 1px solid #e2e8f0;
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
         }
-        .settings-icon:hover { background: var(--color-primary); color: white; }
-
-        /* Modals */
-        .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
-        .modal.active { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; }
-
-        /* Helpers */
-        .badge { padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.7rem; font-weight: 700; }
-        .badge.success { background: #d1fae5; color: var(--color-success); }
-        .duration-red { color: var(--color-danger); font-weight: 700; }
+        .two-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .two-charts .card {
+            margin-bottom: 0;
+        }
+        
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background: var(--color-cloud);
+        }
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--color-slate);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        th.sortable {
+            cursor: pointer;
+            user-select: none;
+        }
+        th.sortable:hover {
+            background: #e2e8f0;
+        }
+        td {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        tr:hover {
+            background: #f8fafc;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .badge.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--color-success);
+        }
+        
+        /* Duration colors */
+        .duration-green { color: var(--color-success); font-weight: 600; }
+        .duration-yellow { color: var(--color-warning); font-weight: 600; }
+        .duration-red { color: var(--color-danger); font-weight: 600; }
+        
+        /* Buttons */
+        .export-button {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        @media (max-width: 1024px) {
+            .overview-grid, .two-charts {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
-
     <div class="header">
         <div class="header-content">
             <h1>Analytics Dashboard</h1>
-            <p>Classroom Hall Pass Monitoring</p>
+            <p>Track and analyze student frequency and duration</p>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="settings-icon" onclick="openSettings()" title="Settings">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-            </button>
-            <button class="settings-icon" onclick="returnHome()" title="Home">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:18px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
-            </button>
-        </div>
-    </div>
-
-    <div class="tabs">
-        <button class="tab active" onclick="switchTab('overview')">Overview</button>
-        <button class="tab" onclick="switchTab('class')">By Class</button>
-        <button class="tab" onclick="switchTab('student')">By Student</button>
-    </div>
-
-    <div class="main-container">
-        <div id="overview" class="tab-content active">
-            <div class="slider-filters">
-                <div class="slider-group">
-                    <span class="slider-label">Schedule</span>
-                    <div class="slider-buttons">
-                        <button class="slider-button red active" onclick="setOverviewSchedule('Red', this)">Red</button>
-                        <button class="slider-button black" onclick="setOverviewSchedule('Black', this)">Black</button>
-                    </div>
-                </div>
-                <div class="slider-group">
-                    <span class="slider-label">Period</span>
-                    <div class="slider-buttons" id="overviewPeriodButtons"></div>
-                </div>
-                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; margin-left: auto;">Refresh</button>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Recent Frequency</div>
-                    <div class="stat-value" id="overviewRecentStudents">-</div>
-                </div>
-                <div class="stat-card" style="border-left-color: var(--color-warning);">
-                    <div class="stat-label">Recent Avg. Duration</div>
-                    <div class="stat-value" id="overviewRecentAvg">-</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">14-Day Total</div>
-                    <div class="stat-value" id="overviewTotal14">-</div>
-                </div>
-                <div class="stat-card" style="border-left-color: var(--color-success);">
-                    <div class="stat-label">14-Day Avg. Duration</div>
-                    <div class="stat-value" id="overviewAvg14">-</div>
-                </div>
-            </div>
-
-            <div class="dashboard-grid">
-                <div class="card">
-                    <h2>14-Day Trend</h2>
-                    <div class="chart-container">
-                        <canvas id="overviewChart"></canvas>
-                    </div>
-                </div>
-                <div class="card">
-                    <h2>Top Students (Last 14 Days)</h2>
-                    <div class="table-wrapper" id="topStudentsTable"></div>
-                </div>
-            </div>
-        </div>
-
-        <div id="class" class="tab-content">
-            <div class="slider-filters">
-                <div class="slider-group">
-                    <span class="slider-label">Schedule</span>
-                    <div class="slider-buttons">
-                        <button class="slider-button red active" onclick="setClassSchedule('Red', this)">Red</button>
-                        <button class="slider-button black" onclick="setClassSchedule('Black', this)">Black</button>
-                    </div>
-                </div>
-                <div class="slider-group">
-                    <span class="slider-label">Period</span>
-                    <div class="slider-buttons" id="classPeriodButtons"></div>
-                </div>
-                <div class="slider-group" style="margin-left: auto;">
-                    <select id="classTimeRange" onchange="loadClassData()" style="padding: 4px; border-radius: 4px; font-size: 0.8rem;">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="14days" selected>14 Days</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card"><div class="stat-label">Students</div><div class="stat-value" id="classStudentCount">-</div></div>
-                <div class="stat-card"><div class="stat-label">Total Scans</div><div class="stat-value" id="classTotalTrips">-</div></div>
-                <div class="stat-card"><div class="stat-label">Avg Duration</div><div class="stat-value" id="classAvgDuration">-</div></div>
-                <div class="stat-card" style="border-left-color: var(--color-danger);"><div class="stat-label">Over 10 Min</div><div class="stat-value" id="classTripsOver10">-</div></div>
-            </div>
-
-            <div class="card" style="flex: 1;">
-                <h2>Student Summary</h2>
-                <div class="table-wrapper" id="classStudentTable"></div>
-            </div>
-        </div>
-
-        <div id="student" class="tab-content">
-            <div class="slider-filters">
-                <div class="slider-group">
-                    <select id="studentSelect" onchange="loadStudentData()" style="padding: 6px; border-radius: 6px; font-weight: 600; min-width: 200px;">
-                        <option value="">-- Select Student --</option>
-                    </select>
-                </div>
-                <div class="slider-group">
-                    <span class="slider-label">Schedule</span>
-                    <div class="slider-buttons">
-                        <button class="slider-button red active" onclick="setStudentSchedule('Red', this)">Red</button>
-                        <button class="slider-button black" onclick="setStudentSchedule('Black', this)">Black</button>
-                    </div>
-                </div>
-                <div class="slider-group">
-                    <span class="slider-label">Period</span>
-                    <div class="slider-buttons" id="studentPeriodButtons"></div>
-                </div>
-            </div>
-
-            <div id="studentDetailsContainer" style="display: none; height: 100%; flex-direction: column;">
-                <div class="stats-grid" style="grid-template-columns: repeat(6, 1fr);">
-                    <div class="stat-card"><div class="stat-label">Trips</div><div class="stat-value" id="studentTotalTrips">-</div></div>
-                    <div class="stat-card"><div class="stat-label">Time</div><div class="stat-value" id="studentTotalTime">-</div></div>
-                    <div class="stat-card"><div class="stat-label">Avg</div><div class="stat-value" id="studentAvgTime">-</div></div>
-                    <div class="stat-card"><div class="stat-label">Longest</div><div class="stat-value" id="studentLongestTrip">-</div></div>
-                    <div class="stat-card"><div class="stat-label">>10m</div><div class="stat-value" id="studentTripsOver10">-</div></div>
-                    <div class="stat-card"><div class="stat-label">Forgot %</div><div class="stat-value" id="studentForgotRate">-</div></div>
-                </div>
-                <div class="dashboard-grid">
-                    <div class="card">
-                        <h2>Trends by Day</h2>
-                        <div class="chart-container">
-                            <canvas id="studentTripsChart"></canvas>
-                        </div>
-                    </div>
-                    <div class="card">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                            <h2 style="margin:0;">Recent Trips</h2>
-                            <button class="badge success" onclick="exportStudentReport()" style="border:none; cursor:pointer;">CSV</button>
-                        </div>
-                        <div class="table-wrapper" id="studentTripsTable"></div>
-                    </div>
-                </div>
-            </div>
-            <div id="noStudentSelected" class="card" style="justify-content: center; align-items: center; color: var(--color-slate);">
-                <p>Please select a student to view their analytics</p>
-            </div>
-        </div>
+        <button class="settings-icon" onclick="returnHome()" title="Return Home">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+            </svg>
+        </button>
     </div>
 
     <div class="modal" id="settingsModal">
         <div class="modal-content">
-            <h2 style="font-family:'Fraunces'; margin-bottom: 1rem;">Settings</h2>
-            <div style="display:flex; flex-direction:column; gap:10px;">
-                <button onclick="confirmResetData()" style="padding:10px; background:var(--color-danger); color:white; border:none; border-radius:8px; cursor:pointer;">Reset All Data</button>
-                <button onclick="closeSettings()" style="padding:10px; background:var(--color-cloud); border:none; border-radius:8px; cursor:pointer;">Close</button>
+            <h2>Settings</h2>
+            <div class="modal-buttons">
+                <button class="btn-danger" onclick="confirmResetData()">Reset Data</button>
+                <button class="btn-primary" onclick="returnHome()">Return Home</button>
+            </div>
+            <div class="modal-buttons" style="margin-top: 0.5rem;">
+                <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
             </div>
         </div>
     </div>
 
     <div class="modal" id="resetModal">
         <div class="modal-content">
-            <h2 style="font-family:'Fraunces'; margin-bottom: 1rem;">⚠️ Warning</h2>
-            <p>This will delete all logs. Proceed?</p>
-            <div style="display:flex; gap:10px; margin-top:1.5rem;">
-                <button onclick="resetData()" style="flex:1; padding:10px; background:var(--color-danger); color:white; border:none; border-radius:8px;">Yes, Reset</button>
-                <button onclick="closeResetModal()" style="flex:1; padding:10px; background:var(--color-cloud); border:none; border-radius:8px;">Cancel</button>
+            <h2>⚠️ Reset Data</h2>
+            <p style="margin-bottom: 1rem; color: var(--color-slate);">Are you sure you want to reset all data?</p>
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeResetModal()">Cancel</button>
+                <button class="btn-danger" onclick="resetData()">Yes, Reset Data</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // FIREBASE CONFIG - KEPT FROM ORIGINAL
-        const firebaseConfig = {
-            apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-            authDomain: "hallpass2-n244.firebaseapp.com",
-            databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-            projectId: "hallpass2-n244",
-            storageBucket: "hallpass2-n244.firebasestorage.app",
-            messagingSenderId: "262508006458",
-            appId: "1:262508006458:web:4cdebead1181506d833903",
-            measurementId: "G-175T67QFGY"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        const CONFIG = {
-            schedules: {
-                red: { regular: [{ name: "Red1-Algebra" }, { name: "Red2-Algebra" }, { name: "Red3-PreAlgebra" }] },
-                black: { regular: [{ name: "Black2-Geometry" }, { name: "Black3-Geometry" }, { name: "Black4-Algebra" }] }
-            }
-        };
-
-        let allLogs = [];
-        let charts = {};
-        let currentFilters = {
-            overview: { schedule: 'Red', period: null },
-            class: { schedule: 'Red', period: null },
-            student: { schedule: 'Red', period: null }
-        };
-
-        // UI HELPERS
-        function formatDurationHours(ms) {
-            if (!ms) return '0m';
-            const minutes = Math.floor(ms / 60000);
-            if (minutes < 60) return minutes + 'm';
-            return Math.floor(minutes/60) + 'h ' + (minutes%60) + 'm';
-        }
-
-        function getDateRange(days) {
-            const end = new Date(); end.setHours(23,59,59,999);
-            const start = new Date(end); start.setDate(start.getDate() - days + 1); start.setHours(0,0,0,0);
-            return { startDate: start.toISOString().split('T')[0], endDate: end.toISOString().split('T')[0] };
-        }
-
-        // NAVIGATION & TABBING
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById(tab).classList.add('active');
-            if (tab === 'overview') loadOverviewData();
-            else if (tab === 'class') loadClassData();
-            else if (tab === 'student') updateStudentList();
-        }
-
-        function openSettings() { document.getElementById('settingsModal').classList.add('active'); }
-        function closeSettings() { document.getElementById('settingsModal').classList.remove('active'); }
-        function confirmResetData() { closeSettings(); document.getElementById('resetModal').classList.add('active'); }
-        function closeResetModal() { document.getElementById('resetModal').classList.remove('active'); }
-        function returnHome() { window.location.href = 'index.html'; }
-
-        // FILTER LOGIC
-        function setOverviewSchedule(s, b) { toggleBtn('#overview', s, b); currentFilters.overview.schedule = s; updateOverviewPeriodButtons(); loadOverviewData(); }
-        function setClassSchedule(s, b) { toggleBtn('#class', s, b); currentFilters.class.schedule = s; updateClassPeriodButtons(); loadClassData(); }
-        function setStudentSchedule(s, b) { toggleBtn('#student', s, b); currentFilters.student.schedule = s; updateStudentPeriodButtons(); updateStudentList(); }
-
-        function toggleBtn(parent, val, btn) {
-            document.querySelectorAll(`${parent} .slider-button`).forEach(b => { if(b.textContent === 'Red' || b.textContent === 'Black') b.classList.remove('active'); });
-            btn.classList.add('active');
-        }
-
-        function updateOverviewPeriodButtons() { buildPeriodButtons('overview', 'overviewPeriodButtons', loadOverviewData); }
-        function updateClassPeriodButtons() { buildPeriodButtons('class', 'classPeriodButtons', loadClassData); }
-        function updateStudentPeriodButtons() { buildPeriodButtons('student', 'studentPeriodButtons', updateStudentList); }
-
-        function buildPeriodButtons(tabKey, containerId, callback) {
-            const container = document.getElementById(containerId);
-            const sch = currentFilters[tabKey].schedule.toLowerCase();
-            const periods = CONFIG.schedules[sch].regular;
-            container.innerHTML = '';
-            periods.forEach((p, i) => {
-                const btn = document.createElement('button');
-                btn.className = 'slider-button' + (currentFilters[tabKey].period === p.name || (!currentFilters[tabKey].period && i === 0) ? ' active' : '');
-                btn.textContent = p.name;
-                btn.onclick = () => {
-                    document.querySelectorAll(`#${containerId} .slider-button`).forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilters[tabKey].period = p.name;
-                    callback();
-                };
-                container.appendChild(btn);
-                if (i === 0 && !currentFilters[tabKey].period) currentFilters[tabKey].period = p.name;
-            });
-        }
-
-        // DATA LOADING
-        function loadAllData() {
-            database.ref('logs').on('value', snapshot => {
-                allLogs = [];
-                snapshot.forEach(child => {
-                    const log = child.val();
-                    if (log.schedule?.includes('_')) {
-                        const parts = log.schedule.split('_');
-                        log.scheduleDay = parts[0];
-                    }
-                    allLogs.push(log);
-                });
-                updateOverviewPeriodButtons();
-                updateClassPeriodButtons();
-                updateStudentPeriodButtons();
-                loadOverviewData();
-            });
-        }
-
-        function loadOverviewData() {
-            const { schedule, period } = currentFilters.overview;
-            const schDay = schedule.toLowerCase();
-            const r14 = getDateRange(14);
-            
-            const recentLogs = allLogs.filter(l => l.scheduleDay === schDay && l.period === period);
-            const lastDate = recentLogs.length > 0 ? recentLogs.sort((a,b) => new Date(b.date) - new Date(a.date))[0].date : null;
-            const todayLogs = recentLogs.filter(l => l.date === lastDate && (l.action === 'in' || l.action.includes('reset')));
-            
-            document.getElementById('overviewRecentStudents').textContent = new Set(todayLogs.map(l => l.studentName)).size;
-            document.getElementById('overviewRecentAvg').textContent = formatDurationHours(todayLogs.length ? todayLogs.reduce((s,l) => s+(l.duration||0),0)/todayLogs.length : 0);
-
-            const logs14 = recentLogs.filter(l => l.date >= r14.startDate && (l.action === 'in' || l.action.includes('reset')));
-            document.getElementById('overviewTotal14').textContent = logs14.length;
-            document.getElementById('overviewAvg14').textContent = formatDurationHours(logs14.length ? logs14.reduce((s,l) => s+(l.duration||0),0)/logs14.length : 0);
-
-            renderOverviewChart(logs14);
-            renderTopStudents(logs14);
-        }
-
-        function renderOverviewChart(logs) {
-            const daily = {};
-            for(let i=13; i>=0; i--) {
-                const d = new Date(); d.setDate(d.getDate()-i);
-                daily[d.toISOString().split('T')[0]] = new Set();
-            }
-            logs.forEach(l => { if(daily[l.date]) daily[l.date].add(l.studentName); });
-
-            const ctx = document.getElementById('overviewChart');
-            if(charts.overview) charts.overview.destroy();
-            charts.overview = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: Object.keys(daily).map(k => k.split('-').slice(1).join('/')),
-                    datasets: [{ label: 'Students', data: Object.values(daily).map(s => s.size), backgroundColor: '#667eea' }]
-                },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-            });
-        }
-
-        function renderTopStudents(logs) {
-            const stats = {};
-            logs.forEach(l => {
-                if(!stats[l.studentName]) stats[l.studentName] = { trips: 0, time: 0 };
-                stats[l.studentName].trips++;
-                stats[l.studentName].time += (l.duration || 0);
-            });
-            const sorted = Object.entries(stats).sort((a,b) => b[1].trips - a[1].trips).slice(0,15);
-            
-            let html = `<table><thead><tr><th>Student</th><th>Trips</th><th>Avg</th></tr></thead><tbody>`;
-            sorted.forEach(([name, s]) => {
-                html += `<tr><td>${name}</td><td>${s.trips}</td><td>${formatDurationHours(s.time/s.trips)}</td></tr>`;
-            });
-            document.getElementById('topStudentsTable').innerHTML = html + `</tbody></table>`;
-        }
-
-        function loadClassData() {
-            const { schedule, period } = currentFilters.class;
-            const range = getDateRange(document.getElementById('classTimeRange').value === 'today' ? 1 : 14);
-            const filtered = allLogs.filter(l => l.scheduleDay === schedule.toLowerCase() && l.period === period && l.date >= range.startDate && (l.action === 'in' || l.action.includes('reset')));
-            
-            document.getElementById('classStudentCount').textContent = new Set(filtered.map(l => l.studentName)).size;
-            document.getElementById('classTotalTrips').textContent = filtered.length;
-            document.getElementById('classAvgDuration').textContent = formatDurationHours(filtered.length ? filtered.reduce((s,l) => s+(l.duration||0),0)/filtered.length : 0);
-            document.getElementById('classTripsOver10').textContent = filtered.filter(l => (l.duration||0) > 600000).length;
-
-            let html = `<table><thead><tr><th>Student</th><th>Trips</th><th>Total Time</th></tr></thead><tbody>`;
-            const stats = {};
-            filtered.forEach(l => {
-                if(!stats[l.studentName]) stats[l.studentName] = { trips: 0, time: 0 };
-                stats[l.studentName].trips++;
-                stats[l.studentName].time += (l.duration || 0);
-            });
-            Object.entries(stats).forEach(([name, s]) => {
-                html += `<tr><td>${name}</td><td>${s.trips}</td><td>${formatDurationHours(s.time)}</td></tr>`;
-            });
-            document.getElementById('classStudentTable').innerHTML = html + `</tbody></table>`;
-        }
-
-        function updateStudentList() {
-            const { schedule, period } = currentFilters.student;
-            const students = [...new Set(allLogs.filter(l => l.scheduleDay === schedule.toLowerCase() && l.period === period).map(l => l.studentName))].sort();
-            const select = document.getElementById('studentSelect');
-            select.innerHTML = '<option value="">-- Select Student --</option>';
-            students.forEach(s => select.innerHTML += `<option value="${s}">${s}</option>`);
-        }
-
-        function loadStudentData() {
-            const name = document.getElementById('studentSelect').value;
-            if(!name) { document.getElementById('studentDetailsContainer').style.display='none'; document.getElementById('noStudentSelected').style.display='flex'; return; }
-            
-            document.getElementById('studentDetailsContainer').style.display='flex';
-            document.getElementById('noStudentSelected').style.display='none';
-
-            const filtered = allLogs.filter(l => l.studentName === name && (l.action === 'in' || l.action.includes('reset')));
-            const totalTrips = filtered.length;
-            const totalTime = filtered.reduce((s,l) => s+(l.duration||0), 0);
-            
-            document.getElementById('studentTotalTrips').textContent = totalTrips;
-            document.getElementById('studentTotalTime').textContent = formatDurationHours(totalTime);
-            document.getElementById('studentAvgTime').textContent = formatDurationHours(totalTrips ? totalTime/totalTrips : 0);
-            document.getElementById('studentLongestTrip').textContent = formatDurationHours(Math.max(...filtered.map(l => l.duration||0), 0));
-            document.getElementById('studentTripsOver10').textContent = filtered.filter(l => (l.duration||0) > 600000).length;
-            document.getElementById('studentForgotRate').textContent = totalTrips ? ((filtered.filter(l => l.action.includes('reset')).length / totalTrips)*100).toFixed(1) + '%' : '0%';
-
-            renderStudentTable(filtered);
-        }
-
-        function renderStudentTable(logs) {
-            let html = `<table><thead><tr><th>Date</th><th>Duration</th><th>Status</th></tr></thead><tbody>`;
-            logs.slice().reverse().forEach(l => {
-                const dur = l.duration || 0;
-                html += `<tr><td>${l.date}</td><td class="${dur > 600000 ? 'duration-red' : ''}">${formatDurationHours(dur)}</td><td><span class="badge success">${l.action}</span></td></tr>`;
-            });
-            document.getElementById('studentTripsTable').innerHTML = html + `</tbody></table>`;
-        }
-
-        function refreshAnalytics() { location.reload(); }
-
-        window.onload = loadAllData;
-    </script>
-</body>
-</html>
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab('overview')">Overview</button>
+        <button class="tab" onclick="switchTab('class')">By Class</button>
+        <button class="tab" onclick="switchTab('student')">By Student
