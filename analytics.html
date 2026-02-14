@@ -636,7 +636,7 @@
             <h1>Analytics Dashboard</h1>
             <p>Comprehensive student tracking and analytics</p>
         </div>
-        <button class="settings-icon" onclick="window.location.reload()">
+        <button class="settings-icon" onclick="window.location.href='index.html'">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
@@ -826,15 +826,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-  apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-  authDomain: "hallpass2-n244.firebaseapp.com",
-  databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-  projectId: "hallpass2-n244",
-  storageBucket: "hallpass2-n244.firebasestorage.app",
-  messagingSenderId: "262508006458",
-  appId: "1:262508006458:web:4cdebead1181506d833903",
-  measurementId: "G-175T67QFGY"
-
+            apiKey: "AIzaSyAhP77wKiXfbEIldQGF_yUh3DuDTN22vfY",
+            authDomain: "scannerapp-25dab.firebaseapp.com",
+            databaseURL: "https://scannerapp-25dab-default-rtdb.firebaseio.com",
+            projectId: "scannerapp-25dab",
+            storageBucket: "scannerapp-25dab.firebasestorage.app",
+            messagingSenderId: "669842009798",
+            appId: "1:669842009798:web:ba856e54e9bee7aa63f1be",
+            measurementId: "G-GRK2XKDH7C"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -956,7 +955,14 @@
                 snapshot.forEach(child => {
                     allLogs.push(child.val());
                 });
-                console.log('Loaded logs:', allLogs.length);
+                console.log('Total logs loaded:', allLogs.length);
+                if (allLogs.length > 0) {
+                    console.log('Sample log:', allLogs[0]);
+                    console.log('Sample scheduleDay:', allLogs[0].scheduleDay);
+                    console.log('Sample period:', allLogs[0].period);
+                    console.log('Sample date:', allLogs[0].date);
+                    console.log('Sample action:', allLogs[0].action);
+                }
                 updateOverviewData();
             });
         }
@@ -970,13 +976,25 @@
             currentFilters.overview.period = document.getElementById('overviewPeriod').value;
             const periodFilter = currentFilters.overview.period;
             
-            const filtered = allLogs.filter(log =>
-                log.scheduleDay === scheduleDay &&
-                (!periodFilter || log.period === periodFilter) &&
-                log.date >= range.startDate &&
-                log.date <= range.endDate &&
-                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
-            );
+            console.log('=== UPDATE OVERVIEW ===');
+            console.log('Schedule:', schedule, '-> scheduleDay:', scheduleDay);
+            console.log('Period filter:', periodFilter);
+            console.log('Date range:', range.startDate, 'to', range.endDate);
+            console.log('Total logs before filter:', allLogs.length);
+            
+            const filtered = allLogs.filter(log => {
+                const matchSchedule = log.scheduleDay === scheduleDay;
+                const matchPeriod = !periodFilter || log.period === periodFilter;
+                const matchDate = log.date >= range.startDate && log.date <= range.endDate;
+                const matchAction = log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in';
+                
+                return matchSchedule && matchPeriod && matchDate && matchAction;
+            });
+            
+            console.log('Filtered logs:', filtered.length);
+            if (filtered.length > 0) {
+                console.log('Sample filtered log:', filtered[0]);
+            }
             
             // Calculate stats
             const uniqueStudents = new Set(filtered.map(log => log.studentName));
@@ -1111,12 +1129,18 @@
             const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             const periodValue = currentFilters.student.period;
             
+            console.log('=== UPDATE STUDENT DROPDOWN ===');
+            console.log('Schedule:', schedule, '-> scheduleDay:', scheduleDay);
+            console.log('Period:', periodValue);
+            
             const students = new Set();
             allLogs.forEach(log => {
                 if (log.scheduleDay === scheduleDay && log.period === periodValue && log.studentName) {
                     students.add(log.studentName);
                 }
             });
+            
+            console.log('Found students:', students.size);
             
             const studentSelect = document.getElementById('studentSelect');
             studentSelect.innerHTML = '<option value="">-- Select student --</option>';
@@ -1142,12 +1166,23 @@
             const { schedule, period } = currentFilters.student;
             const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             
-            const filtered = allLogs.filter(log =>
-                log.studentName === studentName &&
-                log.scheduleDay === scheduleDay &&
-                log.period === period &&
-                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
-            );
+            console.log('=== LOAD STUDENT DATA ===');
+            console.log('Student:', studentName);
+            console.log('Schedule:', schedule, '-> scheduleDay:', scheduleDay);
+            console.log('Period:', period);
+            
+            const filtered = allLogs.filter(log => {
+                const match = log.studentName === studentName &&
+                    log.scheduleDay === scheduleDay &&
+                    log.period === period &&
+                    (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in');
+                return match;
+            });
+            
+            console.log('Filtered student logs:', filtered.length);
+            if (filtered.length > 0) {
+                console.log('Sample student log:', filtered[0]);
+            }
             
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
