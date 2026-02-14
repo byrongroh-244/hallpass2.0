@@ -12,52 +12,44 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         :root {
-            --color-bg: #0a0e1a;
-            --color-surface: #151922;
-            --color-surface-elevated: #1e2433;
-            --color-border: #2a3140;
-            --color-text: #e4e7ec;
-            --color-text-muted: #9ca3af;
-            --color-primary: #3b82f6;
-            --color-primary-dim: #1e40af;
+            --color-ink: #0f172a;
+            --color-slate: #475569;
+            --color-cloud: #f1f5f9;
+            --color-paper: #ffffff;
+            --color-primary: #667eea;
             --color-success: #10b981;
             --color-warning: #f59e0b;
             --color-danger: #ef4444;
-            --color-accent: #8b5cf6;
         }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--color-bg);
-            color: var(--color-text);
+            background: linear-gradient(to bottom, #f8fafc 0%, #e2e8f0 100%);
+            color: var(--color-ink);
             padding: 2rem;
             line-height: 1.6;
         }
         
         .header {
-            background: linear-gradient(135deg, var(--color-surface) 0%, var(--color-surface-elevated) 100%);
+            background: white;
             padding: 2rem;
             border-radius: 16px;
-            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
         }
         
         .header-content h1 { 
             font-size: 2rem; 
             margin-bottom: 0.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: var(--color-ink);
         }
         
         .header-content p {
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             font-size: 0.9375rem;
         }
         
@@ -65,25 +57,23 @@
             width: 44px;
             height: 44px;
             border-radius: 12px;
-            background: var(--color-surface-elevated);
-            border: 1px solid var(--color-border);
+            background: var(--color-cloud);
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.2s;
+            border: none;
         }
         
         .settings-icon:hover {
             background: var(--color-primary);
-            border-color: var(--color-primary);
-            transform: rotate(90deg);
+            color: white;
         }
         
         .settings-icon svg {
             width: 20px;
             height: 20px;
-            stroke: var(--color-text);
         }
         
         /* Modal */
@@ -94,8 +84,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
+            background: rgba(0,0,0,0.5);
             z-index: 1000;
             align-items: center;
             justify-content: center;
@@ -106,18 +95,18 @@
         }
         
         .modal-content {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 2rem;
             border-radius: 16px;
             max-width: 400px;
             width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
         
         .modal-content h2 {
             margin-bottom: 1.5rem;
             font-weight: 700;
+            color: var(--color-ink);
         }
         
         .modal-buttons {
@@ -143,7 +132,7 @@
         }
         
         .btn-primary:hover {
-            background: #2563eb;
+            background: #5568d3;
         }
         
         .btn-danger {
@@ -156,13 +145,12 @@
         }
         
         .btn-secondary {
-            background: var(--color-surface-elevated);
-            border: 1px solid var(--color-border);
-            color: var(--color-text);
+            background: var(--color-cloud);
+            color: var(--color-slate);
         }
         
         .btn-secondary:hover {
-            background: var(--color-border);
+            background: #e2e8f0;
         }
         
         /* Tabs */
@@ -170,10 +158,10 @@
             display: flex;
             gap: 0.5rem;
             margin-bottom: 2rem;
-            background: var(--color-surface);
+            background: white;
             padding: 0.5rem;
             border-radius: 12px;
-            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .tab {
@@ -185,13 +173,13 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             font-size: 0.9375rem;
         }
         
         .tab:hover { 
-            background: var(--color-surface-elevated); 
-            color: var(--color-text);
+            background: var(--color-cloud);
+            color: var(--color-ink);
         }
         
         .tab.active {
@@ -212,10 +200,10 @@
             display: flex;
             gap: 1.5rem;
             margin-bottom: 2rem;
-            background: var(--color-surface);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
-            border: 1px solid var(--color-border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             flex-wrap: wrap;
         }
         
@@ -228,7 +216,7 @@
         .filter-label {
             font-size: 0.75rem;
             font-weight: 700;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             text-transform: uppercase;
             letter-spacing: 0.8px;
         }
@@ -236,7 +224,7 @@
         .filter-buttons {
             display: flex;
             gap: 0.5rem;
-            background: var(--color-bg);
+            background: var(--color-cloud);
             padding: 0.25rem;
             border-radius: 8px;
         }
@@ -249,26 +237,27 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             font-size: 0.875rem;
         }
         
         .filter-button:hover {
-            background: var(--color-surface);
-            color: var(--color-text);
+            background: rgba(255, 255, 255, 0.5);
+            color: var(--color-ink);
         }
         
         .filter-button.active {
-            background: var(--color-primary);
-            color: white;
+            background: white;
+            color: var(--color-ink);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         select {
             padding: 0.625rem 1rem;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            color: var(--color-text);
+            color: var(--color-ink);
             font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
@@ -282,15 +271,15 @@
         select:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         input[type="date"] {
             padding: 0.625rem 1rem;
-            background: var(--color-bg);
-            border: 1px solid var(--color-border);
+            background: white;
+            border: 1px solid #e2e8f0;
             border-radius: 8px;
-            color: var(--color-text);
+            color: var(--color-ink);
             font-size: 0.875rem;
             font-family: 'JetBrains Mono', monospace;
             cursor: pointer;
@@ -304,7 +293,7 @@
         input[type="date"]:focus {
             outline: none;
             border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         /* Stats Grid */
@@ -316,13 +305,13 @@
         }
         
         .stat-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
             transition: all 0.2s;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .stat-card::before {
@@ -332,7 +321,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+            background: var(--color-primary);
             opacity: 0;
             transition: opacity 0.2s;
         }
@@ -343,12 +332,12 @@
         
         .stat-card:hover {
             transform: translateY(-2px);
-            border-color: var(--color-primary);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
         }
         
         .stat-label {
             font-size: 0.75rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             text-transform: uppercase;
             letter-spacing: 0.8px;
             font-weight: 700;
@@ -358,14 +347,14 @@
         .stat-value {
             font-size: 2rem;
             font-weight: 800;
-            color: var(--color-text);
+            color: var(--color-ink);
             font-family: 'JetBrains Mono', monospace;
         }
         
         .stat-change {
             font-size: 0.875rem;
             margin-top: 0.5rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
         }
         
         .stat-change.positive {
@@ -385,16 +374,16 @@
         }
         
         .chart-card {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .chart-card h3 {
             font-size: 1rem;
             margin-bottom: 1.5rem;
-            color: var(--color-text);
+            color: var(--color-ink);
             font-weight: 700;
         }
         
@@ -405,16 +394,16 @@
         
         /* Top Students Table */
         .top-students {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .top-students h3 {
             font-size: 1rem;
             margin-bottom: 1.5rem;
-            color: var(--color-text);
+            color: var(--color-ink);
             font-weight: 700;
         }
         
@@ -429,7 +418,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
-            background: var(--color-bg);
+            background: var(--color-cloud);
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s;
@@ -437,9 +426,10 @@
         }
         
         .student-item:hover {
-            background: var(--color-surface-elevated);
+            background: white;
             border-color: var(--color-primary);
             transform: translateX(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .student-info {
@@ -452,13 +442,13 @@
             width: 32px;
             height: 32px;
             border-radius: 8px;
-            background: var(--color-surface-elevated);
+            background: #e2e8f0;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
             font-size: 0.875rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
         }
         
         .student-item:nth-child(1) .student-rank {
@@ -478,7 +468,7 @@
         
         .student-name {
             font-weight: 600;
-            color: var(--color-text);
+            color: var(--color-ink);
         }
         
         .student-duration {
@@ -490,19 +480,20 @@
         
         /* Student Details Page */
         .student-header {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
             margin-bottom: 2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .student-header h2 {
             font-size: 1.5rem;
             font-weight: 700;
+            color: var(--color-ink);
         }
         
         .student-select-container {
@@ -519,16 +510,16 @@
         }
         
         .compact-chart {
-            background: var(--color-surface);
-            border: 1px solid var(--color-border);
+            background: white;
             padding: 1.5rem;
             border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
         }
         
         .compact-chart h4 {
             font-size: 0.875rem;
             margin-bottom: 1rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -553,21 +544,21 @@
             text-align: left;
             padding: 0.75rem;
             font-size: 0.75rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
             text-transform: uppercase;
             letter-spacing: 0.8px;
             font-weight: 700;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 2px solid var(--color-cloud);
         }
         
         .compact-table td {
             padding: 0.75rem;
             font-size: 0.875rem;
-            border-bottom: 1px solid var(--color-border);
+            border-bottom: 1px solid var(--color-cloud);
         }
         
         .compact-table tr:hover {
-            background: var(--color-bg);
+            background: var(--color-cloud);
         }
         
         .duration-green { color: var(--color-success); font-weight: 600; }
@@ -602,14 +593,14 @@
         .no-data {
             text-align: center;
             padding: 3rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
         }
         
         /* Loading State */
         .loading {
             text-align: center;
             padding: 3rem;
-            color: var(--color-text-muted);
+            color: var(--color-slate);
         }
         
         .loading::after {
@@ -645,24 +636,11 @@
             <h1>Analytics Dashboard</h1>
             <p>Comprehensive student tracking and analytics</p>
         </div>
-        <button class="settings-icon" onclick="showSettingsModal()">
+        <button class="settings-icon" onclick="window.location.reload()">
             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
             </svg>
         </button>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsModal" class="modal">
-        <div class="modal-content">
-            <h2>Settings</h2>
-            <p>Clear all stored data?</p>
-            <div class="modal-buttons">
-                <button class="btn-secondary" onclick="hideSettingsModal()">Cancel</button>
-                <button class="btn-danger" onclick="clearAllData()">Clear Data</button>
-            </div>
-        </div>
     </div>
 
     <!-- Tabs -->
@@ -687,10 +665,12 @@
                 <div class="filter-label">Period</div>
                 <select id="overviewPeriod" onchange="updateOverviewData()">
                     <option value="">All Periods</option>
-                    <option value="1">Period 1</option>
-                    <option value="2">Period 2</option>
-                    <option value="3">Period 3</option>
-                    <option value="4">Period 4</option>
+                    <option value="Red1-Algebra">Red1-Algebra</option>
+                    <option value="Red2-Algebra">Red2-Algebra</option>
+                    <option value="Red3-PreAlgebra">Red3-PreAlgebra</option>
+                    <option value="Black2-Geometry">Black2-Geometry</option>
+                    <option value="Black3-Geometry">Black3-Geometry</option>
+                    <option value="Black4-Algebra">Black4-Algebra</option>
                 </select>
             </div>
             
@@ -764,10 +744,12 @@
                 <div class="filter-group">
                     <div class="filter-label">Period</div>
                     <select id="studentPeriod" onchange="updateStudentDropdown()">
-                        <option value="1">Period 1</option>
-                        <option value="2">Period 2</option>
-                        <option value="3">Period 3</option>
-                        <option value="4">Period 4</option>
+                        <option value="Red1-Algebra">Red1-Algebra</option>
+                        <option value="Red2-Algebra">Red2-Algebra</option>
+                        <option value="Red3-PreAlgebra">Red3-PreAlgebra</option>
+                        <option value="Black2-Geometry">Black2-Geometry</option>
+                        <option value="Black3-Geometry">Black3-Geometry</option>
+                        <option value="Black4-Algebra">Black4-Algebra</option>
                     </select>
                 </div>
                 
@@ -844,14 +826,14 @@
     <script>
         // Firebase configuration
         const firebaseConfig = {
-          apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-          authDomain: "hallpass2-n244.firebaseapp.com",
-          databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-          projectId: "hallpass2-n244",
-          storageBucket: "hallpass2-n244.firebasestorage.app",
-          messagingSenderId: "262508006458",
-          appId: "1:262508006458:web:4cdebead1181506d833903",
-          measurementId: "G-175T67QFGY"
+            apiKey: "AIzaSyAhP77wKiXfbEIldQGF_yUh3DuDTN22vfY",
+            authDomain: "scannerapp-25dab.firebaseapp.com",
+            databaseURL: "https://scannerapp-25dab-default-rtdb.firebaseio.com",
+            projectId: "scannerapp-25dab",
+            storageBucket: "scannerapp-25dab.firebasestorage.app",
+            messagingSenderId: "669842009798",
+            appId: "1:669842009798:web:ba856e54e9bee7aa63f1be",
+            measurementId: "G-GRK2XKDH7C"
         };
 
         firebase.initializeApp(firebaseConfig);
@@ -866,7 +848,7 @@
         
         let currentFilters = {
             overview: { schedule: 'Red', period: '', timeRange: 'all', startDate: '', endDate: '' },
-            student: { schedule: 'Red', period: '1' }
+            student: { schedule: 'Red', period: 'Red1-Algebra' }
         };
 
         // Helper Functions
@@ -966,24 +948,6 @@
             }
         }
 
-        // Settings Modal
-        function showSettingsModal() {
-            document.getElementById('settingsModal').classList.add('active');
-        }
-
-        function hideSettingsModal() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function clearAllData() {
-            if (confirm('Are you sure you want to clear all data? This cannot be undone.')) {
-                database.ref('logs').remove();
-                allLogs = [];
-                hideSettingsModal();
-                updateOverviewData();
-            }
-        }
-
         // Load All Data
         function loadAllData() {
             database.ref('logs').on('value', snapshot => {
@@ -1062,13 +1026,13 @@
                     datasets: [{
                         label: 'Trips',
                         data: Object.values(tripsByDay),
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
                         tension: 0.4,
                         fill: true,
                         pointRadius: 4,
                         pointHoverRadius: 6,
-                        pointBackgroundColor: '#3b82f6'
+                        pointBackgroundColor: '#667eea'
                     }]
                 },
                 options: {
@@ -1080,12 +1044,12 @@
                     scales: {
                         y: { 
                             beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#475569' }
                         },
                         x: {
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#475569' }
                         }
                     }
                 }
@@ -1216,8 +1180,8 @@
                     datasets: [{
                         label: 'Trips',
                         data: Object.values(dayTrips),
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: '#667eea',
                         borderWidth: 2,
                         borderRadius: 6
                     }]
@@ -1229,12 +1193,12 @@
                     scales: {
                         y: { 
                             beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { stepSize: 1, color: '#9ca3af' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { stepSize: 1, color: '#475569' }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#9ca3af' }
+                            ticks: { color: '#475569' }
                         }
                     }
                 }
@@ -1263,12 +1227,12 @@
                     scales: {
                         y: { 
                             beginAtZero: true,
-                            grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                            ticks: { color: '#9ca3af' }
+                            grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                            ticks: { color: '#475569' }
                         },
                         x: {
                             grid: { display: false },
-                            ticks: { color: '#9ca3af' }
+                            ticks: { color: '#475569' }
                         }
                     }
                 }
