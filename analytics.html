@@ -484,12 +484,10 @@
             <div class="slider-group">
                 <div class="slider-label">Period</div>
                 <div class="slider-buttons" id="overviewPeriodSlider">
-                    <button class="slider-button active" data-value="1" data-name="Red1-Algebra">Red 1</button>
-                    <button class="slider-button" data-value="2" data-name="Red2-Algebra">Red 2</button>
-                    <button class="slider-button" data-value="3" data-name="Red3-PreAlgebra">Red 3</button>
-                    <button class="slider-button" data-value="2" data-name="Black2-Geometry">Black 2</button>
-                    <button class="slider-button" data-value="3" data-name="Black3-Geometry">Black 3</button>
-                    <button class="slider-button" data-value="4" data-name="Black4-Algebra">Black 4</button>
+                    <button class="slider-button active" data-value="1">1</button>
+                    <button class="slider-button" data-value="2">2</button>
+                    <button class="slider-button" data-value="3">3</button>
+                    <button class="slider-button" data-value="4">4</button>
                 </div>
             </div>
             
@@ -567,12 +565,10 @@
             <div class="slider-group">
                 <div class="slider-label">Period</div>
                 <div class="slider-buttons" id="studentPeriodSlider">
-                    <button class="slider-button active" data-value="1" data-name="Red1-Algebra">Red 1</button>
-                    <button class="slider-button" data-value="2" data-name="Red2-Algebra">Red 2</button>
-                    <button class="slider-button" data-value="3" data-name="Red3-PreAlgebra">Red 3</button>
-                    <button class="slider-button" data-value="2" data-name="Black2-Geometry">Black 2</button>
-                    <button class="slider-button" data-value="3" data-name="Black3-Geometry">Black 3</button>
-                    <button class="slider-button" data-value="4" data-name="Black4-Algebra">Black 4</button>
+                    <button class="slider-button active" data-value="1">1</button>
+                    <button class="slider-button" data-value="2">2</button>
+                    <button class="slider-button" data-value="3">3</button>
+                    <button class="slider-button" data-value="4">4</button>
                 </div>
             </div>
             
@@ -709,61 +705,18 @@
                         const key = type === 'Time' ? 'timeRange' : type.toLowerCase();
                         currentFilters[prefix === 'overview' ? 'overview' : 'student'][key] = btn.dataset.value;
                         
-                        // When schedule changes, update period button visibility
-                        if (type === 'Schedule') {
-                            updatePeriodButtons(prefix, btn.dataset.value);
-                        }
-                        
                         if (prefix === 'overview') {
                             loadOverviewData();
                         } else if (prefix === 'student') {
                             const studentName = document.getElementById('studentSelect').value;
                             if (type === 'Schedule' || type === 'Period') {
-                                populateStudentDropdown(); // Refresh student list when schedule/period changes
+                                populateStudentDropdown();
                             }
                             if (studentName) loadStudentData();
                         }
                     });
                 });
             });
-            
-            // Initialize period button visibility
-            const scheduleBtn = document.getElementById(prefix + 'ScheduleSlider').querySelector('.slider-button.active');
-            if (scheduleBtn) {
-                updatePeriodButtons(prefix, scheduleBtn.dataset.value);
-            }
-        }
-        
-        // Update period button visibility based on schedule
-        function updatePeriodButtons(prefix, schedule) {
-            const periodSlider = document.getElementById(prefix + 'PeriodSlider');
-            if (!periodSlider) return;
-            
-            const scheduleDay = schedule.toLowerCase(); // "red" or "black"
-            let firstVisibleBtn = null;
-            
-            periodSlider.querySelectorAll('.slider-button').forEach(btn => {
-                const periodName = btn.dataset.name || '';
-                const btnSchedule = periodName.toLowerCase().startsWith('red') ? 'red' : 'black';
-                
-                if (btnSchedule === scheduleDay) {
-                    btn.style.display = '';
-                    if (!firstVisibleBtn) firstVisibleBtn = btn;
-                } else {
-                    btn.style.display = 'none';
-                    btn.classList.remove('active');
-                }
-            });
-            
-            // If no period is active, activate the first visible one
-            const hasActive = Array.from(periodSlider.querySelectorAll('.slider-button.active'))
-                .some(btn => btn.style.display !== 'none');
-            
-            if (!hasActive && firstVisibleBtn) {
-                firstVisibleBtn.classList.add('active');
-                const key = 'period';
-                currentFilters[prefix === 'overview' ? 'overview' : 'student'][key] = firstVisibleBtn.dataset.value;
-            }
         }
 
         // Utility Functions
