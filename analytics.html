@@ -47,7 +47,12 @@
             color: var(--color-slate);
             font-size: 0.9375rem;
         }
-        .settings-icon {
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        .settings-icon, .home-icon {
             width: 40px;
             height: 40px;
             border-radius: 8px;
@@ -58,12 +63,13 @@
             cursor: pointer;
             transition: all 0.2s;
             border: none;
+            text-decoration: none;
         }
-        .settings-icon:hover {
+        .settings-icon:hover, .home-icon:hover {
             background: var(--color-primary);
             color: white;
         }
-        .settings-icon svg {
+        .settings-icon svg, .home-icon svg {
             width: 20px;
             height: 20px;
         }
@@ -206,59 +212,12 @@
             color: var(--color-ink);
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .slider-button.red.active {
-            background: var(--color-red);
-            color: white;
-        }
-        .slider-button.black.active {
-            background: var(--color-black);
-            color: white;
-        }
         
-        /* Additional Filters */
-        .additional-filters {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .filter-group label {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--color-slate);
-        }
-        .filter-group select,
-        .filter-group input {
-            padding: 0.75rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 0.9375rem;
-            min-width: 150px;
-        }
-        
-        /* Cards */
-        .card {
-            background: white;
-            padding: 2rem;
-            border-radius: 16px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-            margin-bottom: 2rem;
-        }
-        .card h2 {
-            font-family: 'Fraunces', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        /* Stats Grid */
+        /* Stats Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
             margin-bottom: 2rem;
         }
         .stat-card {
@@ -266,10 +225,17 @@
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent-color);
         }
+        .stat-card[data-type="frequency"] { --accent-color: #667eea; }
+        .stat-card[data-type="scans"] { --accent-color: #8b5cf6; }
+        .stat-card[data-type="duration"] { --accent-color: #10b981; }
+        .stat-card[data-type="over10"] { --accent-color: #f59e0b; }
+        
         .stat-label {
             font-size: 0.875rem;
             color: var(--color-slate);
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 0.5rem;
@@ -280,21 +246,141 @@
             font-weight: 700;
             color: var(--color-ink);
         }
+        .stat-subtitle {
+            font-size: 0.875rem;
+            color: var(--color-slate);
+            margin-top: 0.25rem;
+        }
         
-        /* Charts */
+        /* Two Column Layout for Charts */
+        .charts-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .chart-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            color: var(--color-ink);
+        }
         .chart-container {
             position: relative;
             height: 300px;
+        }
+        
+        /* Top Students List */
+        .top-students-list {
+            list-style: none;
+            padding: 0;
+        }
+        .student-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--color-cloud);
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .student-item:hover {
+            background: var(--color-cloud);
+        }
+        .student-item:last-child {
+            border-bottom: none;
+        }
+        .student-rank {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            opacity: 0.3;
+            min-width: 40px;
+        }
+        .student-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+        .student-name {
+            font-weight: 600;
+            color: var(--color-ink);
+            margin-bottom: 0.25rem;
+        }
+        .student-trips {
+            font-size: 0.875rem;
+            color: var(--color-slate);
+        }
+        .student-duration {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+        
+        /* Full Width Sections */
+        .full-width-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
-        .two-charts {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
+        .full-width-card h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--color-ink);
+        }
+        
+        /* Student Report Tab */
+        .student-selector {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
             margin-bottom: 2rem;
         }
-        .two-charts .card {
-            margin-bottom: 0;
+        .student-selector h3 {
+            font-family: 'Fraunces', serif;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .select-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 400px;
+        }
+        .select-wrapper select {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid var(--color-cloud);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            color: var(--color-ink);
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .select-wrapper select:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+        
+        .no-student-message {
+            text-align: center;
+            padding: 3rem;
+            color: var(--color-slate);
         }
         
         /* Tables */
@@ -302,44 +388,24 @@
             width: 100%;
             border-collapse: collapse;
         }
-        thead {
-            background: var(--color-cloud);
-        }
         th {
-            padding: 1rem;
             text-align: left;
+            padding: 1rem;
+            background: var(--color-cloud);
             font-weight: 600;
             color: var(--color-slate);
             font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
-        th.sortable {
-            cursor: pointer;
-            user-select: none;
-        }
-        th.sortable:hover {
-            background: #e2e8f0;
-        }
-        th.sortable::after {
-            content: ' ↕';
-            opacity: 0.3;
-        }
-        th.sortable.asc::after {
-            content: ' ↑';
-            opacity: 1;
-        }
-        th.sortable.desc::after {
-            content: ' ↓';
-            opacity: 1;
-        }
         td {
             padding: 1rem;
-            border-top: 1px solid #e2e8f0;
+            border-bottom: 1px solid var(--color-cloud);
         }
-        tr:hover {
-            background: #f8fafc;
+        tr:last-child td {
+            border-bottom: none;
         }
+        
         .badge {
             display: inline-block;
             padding: 0.25rem 0.75rem;
@@ -347,7 +413,6 @@
             font-size: 0.75rem;
             font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .badge.success {
             background: rgba(16, 185, 129, 0.1);
@@ -362,22 +427,12 @@
             color: var(--color-danger);
         }
         
-        /* Duration colors */
-        .duration-green {
-            color: var(--color-success);
-            font-weight: 600;
-        }
-        .duration-yellow {
-            color: var(--color-warning);
-            font-weight: 600;
-        }
-        .duration-red {
-            color: var(--color-danger);
-            font-weight: 600;
-        }
+        .duration-green { color: var(--color-success); font-weight: 600; }
+        .duration-yellow { color: var(--color-warning); font-weight: 600; }
+        .duration-red { color: var(--color-danger); font-weight: 600; }
         
-        /* Buttons */
-        .export-button {
+        /* Export Button */
+        .export-btn {
             padding: 0.75rem 1.5rem;
             background: var(--color-primary);
             color: white;
@@ -386,928 +441,592 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
+            margin-top: 1rem;
         }
-        .export-button:hover {
+        .export-btn:hover {
             background: #5568d3;
             transform: translateY(-1px);
         }
         
-        .clickable-row {
-            cursor: pointer;
+        @media (max-width: 968px) {
+            .charts-row {
+                grid-template-columns: 1fr;
+            }
         }
         
-        .no-data {
-            text-align: center;
-            padding: 3rem;
-            color: var(--color-slate);
-        }
-        
-        @media (max-width: 1024px) {
-            .two-charts {
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem;
+            }
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            .slider-filters {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
     <div class="header">
         <div class="header-content">
             <h1>Analytics Dashboard</h1>
-            <p>Track and analyze student frequency and duration</p>
+            <p>Track patterns, monitor trends, and export detailed reports</p>
         </div>
-        <button class="settings-icon" onclick="returnHome()" title="Return Home">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-            </svg>
-        </button>
+        <div class="header-actions">
+            <a href="index.html" class="home-icon" title="Home">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                </svg>
+            </a>
+            <button class="settings-icon" onclick="openSettingsModal()">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
-    <!-- Settings Modal -->
     <div class="modal" id="settingsModal">
         <div class="modal-content">
             <h2>Settings</h2>
-            <p style="margin-bottom: 1rem; color: var(--color-slate);">Manage your dashboard settings</p>
+            <p style="margin-bottom: 1rem; color: var(--color-slate);">Choose an action:</p>
             <div class="modal-buttons">
-                <button class="btn-danger" onclick="confirmResetData()">Reset Data</button>
-                <button class="btn-primary" onclick="returnHome()">Return Home</button>
-            </div>
-            <div class="modal-buttons" style="margin-top: 0.5rem;">
-                <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+                <button class="btn-danger" onclick="confirmClearData()">Clear All Data</button>
+                <button class="btn-secondary" onclick="closeSettingsModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Reset Confirmation Modal -->
-    <div class="modal" id="resetModal">
+    <div class="modal" id="confirmModal">
         <div class="modal-content">
-            <h2>⚠️ Reset Data</h2>
-            <p style="margin-bottom: 1rem; color: var(--color-slate);">Are you sure you want to reset all data? This action cannot be undone.</p>
+            <h2>Confirm Clear Data</h2>
+            <p style="margin-bottom: 1rem; color: var(--color-slate);">This will permanently delete all hall pass logs. This action cannot be undone.</p>
             <div class="modal-buttons">
-                <button class="btn-secondary" onclick="closeResetModal()">Cancel</button>
-                <button class="btn-danger" onclick="resetData()">Yes, Reset Data</button>
+                <button class="btn-danger" onclick="clearAllData()">Yes, Clear All</button>
+                <button class="btn-secondary" onclick="closeConfirmModal()">Cancel</button>
             </div>
         </div>
     </div>
 
-    <!-- Tabs -->
     <div class="tabs">
-        <button class="tab active" onclick="switchTab('overview')">Overview</button>
-        <button class="tab" onclick="switchTab('class')">By Class</button>
-        <button class="tab" onclick="switchTab('student')">By Student</button>
+        <button class="tab active" onclick="switchTab('overview')">Class Overview</button>
+        <button class="tab" onclick="switchTab('student')">Student Report</button>
     </div>
 
-    <!-- OVERVIEW TAB -->
-    <div id="overview" class="tab-content active">
+    <!-- OVERVIEW TAB (Combined Overview + By Class) -->
+    <div id="overviewTab" class="tab-content active">
         <!-- Filters -->
         <div class="slider-filters">
             <div class="slider-group">
                 <div class="slider-label">Schedule</div>
-                <div class="slider-buttons">
-                    <button class="slider-button red active" data-schedule="Red" onclick="setOverviewSchedule('Red', this)">Red</button>
-                    <button class="slider-button black" data-schedule="Black" onclick="setOverviewSchedule('Black', this)">Black</button>
+                <div class="slider-buttons" id="overviewScheduleSlider">
+                    <button class="slider-button active" data-value="Red">Red</button>
+                    <button class="slider-button" data-value="Black">Black</button>
                 </div>
             </div>
+            
             <div class="slider-group">
                 <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="overviewPeriodButtons">
-                    <!-- Dynamically populated -->
+                <div class="slider-buttons" id="overviewPeriodSlider">
+                    <button class="slider-button active" data-value="1" data-name="Red1-Algebra">Red 1</button>
+                    <button class="slider-button" data-value="2" data-name="Red2-Algebra">Red 2</button>
+                    <button class="slider-button" data-value="3" data-name="Red3-PreAlgebra">Red 3</button>
+                    <button class="slider-button" data-value="2" data-name="Black2-Geometry">Black 2</button>
+                    <button class="slider-button" data-value="3" data-name="Black3-Geometry">Black 3</button>
+                    <button class="slider-button" data-value="4" data-name="Black4-Algebra">Black 4</button>
                 </div>
             </div>
-            <div class="slider-group" style="margin-left: auto;">
-                <div class="slider-label">&nbsp;</div>
-                <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.5rem 1.5rem;">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                    </svg>
-                    Refresh
-                </button>
-            </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-label">Student Frequency (Most Recent Period)</div>
-                <div class="stat-value" id="overviewRecentStudents">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Avg. Duration (Most Recent Period)</div>
-                <div class="stat-value" id="overviewRecentAvg">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Student Frequency (Last 14 Days)</div>
-                <div class="stat-value" id="overviewTotal14">-</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Avg. Duration (Last 14 Days)</div>
-                <div class="stat-value" id="overviewAvg14">-</div>
-            </div>
-        </div>
-
-        <!-- Chart -->
-        <div class="card">
-            <h2>14-Day Trend </h2>
-            <div class="chart-container">
-                <canvas id="overviewChart"></canvas>
-            </div>
-        </div>
-
-        <!-- Top Students -->
-        <div class="card">
-            <h2>Top Students (Last 14 Days)</h2>
-            <div id="topStudentsTable"></div>
-        </div>
-    </div>
-
-    <!-- BY CLASS TAB -->
-    <div id="class" class="tab-content">
-        <!-- Filters -->
-        <div class="slider-filters">
+            
             <div class="slider-group">
-                <div class="slider-label">Schedule</div>
-                <div class="slider-buttons">
-                    <button class="slider-button red active" data-schedule="Red" onclick="setClassSchedule('Red', this)">Red</button>
-                    <button class="slider-button black" data-schedule="Black" onclick="setClassSchedule('Black', this)">Black</button>
-                </div>
-            </div>
-            <div class="slider-group">
-                <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="classPeriodButtons">
-                    <!-- Dynamically populated -->
-                </div>
-            </div>
-            <div class="additional-filters">
-                <div class="filter-group">
-                    <label>Time Range</label>
-                    <select id="classTimeRange" onchange="loadClassData()">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="14days" selected>14 Days</option>
-                        <option value="custom">Custom</option>
-                    </select>
-                </div>
-                <div class="filter-group" id="classCustomDates" style="display: none;">
-                    <label>Start Date</label>
-                    <input type="date" id="classStartDate" onchange="loadClassData()">
-                </div>
-                <div class="filter-group" id="classCustomDatesEnd" style="display: none;">
-                    <label>End Date</label>
-                    <input type="date" id="classEndDate" onchange="loadClassData()">
-                </div>
-                <div class="filter-group" style="margin-left: auto;">
-                    <label>&nbsp;</label>
-                    <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.75rem 1.5rem;">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Refresh
-                    </button>
+                <div class="slider-label">Time Range</div>
+                <div class="slider-buttons" id="overviewTimeSlider">
+                    <button class="slider-button" data-value="7days">Last 7 Days</button>
+                    <button class="slider-button active" data-value="14days">Last 14 Days</button>
+                    <button class="slider-button" data-value="30days">Last 30 Days</button>
+                    <button class="slider-button" data-value="custom">Custom</button>
                 </div>
             </div>
         </div>
 
-        <!-- Stats -->
+        <!-- Stats Cards -->
+        <div style="background: rgba(102, 126, 234, 0.1); padding: 1rem 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border-left: 4px solid #667eea;">
+            <p style="font-size: 0.875rem; color: var(--color-slate); margin: 0;">
+                <strong style="color: var(--color-ink);">Note:</strong> Stats combine data from both Regular and Late Start days for the selected schedule and period.
+            </p>
+        </div>
+        
         <div class="stats-grid">
-            <div class="stat-card">
+            <div class="stat-card" data-type="frequency">
                 <div class="stat-label">Student Frequency</div>
-                <div class="stat-value" id="classStudentCount">-</div>
+                <div class="stat-value" id="overviewStudentFreq">0</div>
+                <div class="stat-subtitle">unique students</div>
             </div>
-            <div class="stat-card">
+            <div class="stat-card" data-type="scans">
                 <div class="stat-label">Total Scans</div>
-                <div class="stat-value" id="classTotalTrips">-</div>
+                <div class="stat-value" id="overviewTotalScans">0</div>
+                <div class="stat-subtitle">in selected period</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Average Duration</div>
-                <div class="stat-value" id="classAvgDuration">-</div>
+            <div class="stat-card" data-type="duration">
+                <div class="stat-label">Avg Duration</div>
+                <div class="stat-value" id="overviewAvgDuration">0m</div>
+                <div class="stat-subtitle">per trip</div>
             </div>
-            <div class="stat-card">
-                <div class="stat-label">Trips Over 10 Min</div>
-                <div class="stat-value" id="classTripsOver10">-</div>
+            <div class="stat-card" data-type="over10">
+                <div class="stat-label">Over 10 Min</div>
+                <div class="stat-value" id="overviewOver10">0</div>
+                <div class="stat-subtitle">trips exceeded</div>
             </div>
         </div>
 
-        <!-- Student Table -->
-        <div class="card">
-            <h2>Student Summary</h2>
-            <div id="classStudentTable"></div>
+        <!-- Charts Row: 14 Day Trend + Top 10 Students -->
+        <div class="charts-row">
+            <div class="chart-card">
+                <h3>14 Day Trend</h3>
+                <div class="chart-container">
+                    <canvas id="trendChart"></canvas>
+                </div>
+            </div>
+            <div class="chart-card">
+                <h3>Top 10 Students</h3>
+                <ul class="top-students-list" id="topStudentsList">
+                    <li style="text-align: center; padding: 2rem; color: var(--color-slate);">Loading...</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Full Width: All Students Table -->
+        <div class="full-width-card">
+            <h3>All Students</h3>
+            <div id="allStudentsTable">
+                <p style="text-align: center; padding: 2rem; color: var(--color-slate);">Loading...</p>
+            </div>
         </div>
     </div>
 
-    <!-- BY STUDENT TAB -->
-    <div id="student" class="tab-content">
-        <!-- Filters -->
+    <!-- STUDENT REPORT TAB -->
+    <div id="studentTab" class="tab-content">
         <div class="slider-filters">
             <div class="slider-group">
                 <div class="slider-label">Schedule</div>
-                <div class="slider-buttons">
-                    <button class="slider-button red active" data-schedule="Red" onclick="setStudentSchedule('Red', this)">Red</button>
-                    <button class="slider-button black" data-schedule="Black" onclick="setStudentSchedule('Black', this)">Black</button>
+                <div class="slider-buttons" id="studentScheduleSlider">
+                    <button class="slider-button active" data-value="Red">Red</button>
+                    <button class="slider-button" data-value="Black">Black</button>
                 </div>
             </div>
+            
             <div class="slider-group">
                 <div class="slider-label">Period</div>
-                <div class="slider-buttons" id="studentPeriodButtons">
-                    <!-- Dynamically populated -->
+                <div class="slider-buttons" id="studentPeriodSlider">
+                    <button class="slider-button active" data-value="1" data-name="Red1-Algebra">Red 1</button>
+                    <button class="slider-button" data-value="2" data-name="Red2-Algebra">Red 2</button>
+                    <button class="slider-button" data-value="3" data-name="Red3-PreAlgebra">Red 3</button>
+                    <button class="slider-button" data-value="2" data-name="Black2-Geometry">Black 2</button>
+                    <button class="slider-button" data-value="3" data-name="Black3-Geometry">Black 3</button>
+                    <button class="slider-button" data-value="4" data-name="Black4-Algebra">Black 4</button>
                 </div>
             </div>
-            <div class="additional-filters">
-                <div class="filter-group">
-                    <label>Student</label>
-                    <select id="studentSelect" onchange="loadStudentData()">
-                        <option value="">-- Select student --</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Time Range</label>
-                    <select id="studentTimeRange" onchange="loadStudentData()">
-                        <option value="today">Today</option>
-                        <option value="week">This Week</option>
-                        <option value="14days" selected>14 Days</option>
-                        <option value="custom">Custom</option>
-                    </select>
-                </div>
-                <div class="filter-group" id="studentCustomDates" style="display: none;">
-                    <label>Start Date</label>
-                    <input type="date" id="studentStartDate" onchange="loadStudentData()">
-                </div>
-                <div class="filter-group" id="studentCustomDatesEnd" style="display: none;">
-                    <label>End Date</label>
-                    <input type="date" id="studentEndDate" onchange="loadStudentData()">
-                </div>
-                <div class="filter-group" style="margin-left: auto;">
-                    <label>&nbsp;</label>
-                    <button class="slider-button" onclick="refreshAnalytics()" style="background: var(--color-primary); color: white; padding: 0.75rem 1.5rem;">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width: 16px; height: 16px; display: inline-block; margin-right: 0.5rem; vertical-align: middle;">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                        Refresh
-                    </button>
+            
+            <div class="slider-group">
+                <div class="slider-label">Time Range</div>
+                <div class="slider-buttons" id="studentTimeSlider">
+                    <button class="slider-button" data-value="7days">Last 7 Days</button>
+                    <button class="slider-button active" data-value="14days">Last 14 Days</button>
+                    <button class="slider-button" data-value="30days">Last 30 Days</button>
+                    <button class="slider-button" data-value="custom">Custom</button>
                 </div>
             </div>
+        </div>
+
+        <div class="student-selector">
+            <h3>Select Student</h3>
+            <div class="select-wrapper">
+                <select id="studentSelect" onchange="loadStudentData()">
+                    <option value="">-- Select student --</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="noStudentSelected" class="no-student-message">
+            <p>Please select a student to view their detailed report</p>
         </div>
 
         <div id="studentDetailsContainer" style="display: none;">
-            <!-- Stats -->
             <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-label">Total Frequency</div>
-                    <div class="stat-value" id="studentTotalTrips">-</div>
+                <div class="stat-card" data-type="scans">
+                    <div class="stat-label">Total Trips</div>
+                    <div class="stat-value" id="studentTotalTrips">0</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-type="duration">
                     <div class="stat-label">Total Time Out</div>
-                    <div class="stat-value" id="studentTotalTime">-</div>
+                    <div class="stat-value" id="studentTotalTime">0h 0m</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Average Duration</div>
-                    <div class="stat-value" id="studentAvgTime">-</div>
+                <div class="stat-card" data-type="duration">
+                    <div class="stat-label">Average Time</div>
+                    <div class="stat-value" id="studentAvgTime">0m</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-type="over10">
                     <div class="stat-label">Longest Trip</div>
-                    <div class="stat-value" id="studentLongestTrip">-</div>
+                    <div class="stat-value" id="studentLongestTrip">0m</div>
                 </div>
-                <div class="stat-card">
+                <div class="stat-card" data-type="over10">
                     <div class="stat-label">Trips Over 10 Min</div>
-                    <div class="stat-value" id="studentTripsOver10">-</div>
+                    <div class="stat-value" id="studentTripsOver10">0</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">Forgot to Scan %</div>
-                    <div class="stat-value" id="studentForgotRate">-</div>
+                <div class="stat-card" data-type="frequency">
+                    <div class="stat-label">Forgot to Scan In</div>
+                    <div class="stat-value" id="studentForgotRate">0%</div>
                 </div>
             </div>
 
-            <!-- Charts -->
-            <div class="two-charts">
-                <div class="card">
-                    <h2>Frequency by Day of Week</h2>
+            <div class="charts-row">
+                <div class="chart-card">
+                    <h3>Trips by Day of Week</h3>
                     <div class="chart-container">
                         <canvas id="studentTripsChart"></canvas>
                     </div>
                 </div>
-                <div class="card">
-                    <h2>Duration by Day of Week</h2>
+                <div class="chart-card">
+                    <h3>Time Out by Day of Week</h3>
                     <div class="chart-container">
                         <canvas id="studentTimeChart"></canvas>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Trips -->
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="margin-bottom: 0;">Recent Trips</h2>
-                    <button class="export-button" onclick="exportStudentReport()">Export Report</button>
-                </div>
+            <div class="full-width-card">
+                <h3>Recent Trips (Last 20)</h3>
                 <div id="studentTripsTable"></div>
-            </div>
-        </div>
-
-        <div id="noStudentSelected" class="card">
-            <div class="no-data">
-                <p>Please select a student to view their analytics</p>
+                <button class="export-btn" onclick="exportStudentReport()">Export Full Report (CSV)</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Firebase configuration
+        // Firebase Config (REPLACE WITH YOUR CONFIG)
         const firebaseConfig = {
-            apiKey: "AIzaSyCI-AIHdViLdf38Z1QohTml6-1HHH6bC7I",
-            authDomain: "hallpass2-n244.firebaseapp.com",
-            databaseURL: "https://hallpass2-n244-default-rtdb.firebaseio.com",
-            projectId: "hallpass2-n244",
-            storageBucket: "hallpass2-n244.firebasestorage.app",
-            messagingSenderId: "262508006458",
-            appId: "1:262508006458:web:4cdebead1181506d833903",
-            measurementId: "G-175T67QFGY"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-        
-        // Schedule configuration - needed for dynamic period buttons
-        const CONFIG = {
-            schedules: {
-                red: {
-                    regular: [
-                        { name: "Red1-Algebra" },
-                        { name: "Red2-Algebra" },
-                        { name: "Red3-PreAlgebra" }
-                    ],
-                    late: [
-                        { name: "Red1-Algebra" },
-                        { name: "Red2-Algebra" },
-                        { name: "Red3-PreAlgebra" }
-                    ]
-                },
-                black: {
-                    regular: [
-                        { name: "Black2-Geometry" },
-                        { name: "Black3-Geometry" },
-                        { name: "Black4-Algebra" }
-                    ],
-                    late: [
-                        { name: "Black2-Geometry" },
-                        { name: "Black3-Geometry" },
-                        { name: "Black4-Algebra" }
-                    ]
-                }
-            }
-        };
-        
-        let allLogs = [];
-        let charts = {};
-        
-        // Current filters - will be set dynamically after periods are populated
-        let currentFilters = {
-            overview: { schedule: 'Red', period: null },
-            class: { schedule: 'Red', period: null },
-            student: { schedule: 'Red', period: null }
-        };
-        
-        // Refresh function
-        function refreshAnalytics() {
-            console.log('Refreshing analytics data...');
-            
-            // Determine which tab is currently active
-            const activeTab = document.querySelector('.tab-content.active');
-            const activeTabId = activeTab ? activeTab.id : 'overview';
-            
-            // Reload data from Firebase
-            database.ref('logs').once('value', snapshot => {
-                allLogs = [];
-                snapshot.forEach(child => {
-                    const log = child.val();
-                    // Parse schedule format (red_regular, black_late, etc.)
-                    if (log.schedule && log.schedule.includes('_')) {
-                        const parts = log.schedule.split('_');
-                        log.scheduleDay = parts[0]; // 'red' or 'black' 
-                        log.startType = parts[1]; // 'regular' or 'late'
-                    }
-                    allLogs.push(log);
-                });
-                
-                console.log('Data refreshed, reloading active tab:', activeTabId);
-                
-                // Reload the appropriate tab based on what's active
-                if (activeTabId === 'overview') {
-                    updateOverviewPeriodButtons();
-                    loadOverviewData();
-                } else if (activeTabId === 'class') {
-                    updateClassPeriodButtons();
-                    loadClassData();
-                } else if (activeTabId === 'student') {
-                    updateStudentPeriodButtons();
-                    updateStudentList();
-                    // If a student is selected, reload their data too
-                    const selectedStudent = document.getElementById('studentSelect')?.value;
-                    if (selectedStudent) {
-                        loadStudentData();
-                    }
-                }
-            });
-        }
-        
-        // Jump to student function - switches to By Student tab and selects the student
-        function jumpToStudent(studentName, schedule, period) {
-            console.log('Jumping to student:', studentName, 'Schedule:', schedule, 'Period:', period);
-            
-            // Switch to student tab
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.tab')[2].classList.add('active'); // Third tab (By Student)
-            document.getElementById('student').classList.add('active');
-            
-            // Determine which schedule/period to use
-            let targetSchedule = schedule || currentFilters.overview?.schedule || currentFilters.class?.schedule || 'Red';
-            let targetPeriod = period || currentFilters.overview?.period || currentFilters.class?.period;
-            
-            // If we still need to find the period, look through all logs for this student
-            if (!targetPeriod) {
-                const studentLog = allLogs.find(log => log.studentName === studentName);
-                if (studentLog) {
-                    targetPeriod = studentLog.period;
-                    targetSchedule = studentLog.scheduleDay === 'red' ? 'Red' : 'Black';
-                }
-            }
-            
-            console.log('Using filters - Schedule:', targetSchedule, 'Period:', targetPeriod);
-            
-            // Set the student tab filters
-            if (targetSchedule && targetPeriod) {
-                currentFilters.student.schedule = targetSchedule;
-                currentFilters.student.period = targetPeriod;
-                
-                // Update the schedule buttons
-                document.querySelectorAll('#student .slider-group:first-child .slider-button').forEach(btn => {
-                    if (btn.textContent.trim() === targetSchedule) {
-                        btn.classList.add('active');
-                    } else {
-                        btn.classList.remove('active');
-                    }
-                });
-                
-                // Update period buttons - need to regenerate them for the correct schedule
-                updateStudentPeriodButtons();
-                
-                // Then set the active period button
-                setTimeout(() => {
-                    document.querySelectorAll('#student .slider-group:nth-child(2) .slider-button').forEach(btn => {
-                        if (btn.textContent.trim() === targetPeriod) {
-                            btn.classList.add('active');
-                        } else {
-                            btn.classList.remove('active');
-                        }
-                    });
-                }, 50);
-            }
-            
-            // Update student list first
-            updateStudentList();
-            
-            // Select the student in dropdown after a brief delay to ensure list is populated
-            setTimeout(() => {
-                const studentSelect = document.getElementById('studentSelect');
-                // Try to find the student in the dropdown
-                const option = Array.from(studentSelect.options).find(opt => opt.value === studentName);
-                if (option) {
-                    studentSelect.value = studentName;
-                    loadStudentData();
-                } else {
-                    console.warn('Student not found in dropdown:', studentName);
-                    // Try again with a longer delay
-                    setTimeout(() => {
-                        const option2 = Array.from(studentSelect.options).find(opt => opt.value === studentName);
-                        if (option2) {
-                            studentSelect.value = studentName;
-                            loadStudentData();
-                        }
-                    }, 200);
-                }
-            }, 150);
-        }
+        const db = firebase.database();
 
-        // Settings functions
-        function openSettings() {
+        let allLogs = [];
+        let charts = {
+            trend: null,
+            studentTrips: null,
+            studentTime: null
+        };
+
+        const currentFilters = {
+            overview: { schedule: 'Red', period: '1', timeRange: '14days', startDate: null, endDate: null },
+            student: { schedule: 'Red', period: '1', timeRange: '14days', startDate: null, endDate: null }
+        };
+
+        // Modal Functions
+        function openSettingsModal() {
             document.getElementById('settingsModal').classList.add('active');
         }
 
-        function closeSettings() {
+        function closeSettingsModal() {
             document.getElementById('settingsModal').classList.remove('active');
         }
 
-        function confirmResetData() {
-            closeSettings();
-            document.getElementById('resetModal').classList.add('active');
+        function confirmClearData() {
+            closeSettingsModal();
+            document.getElementById('confirmModal').classList.add('active');
         }
 
-        function closeResetModal() {
-            document.getElementById('resetModal').classList.remove('active');
+        function closeConfirmModal() {
+            document.getElementById('confirmModal').classList.remove('active');
         }
 
-        function resetData() {
-            // Clear all data from Firebase
-            database.ref('logs').remove()
-                .then(() => {
-                    alert('All data has been reset successfully');
-                    closeResetModal();
-                    location.reload();
-                })
-                .catch(error => {
-                    alert('Error resetting data: ' + error.message);
-                });
+        async function clearAllData() {
+            try {
+                await db.ref('logs').remove();
+                await db.ref('students').remove();
+                alert('All data cleared successfully');
+                closeConfirmModal();
+                location.reload();
+            } catch (error) {
+                console.error('Error clearing data:', error);
+                alert('Error clearing data. Check console.');
+            }
         }
 
-        function returnHome() {
-            window.location.href = 'index.html';
-        }
-
-        // Tab switching
-        function switchTab(tab) {
+        // Tab Switching
+        function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
             event.target.classList.add('active');
-            document.getElementById(tab).classList.add('active');
+            document.getElementById(tabName + 'Tab').classList.add('active');
             
-            if (tab === 'overview') loadOverviewData();
-            else if (tab === 'class') loadClassData();
-            else if (tab === 'student') updateStudentList();
-        }
-
-        // Dynamic period button updates
-        function updateOverviewPeriodButtons() {
-            const container = document.getElementById('overviewPeriodButtons');
-            const scheduleDay = currentFilters.overview.schedule === 'Red' ? 'red' : 'black';
-            // Use regular schedule for button labels (same periods exist in late start)
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.overview.period === period.name) || (!currentFilters.overview.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setOverviewPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.overview.period) {
-                currentFilters.overview.period = periods[0].name;
+            if (tabName === 'overview') {
+                loadOverviewData();
+            } else if (tabName === 'student') {
+                populateStudentDropdown();
             }
         }
 
-        function updateClassPeriodButtons() {
-            const container = document.getElementById('classPeriodButtons');
-            const scheduleDay = currentFilters.class.schedule === 'Red' ? 'red' : 'black';
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.class.period === period.name) || (!currentFilters.class.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setClassPeriod('${period.name}', this)">${period.name}</button>`;
+        // Slider Setup
+        function setupSliders(prefix) {
+            ['Schedule', 'Period', 'Time'].forEach(type => {
+                const slider = document.getElementById(prefix + type + 'Slider');
+                if (!slider) return;
+                
+                slider.querySelectorAll('.slider-button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        slider.querySelectorAll('.slider-button').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        
+                        const key = type === 'Time' ? 'timeRange' : type.toLowerCase();
+                        currentFilters[prefix === 'overview' ? 'overview' : 'student'][key] = btn.dataset.value;
+                        
+                        // When schedule changes, update period button visibility
+                        if (type === 'Schedule') {
+                            updatePeriodButtons(prefix, btn.dataset.value);
+                        }
+                        
+                        if (prefix === 'overview') {
+                            loadOverviewData();
+                        } else if (prefix === 'student') {
+                            const studentName = document.getElementById('studentSelect').value;
+                            if (type === 'Schedule' || type === 'Period') {
+                                populateStudentDropdown(); // Refresh student list when schedule/period changes
+                            }
+                            if (studentName) loadStudentData();
+                        }
+                    });
+                });
             });
-            container.innerHTML = html;
             
-            if (!currentFilters.class.period) {
-                currentFilters.class.period = periods[0].name;
+            // Initialize period button visibility
+            const scheduleBtn = document.getElementById(prefix + 'ScheduleSlider').querySelector('.slider-button.active');
+            if (scheduleBtn) {
+                updatePeriodButtons(prefix, scheduleBtn.dataset.value);
             }
         }
-
-        function updateStudentPeriodButtons() {
-            const container = document.getElementById('studentPeriodButtons');
-            const scheduleDay = currentFilters.student.schedule === 'Red' ? 'red' : 'black';
-            const periods = CONFIG.schedules[scheduleDay]?.['regular'] || [];
+        
+        // Update period button visibility based on schedule
+        function updatePeriodButtons(prefix, schedule) {
+            const periodSlider = document.getElementById(prefix + 'PeriodSlider');
+            if (!periodSlider) return;
             
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
+            const scheduleDay = schedule.toLowerCase(); // "red" or "black"
+            let firstVisibleBtn = null;
             
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.student.period === period.name) || (!currentFilters.student.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setStudentPeriod('${period.name}', this)">${period.name}</button>`;
+            periodSlider.querySelectorAll('.slider-button').forEach(btn => {
+                const periodName = btn.dataset.name || '';
+                const btnSchedule = periodName.toLowerCase().startsWith('red') ? 'red' : 'black';
+                
+                if (btnSchedule === scheduleDay) {
+                    btn.style.display = '';
+                    if (!firstVisibleBtn) firstVisibleBtn = btn;
+                } else {
+                    btn.style.display = 'none';
+                    btn.classList.remove('active');
+                }
             });
-            container.innerHTML = html;
             
-            if (!currentFilters.student.period) {
-                currentFilters.student.period = periods[0].name;
-            }
-        }
-
-        function updateClassPeriodButtons() {
-            const container = document.getElementById('classPeriodButtons');
-            const scheduleDay = currentFilters.class.schedule === 'Red' ? 'red' : 'black';
-            const startType = currentFilters.class.startType || 'regular';
-            const periods = CONFIG.schedules[scheduleDay]?.[startType] || [];
+            // If no period is active, activate the first visible one
+            const hasActive = Array.from(periodSlider.querySelectorAll('.slider-button.active'))
+                .some(btn => btn.style.display !== 'none');
             
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.class.period === period.name) || (!currentFilters.class.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setClassPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.class.period) {
-                currentFilters.class.period = periods[0].name;
-            }
-        }
-
-        function updateStudentPeriodButtons() {
-            const container = document.getElementById('studentPeriodButtons');
-            const scheduleDay = currentFilters.student.schedule === 'Red' ? 'red' : 'black';
-            const startType = currentFilters.student.startType || 'regular';
-            const periods = CONFIG.schedules[scheduleDay]?.[startType] || [];
-            
-            if (periods.length === 0) {
-                container.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods</div>';
-                return;
-            }
-            
-            let html = '';
-            periods.forEach((period, index) => {
-                const isActive = (currentFilters.student.period === period.name) || (!currentFilters.student.period && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setStudentPeriod('${period.name}', this)">${period.name}</button>`;
-            });
-            container.innerHTML = html;
-            
-            if (!currentFilters.student.period) {
-                currentFilters.student.period = periods[0].name;
+            if (!hasActive && firstVisibleBtn) {
+                firstVisibleBtn.classList.add('active');
+                const key = 'period';
+                currentFilters[prefix === 'overview' ? 'overview' : 'student'][key] = firstVisibleBtn.dataset.value;
             }
         }
 
-        // Filter functions - Overview
-        function setOverviewSchedule(schedule, btn) {
-            document.querySelectorAll('#overview .slider-buttons button').forEach(b => {
-                if (b.dataset.schedule) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.overview.schedule = schedule;
-            updateOverviewPeriodButtons();
-            loadOverviewData();
-        }
-
-        function setOverviewPeriod(period, btn) {
-            document.querySelectorAll('#overview .slider-buttons button').forEach(b => {
-                if (b.dataset.period) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.overview.period = period;
-            loadOverviewData();
-        }
-
-        // Filter functions - Class
-        function setClassSchedule(schedule, btn) {
-            document.querySelectorAll('#class .slider-buttons button').forEach(b => {
-                if (b.dataset.schedule) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.class.schedule = schedule;
-            updateClassPeriodButtons();
-            loadClassData();
-        }
-
-        function setClassPeriod(period, btn) {
-            document.querySelectorAll('#class .slider-buttons button').forEach(b => {
-                if (b.dataset.period) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.class.period = period;
-            loadClassData();
-        }
-
-        // Filter functions - Student
-        function setStudentSchedule(schedule, btn) {
-            document.querySelectorAll('#student .slider-buttons button').forEach(b => {
-                if (b.dataset.schedule) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.student.schedule = schedule;
-            updateStudentPeriodButtons();
-            updateStudentList();
-        }
-
-        function setStudentPeriod(period, btn) {
-            document.querySelectorAll('#student .slider-buttons button').forEach(b => {
-                if (b.dataset.period) b.classList.remove('active');
-            });
-            btn.classList.add('active');
-            currentFilters.student.period = period;
-            updateStudentList();
-        }
-
-        // Custom date handling
-        document.getElementById('classTimeRange').addEventListener('change', function() {
-            const isCustom = this.value === 'custom';
-            document.getElementById('classCustomDates').style.display = isCustom ? 'block' : 'none';
-            document.getElementById('classCustomDatesEnd').style.display = isCustom ? 'block' : 'none';
-        });
-
-        document.getElementById('studentTimeRange').addEventListener('change', function() {
-            const isCustom = this.value === 'custom';
-            document.getElementById('studentCustomDates').style.display = isCustom ? 'block' : 'none';
-            document.getElementById('studentCustomDatesEnd').style.display = isCustom ? 'block' : 'none';
-        });
-
-        // Utility functions
-        function formatDurationHours(ms) {
-            if (!ms) return '0m';
-            const minutes = Math.floor(ms / 60000);
-            if (minutes < 60) return minutes + 'm';
-            const hours = Math.floor(minutes / 60);
-            const mins = minutes % 60;
-            return hours + 'h ' + mins + 'm';
-        }
-
-        function getDateRange(days) {
-            const end = new Date();
-            end.setHours(23, 59, 59, 999);
-            const start = new Date(end);
-            start.setDate(start.getDate() - days + 1);
-            start.setHours(0, 0, 0, 0);
-            return {
-                startDate: start.toISOString().split('T')[0],
-                endDate: end.toISOString().split('T')[0]
-            };
-        }
-
-        function getCustomDateRange(startInput, endInput) {
-            const start = document.getElementById(startInput).value;
-            const end = document.getElementById(endInput).value;
-            return { startDate: start, endDate: end };
-        }
-
-        function getTimeRangeDates(timeRangeId, startInputId, endInputId) {
-            const timeRange = document.getElementById(timeRangeId).value;
-            if (timeRange === 'custom') {
-                return getCustomDateRange(startInputId, endInputId);
-            }
-            let days;
-            if (timeRange === 'today') days = 1;
-            else if (timeRange === 'week') days = 7;
-            else days = 14;
-            return getDateRange(days);
-        }
-
-        // Parse date string in local timezone to avoid day-off issues from UTC conversion
-        function parseLocalDate(dateString) {
-            if (!dateString) return new Date();
-            const [year, month, day] = dateString.split('-').map(Number);
+        // Utility Functions
+        function parseLocalDate(dateStr) {
+            const [year, month, day] = dateStr.split('-').map(Number);
             return new Date(year, month - 1, day);
         }
 
-        // Load all data from Firebase
-        function loadAllData() {
-            database.ref('logs').once('value', snapshot => {
-                allLogs = [];
-                snapshot.forEach(child => {
-                    const log = child.val();
-                    // Parse schedule format (red_regular, black_late, etc.)
-                    if (log.schedule && log.schedule.includes('_')) {
-                        const parts = log.schedule.split('_');
-                        log.scheduleDay = parts[0]; // 'red' or 'black' 
-                        log.startType = parts[1]; // 'regular' or 'late'
-                    }
-                    allLogs.push(log);
-                });
-                console.log('Total logs loaded:', allLogs.length);
-                if (allLogs.length > 0) {
-                    console.log('Sample log:', allLogs[0]);
-                    console.log('Parsed scheduleDay:', allLogs[0].scheduleDay);
-                    console.log('Parsed startType:', allLogs[0].startType);
-                    console.log('Period:', allLogs[0].period);
-                    
-                    // Show breakdown by schedule
-                    const bySchedule = {};
-                    allLogs.forEach(log => {
-                        const key = `${log.scheduleDay}_${log.startType}`;
-                        bySchedule[key] = (bySchedule[key] || 0) + 1;
-                    });
-                    console.log('Logs by schedule:', bySchedule);
-                } else {
-                    console.warn('No logs found in database!');
-                }
-                
-                // Initialize period buttons for all tabs
-                updateOverviewPeriodButtons();
-                updateClassPeriodButtons();
-                updateStudentPeriodButtons();
-                
-                loadOverviewData();
-            });
+        function formatDurationHours(ms) {
+            const totalMinutes = Math.floor(ms / 60000);
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            if (hours > 0) return `${hours}h ${minutes}m`;
+            return `${minutes}m`;
         }
 
-        // OVERVIEW TAB
+        function getTimeRangeDates(rangeType, startId, endId) {
+            const filter = rangeType === 'overviewTimeRange' ? currentFilters.overview : currentFilters.student;
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            let startDate, endDate;
+            
+            if (filter.timeRange === 'custom') {
+                const startInput = document.getElementById(startId);
+                const endInput = document.getElementById(endId);
+                if (startInput && endInput && startInput.value && endInput.value) {
+                    startDate = startInput.value;
+                    endDate = endInput.value;
+                } else {
+                    const defaultStart = new Date(today);
+                    defaultStart.setDate(today.getDate() - 14);
+                    startDate = defaultStart.toISOString().split('T')[0];
+                    endDate = today.toISOString().split('T')[0];
+                }
+            } else {
+                const days = parseInt(filter.timeRange.replace('days', ''));
+                const start = new Date(today);
+                start.setDate(today.getDate() - days);
+                startDate = start.toISOString().split('T')[0];
+                endDate = today.toISOString().split('T')[0];
+            }
+            
+            return { startDate, endDate };
+        }
+
+        // Load All Data
+        async function loadAllData() {
+            try {
+                const snapshot = await db.ref('logs').once('value');
+                const data = snapshot.val();
+                
+                allLogs = [];
+                if (data) {
+                    // New Firebase structure: logs is a flat list with push IDs
+                    Object.entries(data).forEach(([logId, log]) => {
+                        // Parse schedule string (e.g., "red_regular" -> scheduleDay: "red", startType: "regular")
+                        let scheduleDay = 'red';
+                        let startType = 'regular';
+                        if (log.schedule) {
+                            const parts = log.schedule.split('_');
+                            scheduleDay = parts[0] || 'red'; // "red" or "black"
+                            startType = parts[1] || 'regular'; // "regular" or "late"
+                        }
+                        
+                        // Parse period name (e.g., "Red1-Algebra" -> period: "1", periodName: "Red1-Algebra")
+                        let periodNumber = '1';
+                        if (log.period) {
+                            // Extract number from period name (Red1, Red2, Black2, etc.)
+                            const match = log.period.match(/\d+/);
+                            if (match) {
+                                periodNumber = match[0];
+                            }
+                        }
+                        
+                        allLogs.push({
+                            logId,
+                            date: log.date,
+                            period: periodNumber,
+                            periodName: log.period, // Keep full name for reference
+                            schedule: log.schedule, // Keep original schedule string
+                            scheduleDay: scheduleDay, // Extracted: "red" or "black"
+                            startType: startType, // Extracted: "regular" or "late"
+                            studentName: log.studentName,
+                            qrCode: log.qrCode,
+                            action: log.action,
+                            timestamp: log.timestamp,
+                            duration: log.duration || 0,
+                            outTime: log.outTime,
+                            inTime: log.inTime
+                        });
+                    });
+                }
+                
+                console.log('Loaded logs:', allLogs.length);
+                console.log('Sample log:', allLogs[0]);
+                setupSliders('overview');
+                setupSliders('student');
+                loadOverviewData();
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+
+        // Load Overview Data
         function loadOverviewData() {
             const { schedule, period } = currentFilters.overview;
-            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
-            const range14 = getDateRange(14);
+            const scheduleDay = schedule === 'Red' ? 'red' : 'black';
+            const range = getTimeRangeDates('overviewTimeRange', 'overviewStartDate', 'overviewEndDate');
             
-            console.log('=== OVERVIEW DATA LOAD ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
-            console.log('Total logs available:', allLogs.length);
+            console.log('Loading overview:', { scheduleDay, period, range });
             
-            // Get most recent period data - filter by scheduleDay and period only (combines regular + late)
-            const recentPeriodLogs = allLogs
-                .filter(log => {
-                    const scheduleMatch = log.scheduleDay === scheduleDay;
-                    const periodMatch = log.period === period;
-                    
-                    if (!scheduleMatch || !periodMatch) {
-                        console.log('Log filtered out:', {
-                            log: log.studentName + ' - ' + log.period,
-                            scheduleMatch,
-                            periodMatch,
-                            expected: { scheduleDay, period },
-                            actual: { scheduleDay: log.scheduleDay, period: log.period }
-                        });
-                    }
-                    
-                    return scheduleMatch && periodMatch;
-                })
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            console.log('Found logs matching all filters:', recentPeriodLogs.length);
-            if (recentPeriodLogs.length > 0) {
-                console.log('Sample matching log:', recentPeriodLogs[0]);
-            }
-            
-            const mostRecentDate = recentPeriodLogs.length > 0 ? recentPeriodLogs[0].date : null;
-            const recentPeriodData = mostRecentDate 
-                ? recentPeriodLogs.filter(log => log.date === mostRecentDate && (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset'))
-                : [];
-            
-            const uniqueStudentsRecent = new Set(recentPeriodData.map(log => log.studentName)).size;
-            const avgDurationRecent = recentPeriodData.length > 0
-                ? recentPeriodData.reduce((sum, log) => sum + (log.duration || 0), 0) / recentPeriodData.length
-                : 0;
-            
-            // Get 14-day data - filter by scheduleDay and period only (combines regular + late)
-            const logs14 = allLogs.filter(log => 
-                log.date >= range14.startDate && 
-                log.date <= range14.endDate &&
+            // Filter logs: match scheduleDay AND period number
+            // This combines data from both regular and late start for the same class
+            const filtered = allLogs.filter(log =>
                 log.scheduleDay === scheduleDay &&
                 log.period === period &&
-                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset')
+                log.date >= range.startDate &&
+                log.date <= range.endDate &&
+                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
             );
             
-            const totalTrips14 = logs14.length;
-            const avgDuration14 = logs14.length > 0
-                ? logs14.reduce((sum, log) => sum + (log.duration || 0), 0) / logs14.length
-                : 0;
+            console.log('Filtered logs:', filtered.length);
+            console.log('Sample filtered:', filtered.slice(0, 3));
+            
+            // Calculate stats
+            const uniqueStudents = new Set(filtered.map(log => log.studentName)).size;
+            const totalScans = filtered.length;
+            const totalDuration = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
+            const avgDuration = totalScans > 0 ? totalDuration / totalScans : 0;
+            const over10Min = filtered.filter(log => (log.duration || 0) > 600000).length;
             
             // Update stats
-            document.getElementById('overviewRecentStudents').textContent = uniqueStudentsRecent;
-            document.getElementById('overviewRecentAvg').textContent = formatDurationHours(avgDurationRecent);
-            document.getElementById('overviewTotal14').textContent = totalTrips14;
-            document.getElementById('overviewAvg14').textContent = formatDurationHours(avgDuration14);
+            document.getElementById('overviewStudentFreq').textContent = uniqueStudents;
+            document.getElementById('overviewTotalScans').textContent = totalScans;
+            document.getElementById('overviewAvgDuration').textContent = formatDurationHours(avgDuration);
+            document.getElementById('overviewOver10').textContent = over10Min;
             
-            // Chart: Unique students per day
-            const dailyStudents = {};
+            // 14 Day Trend Chart
+            const dayMap = {};
+            const endDate = parseLocalDate(range.endDate);
             for (let i = 13; i >= 0; i--) {
-                const date = new Date();
-                date.setDate(date.getDate() - i);
-                const dateStr = date.toISOString().split('T')[0];
-                dailyStudents[dateStr] = new Set();
+                const d = new Date(endDate);
+                d.setDate(endDate.getDate() - i);
+                const dateStr = d.toISOString().split('T')[0];
+                dayMap[dateStr] = 0;
             }
             
-            logs14.forEach(log => {
-                if (dailyStudents[log.date]) {
-                    dailyStudents[log.date].add(log.studentName);
+            filtered.forEach(log => {
+                if (dayMap.hasOwnProperty(log.date)) {
+                    dayMap[log.date]++;
                 }
             });
             
-            const chartLabels = Object.keys(dailyStudents).map(date => {
-                const d = new Date(date);
-                return (d.getMonth() + 1) + '/' + d.getDate();
+            const labels = Object.keys(dayMap).map(d => {
+                const date = parseLocalDate(d);
+                return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
             });
-            const chartData = Object.values(dailyStudents).map(set => set.size);
+            const trendData = Object.values(dayMap);
             
-            const ctx = document.getElementById('overviewChart');
-            if (charts.overview) charts.overview.destroy();
-            charts.overview = new Chart(ctx, {
-                type: 'bar',
+            const ctx = document.getElementById('trendChart');
+            if (charts.trend) charts.trend.destroy();
+            charts.trend = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: chartLabels,
+                    labels: labels,
                     datasets: [{
-                        label: 'Students',
-                        data: chartData,
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        borderWidth: 2
+                        label: 'Trips',
+                        data: trendData,
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#667eea'
                     }]
                 },
                 options: {
@@ -1322,221 +1041,127 @@
                 }
             });
             
-            // Top students table (filtered by schedule/period, last 14 days)
-            const filteredLogs = logs14.filter(log => 
-                log.scheduleDay === scheduleDay
-            );
-            
+            // Top 10 Students
             const studentStats = {};
-            filteredLogs.forEach(log => {
+            filtered.forEach(log => {
+                if (!log.studentName) return;
                 if (!studentStats[log.studentName]) {
-                    studentStats[log.studentName] = { trips: 0, totalTime: 0 };
+                    studentStats[log.studentName] = { trips: 0, duration: 0 };
                 }
                 studentStats[log.studentName].trips++;
-                studentStats[log.studentName].totalTime += log.duration || 0;
+                studentStats[log.studentName].duration += log.duration || 0;
             });
             
-            const sortedStudents = Object.entries(studentStats)
-                .map(([name, stats]) => ({
-                    name,
-                    trips: stats.trips,
-                    totalTime: stats.totalTime,
-                    avgDuration: stats.totalTime / stats.trips
-                }))
-                .sort((a, b) => b.trips - a.trips)
+            const topStudents = Object.entries(studentStats)
+                .sort((a, b) => b[1].trips - a[1].trips)
                 .slice(0, 10);
             
-            let html = `
+            let html = '';
+            if (topStudents.length === 0) {
+                html = '<li style="text-align: center; padding: 2rem; color: var(--color-slate);">No data available</li>';
+            } else {
+                topStudents.forEach(([name, stats], index) => {
+                    html += `
+                        <li class="student-item" onclick="goToStudent('${name.replace(/'/g, "\\'")}')">
+                            <div class="student-rank">${index + 1}</div>
+                            <div class="student-info">
+                                <div class="student-name">${name}</div>
+                                <div class="student-trips">${stats.trips} trips</div>
+                            </div>
+                            <div class="student-duration">${formatDurationHours(stats.duration)}</div>
+                        </li>
+                    `;
+                });
+            }
+            document.getElementById('topStudentsList').innerHTML = html;
+            
+            // All Students Table
+            const allStudents = Object.entries(studentStats)
+                .sort((a, b) => b[1].trips - a[1].trips);
+            
+            let tableHtml = `
                 <table>
                     <thead>
                         <tr>
-                            <th>Student</th>
+                            <th>Rank</th>
+                            <th>Student Name</th>
                             <th>Total Trips</th>
-                            <th>Total Time</th>
+                            <th>Total Time Out</th>
                             <th>Avg Duration</th>
+                            <th>Over 10 Min</th>
                         </tr>
                     </thead>
                     <tbody>
             `;
             
-            sortedStudents.forEach(student => {
-                html += `
-                    <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${schedule}', '${period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
-                        <td>${student.trips}</td>
-                        <td>${formatDurationHours(student.totalTime)}</td>
-                        <td>${formatDurationHours(student.avgDuration)}</td>
-                    </tr>
-                `;
-            });
-            
-            if (sortedStudents.length === 0) {
-                html += '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-slate);">No data available</td></tr>';
-            }
-            
-            html += '</tbody></table>';
-            document.getElementById('topStudentsTable').innerHTML = html;
-        }
-
-        // BY CLASS TAB
-        function loadClassData() {
-            const { schedule, period } = currentFilters.class;
-            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
-            const range = getTimeRangeDates('classTimeRange', 'classStartDate', 'classEndDate');
-            
-            console.log('=== CLASS DATA LOAD ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
-            
-            // Filter by scheduleDay and period only (combines regular + late start data)
-            const filtered = allLogs.filter(log =>
-                log.scheduleDay === scheduleDay &&
-                log.period === period &&
-                log.date >= range.startDate &&
-                log.date <= range.endDate &&
-                (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
-            );
-            
-            console.log('Filtered logs for class:', filtered.length);
-            
-            const uniqueStudents = new Set(filtered.map(log => log.studentName)).size;
-            const totalTrips = filtered.length;
-            const avgDuration = totalTrips > 0 
-                ? filtered.reduce((sum, log) => sum + (log.duration || 0), 0) / totalTrips
-                : 0;
-            const tripsOver10 = filtered.filter(log => (log.duration || 0) > 600000).length;
-            
-            document.getElementById('classStudentCount').textContent = uniqueStudents;
-            document.getElementById('classTotalTrips').textContent = totalTrips;
-            document.getElementById('classAvgDuration').textContent = formatDurationHours(avgDuration);
-            document.getElementById('classTripsOver10').textContent = tripsOver10;
-            
-            // Student summary table
-            const studentStats = {};
-            filtered.forEach(log => {
-                if (!studentStats[log.studentName]) {
-                    studentStats[log.studentName] = { trips: 0, totalTime: 0 };
-                }
-                studentStats[log.studentName].trips++;
-                studentStats[log.studentName].totalTime += log.duration || 0;
-            });
-            
-            const students = Object.entries(studentStats).map(([name, stats]) => ({
-                name,
-                trips: stats.trips,
-                totalTime: stats.totalTime,
-                avgDuration: stats.totalTime / stats.trips
-            }));
-            
-            let html = `
-                <table id="classTable">
-                    <thead>
-                        <tr>
-                            <th class="sortable" onclick="sortClassTable('name')">Student</th>
-                            <th class="sortable" onclick="sortClassTable('trips')">Total Trips</th>
-                            <th class="sortable" onclick="sortClassTable('totalTime')">Total Time Out</th>
-                            <th class="sortable" onclick="sortClassTable('avgDuration')">Average Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            students.forEach(student => {
-                html += `
-                    <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${schedule}', '${period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
-                        <td>${student.trips}</td>
-                        <td>${formatDurationHours(student.totalTime)}</td>
-                        <td>${formatDurationHours(student.avgDuration)}</td>
-                    </tr>
-                `;
-            });
-            
-            if (students.length === 0) {
-                html += '<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--color-slate);">No data available</td></tr>';
-            }
-            
-            html += '</tbody></table>';
-            document.getElementById('classStudentTable').innerHTML = html;
-            
-            // Store data for sorting
-            window.classTableData = students;
-            window.classTableSort = { column: null, direction: 'asc' };
-        }
-
-        function sortClassTable(column) {
-            if (!window.classTableData) return;
-            
-            // Toggle direction
-            if (window.classTableSort.column === column) {
-                window.classTableSort.direction = window.classTableSort.direction === 'asc' ? 'desc' : 'asc';
+            if (allStudents.length === 0) {
+                tableHtml += '<tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--color-slate);">No data available</td></tr>';
             } else {
-                window.classTableSort.column = column;
-                window.classTableSort.direction = 'asc';
+                allStudents.forEach(([name, stats], index) => {
+                    const avgDur = stats.trips > 0 ? stats.duration / stats.trips : 0;
+                    const over10 = filtered.filter(log => log.studentName === name && (log.duration || 0) > 600000).length;
+                    
+                    tableHtml += `
+                        <tr style="cursor: pointer;" onclick="goToStudent('${name.replace(/'/g, "\\'")}')">
+                            <td>${index + 1}</td>
+                            <td><strong>${name}</strong></td>
+                            <td>${stats.trips}</td>
+                            <td>${formatDurationHours(stats.duration)}</td>
+                            <td>${formatDurationHours(avgDur)}</td>
+                            <td>${over10}</td>
+                        </tr>
+                    `;
+                });
             }
             
-            const data = [...window.classTableData];
-            data.sort((a, b) => {
-                let aVal = a[column];
-                let bVal = b[column];
-                
-                if (column === 'name') {
-                    aVal = aVal.toLowerCase();
-                    bVal = bVal.toLowerCase();
-                }
-                
-                if (aVal < bVal) return window.classTableSort.direction === 'asc' ? -1 : 1;
-                if (aVal > bVal) return window.classTableSort.direction === 'asc' ? 1 : -1;
-                return 0;
-            });
-            
-            // Update table
-            let html = `
-                <table id="classTable">
-                    <thead>
-                        <tr>
-                            <th class="sortable ${window.classTableSort.column === 'name' ? window.classTableSort.direction : ''}" onclick="sortClassTable('name')">Student</th>
-                            <th class="sortable ${window.classTableSort.column === 'trips' ? window.classTableSort.direction : ''}" onclick="sortClassTable('trips')">Total Trips</th>
-                            <th class="sortable ${window.classTableSort.column === 'totalTime' ? window.classTableSort.direction : ''}" onclick="sortClassTable('totalTime')">Total Time Out</th>
-                            <th class="sortable ${window.classTableSort.column === 'avgDuration' ? window.classTableSort.direction : ''}" onclick="sortClassTable('avgDuration')">Average Duration</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            
-            data.forEach(student => {
-                html += `
-                    <tr>
-                        <td><a href="#" onclick="jumpToStudent('${student.name}', '${currentFilters.class.schedule}', '${currentFilters.class.period}'); return false;" style="color: var(--color-primary); text-decoration: none; font-weight: 600;">${student.name}</a></td>
-                        <td>${student.trips}</td>
-                        <td>${formatDurationHours(student.totalTime)}</td>
-                        <td>${formatDurationHours(student.avgDuration)}</td>
-                    </tr>
-                `;
-            });
-            
-            html += '</tbody></table>';
-            document.getElementById('classStudentTable').innerHTML = html;
+            tableHtml += '</tbody></table>';
+            document.getElementById('allStudentsTable').innerHTML = tableHtml;
         }
 
-        // BY STUDENT TAB
-        function updateStudentList() {
-            const { schedule, period } = currentFilters.student;
-            const scheduleDay = schedule === 'Red' ? 'red' : 'black'; // Map Red->red, Black->black
-            const studentSelect = document.getElementById('studentSelect');
+        // Go to Student Report
+        function goToStudent(studentName) {
+            // Switch to student tab
+            switchTab('student');
             
-            console.log('=== UPDATE STUDENT LIST ===');
-            console.log('Filters:', { schedule, period, scheduleDay });
+            // Set the same filters
+            currentFilters.student = { ...currentFilters.overview };
+            
+            // Update UI sliders
+            ['Schedule', 'Period', 'Time'].forEach(type => {
+                const slider = document.getElementById('student' + type + 'Slider');
+                if (!slider) return;
+                
+                slider.querySelectorAll('.slider-button').forEach(btn => {
+                    const key = type === 'Time' ? 'timeRange' : type.toLowerCase();
+                    if (btn.dataset.value === currentFilters.student[key]) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Populate dropdown and select student
+            populateStudentDropdown();
+            setTimeout(() => {
+                document.getElementById('studentSelect').value = studentName;
+                loadStudentData();
+            }, 100);
+        }
+
+        // Populate Student Dropdown
+        function populateStudentDropdown() {
+            const { schedule, period } = currentFilters.student;
+            const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             
             const students = new Set();
             allLogs.forEach(log => {
-                // Filter by scheduleDay and period (combines regular + late start data)
                 if (log.scheduleDay === scheduleDay && log.period === period && log.studentName) {
                     students.add(log.studentName);
                 }
             });
             
-            console.log('Found students:', students.size);
-            
+            const studentSelect = document.getElementById('studentSelect');
             studentSelect.innerHTML = '<option value="">-- Select student --</option>';
             Array.from(students).sort().forEach(name => {
                 studentSelect.innerHTML += `<option value="${name}">${name}</option>`;
@@ -1546,6 +1171,7 @@
             document.getElementById('noStudentSelected').style.display = 'block';
         }
 
+        // Load Student Data
         function loadStudentData() {
             const studentName = document.getElementById('studentSelect').value;
             if (!studentName) {
@@ -1561,11 +1187,6 @@
             const scheduleDay = schedule === 'Red' ? 'red' : 'black';
             const range = getTimeRangeDates('studentTimeRange', 'studentStartDate', 'studentEndDate');
             
-            console.log('=== LOAD STUDENT DATA ===');
-            console.log('Student:', studentName, 'Filters:', { scheduleDay, period });
-            
-            // Filter by scheduleDay and period only (combines regular + late start data)
-            // Only count 'in' actions as trips (not 'out'), since a trip is one in+out cycle
             const filtered = allLogs.filter(log =>
                 log.studentName === studentName &&
                 log.scheduleDay === scheduleDay &&
@@ -1574,8 +1195,6 @@
                 log.date <= range.endDate &&
                 (log.action === 'in' || log.action === 'auto-reset' || log.action === 'manual-reset' || log.action === 'manual-in')
             );
-            
-            console.log('Filtered student logs:', filtered.length);
             
             const totalTrips = filtered.length;
             const totalTime = filtered.reduce((sum, log) => sum + (log.duration || 0), 0);
@@ -1594,7 +1213,7 @@
             document.getElementById('studentTripsOver10').textContent = tripsOver10;
             document.getElementById('studentForgotRate').textContent = forgotRate + '%';
             
-            // Chart 1: Trips by day of week
+            // Trips by day
             const dayTrips = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
             const dayTime = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
             
@@ -1624,16 +1243,11 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
                 }
             });
             
-            // Chart 2: Time out by day of week
             const ctx2 = document.getElementById('studentTimeChart');
             if (charts.studentTime) charts.studentTime.destroy();
             charts.studentTime = new Chart(ctx2, {
@@ -1651,12 +1265,8 @@
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: { beginAtZero: true }
-                    }
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: true } }
                 }
             });
             
@@ -1686,11 +1296,9 @@
                 
                 let badge = '';
                 if (log.action === 'in') badge = '<span class="badge success">Normal In</span>';
-                else if (log.action === 'out') badge = '<span class="badge success">Normal Out</span>';
-                else if (log.action === 'manual-in') badge = '<span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Manual In</span>';
-                else if (log.action === 'manual-out') badge = '<span class="badge warning">Manual Out</span>';
                 else if (log.action === 'auto-reset') badge = '<span class="badge warning">Auto Reset</span>';
-                else badge = '<span class="badge danger">Manual Reset</span>';
+                else if (log.action === 'manual-reset') badge = '<span class="badge danger">Manual Reset</span>';
+                else badge = '<span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6;">Manual In</span>';
                 
                 html += `
                     <tr>
@@ -1710,6 +1318,7 @@
             document.getElementById('studentTripsTable').innerHTML = html;
         }
 
+        // Export Student Report
         function exportStudentReport() {
             const studentName = document.getElementById('studentSelect').value;
             if (!studentName) {
