@@ -1021,6 +1021,33 @@
                 const curr = snap.val();
                 const isIn = !curr || curr.status === 'in';
                 
+                // Check if trying to scan out - enforce 5 student limit
+                if (isIn) {
+                    // Count how many students are currently out for this period
+                    const currentPeriod = getCurrentPeriod();
+                    if (currentPeriod) {
+                        const allStudentsSnap = await database.ref('students').once('value');
+                        const allStudents = allStudentsSnap.val() || {};
+                        
+                        let studentsOut = 0;
+                        Object.values(allStudents).forEach(student => {
+                            // Count students who are out AND in the same period
+                            if (student.status === 'out' && 
+                                student.period === currentPeriod.name && 
+                                student.schedule === info.schedule) {
+                                studentsOut++;
+                            }
+                        });
+                        
+                        // If 5 or more students already out, prevent this scan
+                        if (studentsOut >= 5) {
+                            playErrorBuzz();
+                            showError('Maximum 5 students allowed out at a time. Please wait for someone to return.');
+                            return;
+                        }
+                    }
+                }
+                
                 const data = {
                     name: info.studentName,
                     qrCode: info.qrCode,
