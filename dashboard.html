@@ -542,7 +542,12 @@
         <div class="slider-group">
             <div class="slider-label">Period</div>
             <div class="slider-buttons" id="periodButtons">
-                <!-- Dynamically populated based on selected schedule -->
+                <button class="slider-button active" data-period="Red1-Algebra" data-schedule="red" onclick="setPeriod('Red1-Algebra', this)">Red 1</button>
+                <button class="slider-button" data-period="Red2-Algebra" data-schedule="red" onclick="setPeriod('Red2-Algebra', this)">Red 2</button>
+                <button class="slider-button" data-period="Red3-PreAlgebra" data-schedule="red" onclick="setPeriod('Red3-PreAlgebra', this)">Red 3</button>
+                <button class="slider-button" data-period="Black2-Geometry" data-schedule="black" style="display:none" onclick="setPeriod('Black2-Geometry', this)">Black 2</button>
+                <button class="slider-button" data-period="Black3-Geometry" data-schedule="black" style="display:none" onclick="setPeriod('Black3-Geometry', this)">Black 3</button>
+                <button class="slider-button" data-period="Black4-Algebra" data-schedule="black" style="display:none" onclick="setPeriod('Black4-Algebra', this)">Black 4</button>
             </div>
         </div>
         <div class="slider-group">
@@ -1020,31 +1025,26 @@
         let updateInterval = null;
         let timers = {};
 
-        // Update period buttons based on selected schedule and start type
-        function updatePeriodButtons() {
-            const periodButtons = document.getElementById('periodButtons');
-            const schedule = CONFIG.schedules[currentSchedule]?.[currentStartType];
-            
-            if (!schedule || schedule.length === 0) {
-                periodButtons.innerHTML = '<div style="padding: 0.5rem; color: var(--color-slate);">No periods available</div>';
-                return;
-            }
-            
-            // Build buttons for actual periods
-            let html = '';
-            schedule.forEach((period, index) => {
-                const isActive = (currentPeriod === period.name) || (!currentPeriod && index === 0) ? 'active' : '';
-                html += `<button class="slider-button ${isActive}" data-period="${period.name}" onclick="setPeriod('${period.name}', this)">${period.name}</button>`;
+        // Show/hide period buttons based on schedule and auto-select first
+        function updatePeriodVisibility(schedule) {
+            const allPeriodBtns = document.querySelectorAll('#periodButtons .slider-button');
+            let firstVisible = null;
+            allPeriodBtns.forEach(btn => {
+                if (btn.dataset.schedule === schedule) {
+                    btn.style.display = '';
+                    if (!firstVisible) firstVisible = btn;
+                } else {
+                    btn.style.display = 'none';
+                    btn.classList.remove('active');
+                }
             });
-            
-            periodButtons.innerHTML = html;
-            
-            // Set first period as default if none selected
-            if (!currentPeriod || !schedule.find(p => p.name === currentPeriod)) {
-                currentPeriod = schedule[0].name;
+            // Auto-select first period for this schedule
+            if (firstVisible) {
+                allPeriodBtns.forEach(b => b.classList.remove('active'));
+                firstVisible.classList.add('active');
+                currentPeriod = firstVisible.dataset.period;
+                try { localStorage.setItem('dashboard_period', currentPeriod); } catch(e) {}
             }
-            
-            loadStudents();
         }
 
         // Filter functions
@@ -1052,19 +1052,16 @@
             document.querySelectorAll('.slider-button[data-schedule]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentSchedule = schedule;
-            try {
-                localStorage.setItem('dashboard_schedule', currentSchedule);
-            } catch(e) {}
-            updatePeriodButtons();
+            try { localStorage.setItem('dashboard_schedule', currentSchedule); } catch(e) {}
+            updatePeriodVisibility(schedule);
+            loadStudents();
         }
 
         function setPeriod(period, btn) {
-            document.querySelectorAll('.slider-button[data-period]').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('#periodButtons .slider-button').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentPeriod = period;
-            try {
-                localStorage.setItem('dashboard_period', currentPeriod);
-            } catch(e) {}
+            try { localStorage.setItem('dashboard_period', currentPeriod); } catch(e) {}
             loadStudents();
         }
 
@@ -1072,10 +1069,8 @@
             document.querySelectorAll('.slider-button[data-start]').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             currentStartType = startType;
-            try {
-                localStorage.setItem('dashboard_startType', currentStartType);
-            } catch(e) {}
-            updatePeriodButtons();
+            try { localStorage.setItem('dashboard_startType', currentStartType); } catch(e) {}
+            loadStudents();
         }
 
         function returnHome() {
@@ -1488,45 +1483,41 @@
                 const savedSchedule = localStorage.getItem('dashboard_schedule');
                 const savedPeriod = localStorage.getItem('dashboard_period');
                 const savedStartType = localStorage.getItem('dashboard_startType');
-                
+
                 if (savedSchedule) {
                     currentSchedule = savedSchedule;
-                    document.querySelector(`[data-schedule="${savedSchedule}"]`)?.classList.add('active');
-                    document.querySelector('[data-schedule]:not([data-schedule="' + savedSchedule + '"])')?.classList.remove('active');
+                    document.querySelectorAll('.slider-button[data-schedule]').forEach(b => {
+                        b.classList.toggle('active', b.dataset.schedule === savedSchedule);
+                    });
                 }
                 if (savedStartType) {
                     currentStartType = savedStartType;
-                    document.querySelector(`[data-start="${savedStartType}"]`)?.classList.add('active');
-                    document.querySelectorAll('[data-start]').forEach(b => {
-                        if (b.dataset.start !== savedStartType) b.classList.remove('active');
+                    document.querySelectorAll('.slider-button[data-start]').forEach(b => {
+                        b.classList.toggle('active', b.dataset.start === savedStartType);
                     });
                 }
-                
-                // Populate period buttons based on current schedule/start type
-                updatePeriodButtons();
-                
-                // Restore saved period if it exists in current schedule
+
+                // Show correct period buttons for this schedule
+                updatePeriodVisibility(currentSchedule);
+
+                // Restore saved period if it belongs to current schedule
                 if (savedPeriod) {
-                    currentPeriod = savedPeriod;
-                    setTimeout(() => {
-                        const periodBtn = document.querySelector(`[data-period="${savedPeriod}"]`);
-                        if (periodBtn) {
-                            periodBtn.classList.add('active');
-                            document.querySelectorAll('[data-period]').forEach(b => {
-                                if (b.dataset.period !== savedPeriod) b.classList.remove('active');
-                            });
-                        }
-                    }, 100);
+                    const savedBtn = document.querySelector(`#periodButtons .slider-button[data-period="${savedPeriod}"]`);
+                    if (savedBtn && savedBtn.style.display !== 'none') {
+                        document.querySelectorAll('#periodButtons .slider-button').forEach(b => b.classList.remove('active'));
+                        savedBtn.classList.add('active');
+                        currentPeriod = savedPeriod;
+                    }
                 }
             } catch (e) {
                 console.error('Initialization error:', e);
-                // Fallback: just populate periods with defaults
-                updatePeriodButtons();
+                updatePeriodVisibility(currentSchedule);
             }
-            
+
+            loadStudents();
             setInterval(loadStudents, 2000);
             setInterval(updatePeriodStatus, 1000);
-            setInterval(checkPeriodEnd, 30000); // Check every 30 seconds for period end
+            setInterval(checkPeriodEnd, 30000);
         });
     </script>
 </body>
