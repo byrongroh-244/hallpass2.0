@@ -1114,7 +1114,7 @@
                 timeDisplay.textContent = `${formatTime(currentPeriodObj.startTime)} - ${formatTime(currentPeriodObj.endTime)}`;
                 
                 // Check if currently active
-                const isActive = currentTime >= currentPeriodObj.startTime && currentTime <= currentPeriodObj.endTime;
+                const isActive = currentTime >= currentPeriodObj.startTime && currentTime < currentPeriodObj.endTime;
                 
                 if (isActive) {
                     statusBadge.className = 'status-indicator-badge active';
@@ -1411,7 +1411,9 @@
             
             if (!currentPeriodObj) return;
             
-            const isActive = currentTime >= currentPeriodObj.startTime && currentTime <= currentPeriodObj.endTime;
+            // Use strict < on endTime so the period flips inactive as soon as the end minute arrives
+            const isActive = currentTime >= currentPeriodObj.startTime && currentTime < currentPeriodObj.endTime;
+            // Only fire if we have a real previous state (not the null seed) and the period just ended
             const periodJustEnded = lastPeriodState === true && isActive === false;
             
             if (periodJustEnded) {
@@ -1517,6 +1519,8 @@
             loadStudents();
             setInterval(loadStudents, 2000);
             setInterval(updatePeriodStatus, 1000);
+            // Seed lastPeriodState immediately so the interval can detect transitions
+            checkPeriodEnd();
             setInterval(checkPeriodEnd, 30000);
         });
     </script>
